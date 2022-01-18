@@ -29,22 +29,22 @@
 #include <string.h>
 #include <errno.h>
 
-#include "json-locator.h"
+#include "rp-json-locator.h"
 
 #if JSON_C_MINOR_VERSION < 13 /************* DONT IMPLEMENT LOCATOR *********/
 
-int json_locator_from_file(struct json_object **jso, const char *filename)
+int rp_json_locator_from_file(struct json_object **jso, const char *filename)
 {
 	*jso = json_object_from_file(filename);
 	return *jso ? 0 : -ENOMEM;
 }
 
-const char *json_locator_locate(struct json_object *jso, unsigned *linenum)
+const char *rp_json_locator_locate(struct json_object *jso, unsigned *linenum)
 {
 	return NULL;
 }
 
-void json_locator_copy(struct json_object *from, struct json_object *to)
+void rp_json_locator_copy(struct json_object *from, struct json_object *to)
 {
 }
 
@@ -468,7 +468,7 @@ end:
 }
 
 /* parse the file of filename and make its json object representation */
-int json_locator_from_file(struct json_object **object, const char *filename)
+int rp_json_locator_from_file(struct json_object **object, const char *filename)
 {
 	FILE *file;
 	int rc;
@@ -499,7 +499,7 @@ static struct tagline *locator_file_check(struct tagline *tagline)
 }
 
 /* return the file and the line of the object jso */
-const char *json_locator_locate(struct json_object *jso, unsigned *linenum)
+const char *rp_json_locator_locate(struct json_object *jso, unsigned *linenum)
 {
 	struct tagline *tagfile, *tagline;
 	const char *result;
@@ -524,7 +524,7 @@ const char *json_locator_locate(struct json_object *jso, unsigned *linenum)
 }
 
 /* copy the locator */
-void json_locator_copy(struct json_object *from, struct json_object *to)
+void rp_json_locator_copy(struct json_object *from, struct json_object *to)
 {
 	struct tagline *tagfile, *tagline;
 
@@ -684,7 +684,7 @@ static char *search(struct json_object *root, struct json_object *jso, struct pa
 }
 
 /* get the path  from root to json or NULL if none exists */
-char *json_locator_search_path(struct json_object *root, struct json_object *jso)
+char *rp_json_locator_search_path(struct json_object *root, struct json_object *jso)
 {
 	return search(root, jso, NULL);
 }

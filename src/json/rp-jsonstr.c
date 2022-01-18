@@ -25,7 +25,7 @@
 
 #include <string.h>
 
-#include "jsonstr.h"
+#include "rp-jsonstr.h"
 
 /**********************************************************************/
 
@@ -35,7 +35,7 @@ static inline char hex(int digit)
 	return (char)(digit + (digit > 9 ? 'a' - 10 : '0'));
 }
 
-size_t jsonstr_string_escape_length(const char *string, size_t maxlen)
+size_t rp_jsonstr_string_escape_length(const char *string, size_t maxlen)
 {
 	size_t i, r;
 	char c;
@@ -61,7 +61,7 @@ size_t jsonstr_string_escape_length(const char *string, size_t maxlen)
  * escape the string for JSON in destination
  * returns length of the final string as if enougth room existed
  */
-size_t jsonstr_string_escape(char *dest, size_t destlenmax, const char *string, size_t stringlenmax)
+size_t rp_jsonstr_string_escape(char *dest, size_t destlenmax, const char *string, size_t stringlenmax)
 {
 	size_t i, r;
 	char c;
@@ -94,7 +94,7 @@ size_t jsonstr_string_escape(char *dest, size_t destlenmax, const char *string, 
 	}
 	/* fullfil return length */
 	if (i < stringlenmax && c)
-		r += jsonstr_string_escape_length(&string[i], stringlenmax - i);
+		r += rp_jsonstr_string_escape_length(&string[i], stringlenmax - i);
 
 	/* end */
 	if (r < destlenmax)
@@ -106,7 +106,7 @@ size_t jsonstr_string_escape(char *dest, size_t destlenmax, const char *string, 
  * escape the string for JSON in destination
  * returns offset of the terminating zero
  */
-size_t jsonstr_string_escape_unsafe(char *dest, const char *string, size_t stringlenmax)
+size_t rp_jsonstr_string_escape_unsafe(char *dest, const char *string, size_t stringlenmax)
 {
 	size_t i, r;
 	char c;
@@ -380,7 +380,7 @@ static int test_value(struct readtxt *rt)
 /*
  * test if a string is a valid json utf8 stream
  */
-int jsonstr_test(const char *string, size_t stringlenmax, size_t *size)
+int rp_jsonstr_test(const char *string, size_t stringlenmax, size_t *size)
 {
 	int r;
 	struct readtxt rt;

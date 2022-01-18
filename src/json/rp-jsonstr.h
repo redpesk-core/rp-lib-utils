@@ -36,11 +36,11 @@
  * @return the length of the escaped JSON string (without the enclosing double quotes)
  *
  * @example
- *   jsonstr_string_escape_length("hello", 10000) = 5
- *   jsonstr_string_escape_length("hello", 3) = 3
- *   jsonstr_string_escape_length("hello\n", 10000) = 13
+ *   rp_jsonstr_string_escape_length("hello", 10000) = 5
+ *   rp_jsonstr_string_escape_length("hello", 3) = 3
+ *   rp_jsonstr_string_escape_length("hello\n", 10000) = 13
  */
-extern size_t jsonstr_string_escape_length(const char *string, size_t maxlen);
+extern size_t rp_jsonstr_string_escape_length(const char *string, size_t maxlen);
 
 /**
  * Compute the possibly escaped JSON string value of
@@ -57,14 +57,14 @@ extern size_t jsonstr_string_escape_length(const char *string, size_t maxlen);
  * If the returned length is greater or equal to the given length then the escaped
  * string is not terminated by a zero.
  */
-extern size_t jsonstr_string_escape(char *dest, size_t destlenmax, const char *string, size_t stringlenmax);
+extern size_t rp_jsonstr_string_escape(char *dest, size_t destlenmax, const char *string, size_t stringlenmax);
 
 /**
  * Compute the possibly escaped JSON string value of
  * the given string. Doesn't put the enclosing double quotes.
  * This routine is unsafe because it does not check the overflow
  * of the destination. However the check can be done before by using
- * the function @see jsonstr_string_escape_length.
+ * the function @see rp_jsonstr_string_escape_length.
  *
  * @param dest   buffer where to store the escaped JSON string
  * @param string the string to escape
@@ -73,10 +73,10 @@ extern size_t jsonstr_string_escape(char *dest, size_t destlenmax, const char *s
  * @return the length of the escaped JSON string without the enclosing double quotes
  * and without the added terminating zero.
  *
- * @see jsonstr_string_escape_length
- * @see jsonstr_string_escape
+ * @see rp_jsonstr_string_escape_length
+ * @see rp_jsonstr_string_escape
  */
-extern size_t jsonstr_string_escape_unsafe(char *dest, const char *string, size_t stringlenmax);
+extern size_t rp_jsonstr_string_escape_unsafe(char *dest, const char *string, size_t stringlenmax);
 
 /**
  * test if a string is a valid json utf8 stream.
@@ -87,5 +87,5 @@ extern size_t jsonstr_string_escape_unsafe(char *dest, const char *string, size_
  *
  * @return 0 if the string is not a valid JSON or otherwise 1
  */
-extern int jsonstr_test(const char *string, size_t stringlenmax, size_t *size);
+extern int rp_jsonstr_test(const char *string, size_t stringlenmax, size_t *size);
 

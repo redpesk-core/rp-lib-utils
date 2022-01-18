@@ -26,7 +26,7 @@
 #include <string.h>
 #include <limits.h>
 
-#include "wrap-json.h"
+#include "rp-json-wrap.h"
 #include "../misc/wrap-base64.h"
 
 #define STACKCOUNT  32
@@ -40,28 +40,28 @@ static const char unpack_accept_arr[] = "*!][{snbiIfFoOyY";
 static const char unpack_accept_key[] = "*!s}";
 #define unpack_accept_any (&unpack_accept_arr[3])
 
-static const char *pack_errors[_wrap_json_error_count_] =
+static const char *pack_errors[_rp_json_wrap_error_count_] =
 {
-	[wrap_json_error_none] = "unknown error",
-	[wrap_json_error_null_object] = "null object",
-	[wrap_json_error_truncated] = "truncated",
-	[wrap_json_error_internal_error] = "internal error",
-	[wrap_json_error_out_of_memory] = "out of memory",
-	[wrap_json_error_invalid_character] = "invalid character",
-	[wrap_json_error_too_long] = "too long",
-	[wrap_json_error_too_deep] = "too deep",
-	[wrap_json_error_null_spec] = "spec is NULL",
-	[wrap_json_error_null_key] = "key is NULL",
-	[wrap_json_error_null_string] = "string is NULL",
-	[wrap_json_error_out_of_range] = "array too small",
-	[wrap_json_error_incomplete] = "incomplete container",
-	[wrap_json_error_missfit_type] = "missfit of type",
-	[wrap_json_error_key_not_found] = "key not found",
-	[wrap_json_error_bad_base64] = "bad base64 encoding"
+	[rp_json_wrap_error_none] = "unknown error",
+	[rp_json_wrap_error_null_object] = "null object",
+	[rp_json_wrap_error_truncated] = "truncated",
+	[rp_json_wrap_error_internal_error] = "internal error",
+	[rp_json_wrap_error_out_of_memory] = "out of memory",
+	[rp_json_wrap_error_invalid_character] = "invalid character",
+	[rp_json_wrap_error_too_long] = "too long",
+	[rp_json_wrap_error_too_deep] = "too deep",
+	[rp_json_wrap_error_null_spec] = "spec is NULL",
+	[rp_json_wrap_error_null_key] = "key is NULL",
+	[rp_json_wrap_error_null_string] = "string is NULL",
+	[rp_json_wrap_error_out_of_range] = "array too small",
+	[rp_json_wrap_error_incomplete] = "incomplete container",
+	[rp_json_wrap_error_missfit_type] = "missfit of type",
+	[rp_json_wrap_error_key_not_found] = "key not found",
+	[rp_json_wrap_error_bad_base64] = "bad base64 encoding"
 };
 
 /* position of the error code */
-int wrap_json_get_error_position(int rc)
+int rp_json_wrap_get_error_position(int rc)
 {
 	if (rc < 0)
 		rc = -rc;
@@ -69,16 +69,16 @@ int wrap_json_get_error_position(int rc)
 }
 
 
-int wrap_json_get_error_code(int rc)
+int rp_json_wrap_get_error_code(int rc)
 {
 	if (rc < 0)
 		rc = -rc;
 	return rc & 15;
 }
 
-const char *wrap_json_get_error_string(int rc)
+const char *rp_json_wrap_get_error_string(int rc)
 {
-	rc = wrap_json_get_error_code(rc);
+	rc = rp_json_wrap_get_error_code(rc);
 	if (rc >= (int)(sizeof pack_errors / sizeof *pack_errors))
 		rc = 0;
 	return pack_errors[rc];
@@ -91,7 +91,7 @@ static inline const char *skip(const char *d)
 	return d;
 }
 
-int wrap_json_vpack(struct json_object **result, const char *desc, va_list args)
+int rp_json_wrap_vpack(struct json_object **result, const char *desc, va_list args)
 {
 	/* TODO: the case of structs with key being single char should be optimized */
 	int notnull, nullable, rc, init;
@@ -310,31 +310,31 @@ int wrap_json_vpack(struct json_object **result, const char *desc, va_list args)
 	}
 
 null_object:
-	rc = wrap_json_error_null_object;
+	rc = rp_json_wrap_error_null_object;
 	goto error;
 truncated:
-	rc = wrap_json_error_truncated;
+	rc = rp_json_wrap_error_truncated;
 	goto error;
 internal_error:
-	rc = wrap_json_error_internal_error;
+	rc = rp_json_wrap_error_internal_error;
 	goto error;
 out_of_memory:
-	rc = wrap_json_error_out_of_memory;
+	rc = rp_json_wrap_error_out_of_memory;
 	goto error;
 invalid_character:
-	rc = wrap_json_error_invalid_character;
+	rc = rp_json_wrap_error_invalid_character;
 	goto error;
 too_deep:
-	rc = wrap_json_error_too_deep;
+	rc = rp_json_wrap_error_too_deep;
 	goto error;
 null_spec:
-	rc = wrap_json_error_null_spec;
+	rc = rp_json_wrap_error_null_spec;
 	goto error;
 null_key:
-	rc = wrap_json_error_null_key;
+	rc = rp_json_wrap_error_null_key;
 	goto error;
 null_string:
-	rc = wrap_json_error_null_string;
+	rc = rp_json_wrap_error_null_string;
 	goto error;
 error:
 	do {
@@ -347,13 +347,13 @@ error:
 	return -rc;
 }
 
-int wrap_json_pack(struct json_object **result, const char *desc, ...)
+int rp_json_wrap_pack(struct json_object **result, const char *desc, ...)
 {
 	int rc;
 	va_list args;
 
 	va_start(args, desc);
-	rc = wrap_json_vpack(result, desc, args);
+	rc = rp_json_wrap_vpack(result, desc, args);
 	va_end(args);
 	return rc;
 }
@@ -523,9 +523,9 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 							py, pz, 0);
 						if (rc) {
 							if (rc == -1)
-								rc = wrap_json_error_out_of_memory;
+								rc = rp_json_wrap_error_out_of_memory;
 							else
-								rc = wrap_json_error_bad_base64;
+								rc = rp_json_wrap_error_bad_base64;
 							goto error;
 						}
 					}
@@ -600,7 +600,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				if (key && key >= unpack_accept_any) {
 					if (top->index >= top->count)
 						goto out_of_range;
-					obj = json_object_array_get_idx(top->parent, (wrap_json_index_t)top->index++);
+					obj = json_object_array_get_idx(top->parent, (rp_json_wrap_index_t)top->index++);
 				}
 			}
 			break;
@@ -615,34 +615,34 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 		}
 	}
 truncated:
-	rc = wrap_json_error_truncated;
+	rc = rp_json_wrap_error_truncated;
 	goto error;
 internal_error:
-	rc = wrap_json_error_internal_error;
+	rc = rp_json_wrap_error_internal_error;
 	goto error;
 invalid_character:
-	rc = wrap_json_error_invalid_character;
+	rc = rp_json_wrap_error_invalid_character;
 	goto error;
 too_deep:
-	rc = wrap_json_error_too_deep;
+	rc = rp_json_wrap_error_too_deep;
 	goto error;
 null_spec:
-	rc = wrap_json_error_null_spec;
+	rc = rp_json_wrap_error_null_spec;
 	goto error;
 null_key:
-	rc = wrap_json_error_null_key;
+	rc = rp_json_wrap_error_null_key;
 	goto error;
 out_of_range:
-	rc = wrap_json_error_out_of_range;
+	rc = rp_json_wrap_error_out_of_range;
 	goto error;
 incomplete:
-	rc = wrap_json_error_incomplete;
+	rc = rp_json_wrap_error_incomplete;
 	goto error;
 missfit:
-	rc = wrap_json_error_missfit_type;
+	rc = rp_json_wrap_error_missfit_type;
 	goto errorfit;
 key_not_found:
-	rc = wrap_json_error_key_not_found;
+	rc = rp_json_wrap_error_key_not_found;
 	goto error;
 errorfit:
 	d = fit;
@@ -651,44 +651,44 @@ error:
 	return -rc;
 }
 
-int wrap_json_vcheck(struct json_object *object, const char *desc, va_list args)
+int rp_json_wrap_vcheck(struct json_object *object, const char *desc, va_list args)
 {
 	return vunpack(object, desc, args, 0);
 }
 
-int wrap_json_check(struct json_object *object, const char *desc, ...)
+int rp_json_wrap_check(struct json_object *object, const char *desc, ...)
 {
 	int rc;
 	va_list args;
 
 	va_start(args, desc);
-	rc = wrap_json_vcheck(object, desc, args);
+	rc = rp_json_wrap_vcheck(object, desc, args);
 	va_end(args);
 	return rc;
 }
 
-int wrap_json_vmatch(struct json_object *object, const char *desc, va_list args)
+int rp_json_wrap_vmatch(struct json_object *object, const char *desc, va_list args)
 {
 	return !vunpack(object, desc, args, 0);
 }
 
-int wrap_json_match(struct json_object *object, const char *desc, ...)
+int rp_json_wrap_match(struct json_object *object, const char *desc, ...)
 {
 	int rc;
 	va_list args;
 
 	va_start(args, desc);
-	rc = wrap_json_vmatch(object, desc, args);
+	rc = rp_json_wrap_vmatch(object, desc, args);
 	va_end(args);
 	return rc;
 }
 
-int wrap_json_vunpack(struct json_object *object, const char *desc, va_list args)
+int rp_json_wrap_vunpack(struct json_object *object, const char *desc, va_list args)
 {
 	return vunpack(object, desc, args, 1);
 }
 
-int wrap_json_unpack(struct json_object *object, const char *desc, ...)
+int rp_json_wrap_unpack(struct json_object *object, const char *desc, ...)
 {
 	int rc;
 	va_list args;
@@ -735,11 +735,11 @@ static void array_for_all(struct json_object *object, void (*callback)(void*,str
 	int n = (int)json_object_array_length(object);
 	int i = 0;
 	while(i < n)
-		callback(closure, json_object_array_get_idx(object, (wrap_json_index_t)i++));
+		callback(closure, json_object_array_get_idx(object, (rp_json_wrap_index_t)i++));
 }
 
 /* apply callback to items of an array or to it if not an object */
-void wrap_json_optarray_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
+void rp_json_wrap_optarray_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
 	if (json_object_is_type(object, json_type_array))
 		array_for_all(object, callback, closure);
@@ -748,21 +748,21 @@ void wrap_json_optarray_for_all(struct json_object *object, void (*callback)(voi
 }
 
 /* apply callback to items of an array */
-void wrap_json_array_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
+void rp_json_wrap_array_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
 	if (json_object_is_type(object, json_type_array))
 		array_for_all(object, callback, closure);
 }
 
 /* apply callback to items of an object */
-void wrap_json_object_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
+void rp_json_wrap_object_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
 {
 	if (json_object_is_type(object, json_type_object))
 		object_for_all(object, callback, closure);
 }
 
 /* apply callback to items of an object or to it if not an object */
-void wrap_json_optobject_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
+void rp_json_wrap_optobject_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
 {
 	if (json_object_is_type(object, json_type_object))
 		object_for_all(object, callback, closure);
@@ -771,7 +771,7 @@ void wrap_json_optobject_for_all(struct json_object *object, void (*callback)(vo
 }
 
 /* apply callback to items or object */
-void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
+void rp_json_wrap_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
 {
 	if (!object)
 		/* do nothing */;
@@ -783,7 +783,7 @@ void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct
 		int n = (int)json_object_array_length(object);
 		int i = 0;
 		while(i < n)
-			callback(closure, json_object_array_get_idx(object, (wrap_json_index_t)i++), NULL);
+			callback(closure, json_object_array_get_idx(object, (rp_json_wrap_index_t)i++), NULL);
 	}
 }
 
@@ -804,7 +804,7 @@ static struct json_object *clone_object(struct json_object *object, int subdepth
 	while (!json_object_iter_equal(&it, &end)) {
 		json_object_object_add(r,
 			json_object_iter_peek_name(&it),
-			wrap_json_clone_depth(json_object_iter_peek_value(&it), subdepth));
+			rp_json_wrap_clone_depth(json_object_iter_peek_value(&it), subdepth));
 		json_object_iter_next(&it);
 	}
 	return r;
@@ -825,14 +825,14 @@ static struct json_object *clone_array(struct json_object *array, int subdepth)
 	struct json_object *r = json_object_new_array();
 	while (n) {
 		n--;
-		json_object_array_put_idx(r, (wrap_json_index_t)n,
-			wrap_json_clone_depth(json_object_array_get_idx(array, (wrap_json_index_t)n), subdepth));
+		json_object_array_put_idx(r, (rp_json_wrap_index_t)n,
+			rp_json_wrap_clone_depth(json_object_array_get_idx(array, (rp_json_wrap_index_t)n), subdepth));
 	}
 	return r;
 }
 
 /* clone with controled depth */
-struct json_object *wrap_json_clone_depth(struct json_object *item, int depth)
+struct json_object *rp_json_wrap_clone_depth(struct json_object *item, int depth)
 {
 	if (depth) {
 		switch (json_object_get_type(item)) {
@@ -848,21 +848,21 @@ struct json_object *wrap_json_clone_depth(struct json_object *item, int depth)
 }
 
 /* clone first level */
-struct json_object *wrap_json_clone(struct json_object *object)
+struct json_object *rp_json_wrap_clone(struct json_object *object)
 {
-	return wrap_json_clone_depth(object, 1);
+	return rp_json_wrap_clone_depth(object, 1);
 }
 
 /* clone entirely */
-struct json_object *wrap_json_clone_deep(struct json_object *object)
+struct json_object *rp_json_wrap_clone_deep(struct json_object *object)
 {
-	return wrap_json_clone_depth(object, INT_MAX);
+	return rp_json_wrap_clone_depth(object, INT_MAX);
 }
 
 /* add items of object added in dest */
-struct json_object *wrap_json_object_add(struct json_object *dest, struct json_object *added)
+struct json_object *rp_json_wrap_object_add(struct json_object *dest, struct json_object *added)
 {
-	return wrap_json_object_merge(dest, added, wrap_json_merge_option_replace);
+	return rp_json_wrap_object_merge(dest, added, rp_json_wrap_merge_option_replace);
 }
 
 /* merge items of object 'merged' to the object 'dest' */
@@ -878,7 +878,7 @@ static void object_merge(struct json_object *dest, struct json_object *merged, i
 	end = json_object_iter_end(merged);
 	while (!json_object_iter_equal(&it, &end)) {
 		from = json_object_iter_peek_value(&it);
-		if (option == wrap_json_merge_option_replace) {
+		if (option == rp_json_wrap_merge_option_replace) {
 			/* always replace */
 			add = 1;
 		}
@@ -889,7 +889,7 @@ static void object_merge(struct json_object *dest, struct json_object *merged, i
 				/* add if not existing */
 				add = 1;
 			}
-			else if (option == wrap_json_merge_option_keep) {
+			else if (option == rp_json_wrap_merge_option_keep) {
 				/* no replacement */
 				add = 0;
 			}
@@ -903,12 +903,12 @@ static void object_merge(struct json_object *dest, struct json_object *merged, i
 				}
 				else if (tyto == json_type_array && tyfrom == json_type_array) {
 					/* append the array */
-					wrap_json_array_insert_array(to, from, -1);
+					rp_json_wrap_array_insert_array(to, from, -1);
 					add = 0;
 				}
 				else {
 					/* fallback baheaviour */
-					add = option & wrap_json_merge_option_replace;
+					add = option & rp_json_wrap_merge_option_replace;
 				}
 			}
 		}
@@ -924,7 +924,7 @@ static void object_merge(struct json_object *dest, struct json_object *merged, i
 }
 
 /* merge items of object 'merged' to the object 'dest' */
-struct json_object *wrap_json_object_merge(struct json_object *dest, struct json_object *merged, int option)
+struct json_object *rp_json_wrap_object_merge(struct json_object *dest, struct json_object *merged, int option)
 {
 	if (json_object_is_type(dest, json_type_object) && json_object_is_type(merged, json_type_object)) {
 		object_merge(dest, merged, option);
@@ -933,7 +933,7 @@ struct json_object *wrap_json_object_merge(struct json_object *dest, struct json
 }
 
 /* insert items of added in dest before position idx */
-struct json_object *wrap_json_array_insert_array(struct json_object *dest, struct json_object *added, int idx)
+struct json_object *rp_json_wrap_array_insert_array(struct json_object *dest, struct json_object *added, int idx)
 {
 	int i, nd, na;
 
@@ -960,30 +960,30 @@ struct json_object *wrap_json_array_insert_array(struct json_object *dest, struc
 	while (i > idx + na) {
 		i--;
 		json_object_array_put_idx(dest,
-			(wrap_json_index_t)i,
-			json_object_get(json_object_array_get_idx(dest, (wrap_json_index_t)(i - na))));
+			(rp_json_wrap_index_t)i,
+			json_object_get(json_object_array_get_idx(dest, (rp_json_wrap_index_t)(i - na))));
 	}
 	/* copy the added items */
 	while (i > idx) {
 		i--;
 		json_object_array_put_idx(dest,
-			(wrap_json_index_t)i,
-			json_object_get(json_object_array_get_idx(added, (wrap_json_index_t)(i - idx))));
+			(rp_json_wrap_index_t)i,
+			json_object_get(json_object_array_get_idx(added, (rp_json_wrap_index_t)(i - idx))));
 	}
 	return dest;
 }
 
 /* sort the array and return it */
-struct json_object *wrap_json_sort(struct json_object *array)
+struct json_object *rp_json_wrap_sort(struct json_object *array)
 {
 	if (json_object_is_type(array, json_type_array))
-		json_object_array_sort(array, (int(*)(const void*, const void*))wrap_json_cmp);
+		json_object_array_sort(array, (int(*)(const void*, const void*))rp_json_wrap_cmp);
 
 	return array;
 }
 
 /* return array of the sorted keys of the object */
-struct json_object *wrap_json_keys(struct json_object *object)
+struct json_object *rp_json_wrap_keys(struct json_object *object)
 {
 	struct json_object *r;
 	struct json_object_iterator it, end;
@@ -997,7 +997,7 @@ struct json_object *wrap_json_keys(struct json_object *object)
 			json_object_array_add(r, json_object_new_string(json_object_iter_peek_name(&it)));
 			json_object_iter_next(&it);
 		}
-		r = wrap_json_sort(r);
+		r = rp_json_wrap_sort(r);
 	}
 	return r;
 }
@@ -1082,9 +1082,9 @@ static int jcmp(struct json_object *x, struct json_object *y, int inc, int sort)
 				json_object_iter_next(&it);
 				r = jcmp(jx, jy, inc, sort);
 			} else if (sort) {
-				jx = wrap_json_keys(x);
-				jy = wrap_json_keys(y);
-				r = wrap_json_cmp(jx, jy);
+				jx = rp_json_wrap_keys(x);
+				jy = rp_json_wrap_keys(y);
+				r = rp_json_wrap_cmp(jx, jy);
 				json_object_put(jx);
 				json_object_put(jy);
 			} else
@@ -1099,8 +1099,8 @@ static int jcmp(struct json_object *x, struct json_object *y, int inc, int sort)
 		if (r > 0 && inc)
 			r = 0;
 		for (i = 0 ; !r && i < ny ; i++) {
-			jx = json_object_array_get_idx(x, (wrap_json_index_t)i);
-			jy = json_object_array_get_idx(y, (wrap_json_index_t)i);
+			jx = json_object_array_get_idx(x, (rp_json_wrap_index_t)i);
+			jy = json_object_array_get_idx(y, (rp_json_wrap_index_t)i);
 			r = jcmp(jx, jy, inc, sort);
 		}
 		break;
@@ -1115,19 +1115,19 @@ static int jcmp(struct json_object *x, struct json_object *y, int inc, int sort)
 }
 
 /* compares 2 items */
-int wrap_json_cmp(struct json_object *x, struct json_object *y)
+int rp_json_wrap_cmp(struct json_object *x, struct json_object *y)
 {
 	return jcmp(x, y, 0, 1);
 }
 
 /* test equallity of two items */
-int wrap_json_equal(struct json_object *x, struct json_object *y)
+int rp_json_wrap_equal(struct json_object *x, struct json_object *y)
 {
 	return !jcmp(x, y, 0, 0);
 }
 
 /* if x contains y */
-int wrap_json_contains(struct json_object *x, struct json_object *y)
+int rp_json_wrap_contains(struct json_object *x, struct json_object *y)
 {
 	return !jcmp(x, y, 1, 0);
 }
@@ -1146,13 +1146,13 @@ void tclone(struct json_object *object)
 {
 	struct json_object *o;
 
-	o = wrap_json_clone(object);
-	if (!wrap_json_equal(object, o))
+	o = rp_json_wrap_clone(object);
+	if (!rp_json_wrap_equal(object, o))
 		printf("ERROR in clone or equal: %s VERSUS %s\n", j2t(object), j2t(o));
 	json_object_put(o);
 
-	o = wrap_json_clone_deep(object);
-	if (!wrap_json_equal(object, o))
+	o = rp_json_wrap_clone_deep(object);
+	if (!rp_json_wrap_equal(object, o))
 		printf("ERROR in clone_deep or equal: %s VERSUS %s\n", j2t(object), j2t(o));
 	json_object_put(o);
 }
@@ -1164,12 +1164,12 @@ void p(const char *desc, ...)
 	struct json_object *result;
 
 	va_start(args, desc);
-	rc = wrap_json_vpack(&result, desc, args);
+	rc = rp_json_wrap_vpack(&result, desc, args);
 	va_end(args);
 	if (!rc)
 		printf("  SUCCESS %s\n\n", j2t(result));
 	else
-		printf("  ERROR[char %d err %d] %s\n\n", wrap_json_get_error_position(rc), wrap_json_get_error_code(rc), wrap_json_get_error_string(rc));
+		printf("  ERROR[char %d err %d] %s\n\n", rp_json_wrap_get_error_position(rc), rp_json_wrap_get_error_code(rc), rp_json_wrap_get_error_string(rc));
 	tclone(result);
 	json_object_put(result);
 }
@@ -1198,10 +1198,10 @@ void u(const char *value, const char *desc, ...)
 	memset(xz, 0, sizeof xz);
 	object = json_tokener_parse(value);
 	va_start(args, desc);
-	rc = wrap_json_vunpack(object, desc, args);
+	rc = rp_json_wrap_vunpack(object, desc, args);
 	va_end(args);
 	if (rc)
-		printf("  ERROR[char %d err %d] %s\n\n", wrap_json_get_error_position(rc), wrap_json_get_error_code(rc), wrap_json_get_error_string(rc));
+		printf("  ERROR[char %d err %d] %s\n\n", rp_json_wrap_get_error_position(rc), rp_json_wrap_get_error_code(rc), rp_json_wrap_get_error_string(rc));
 	else {
 		value = NULL;
 		printf("  SUCCESS");
@@ -1250,8 +1250,8 @@ void c(const char *sx, const char *sy, int e, int c)
 	jx = json_tokener_parse(sx);
 	jy = json_tokener_parse(sy);
 
-	re = wrap_json_cmp(jx, jy);
-	rc = wrap_json_contains(jx, jy);
+	re = rp_json_wrap_cmp(jx, jy);
+	rc = rp_json_wrap_contains(jx, jy);
 
 	printf("compare(%s)(%s)\n", sx, sy);
 	printf("   -> %d / %d\n", re, rc);
