@@ -1,0 +1,9 @@
+Name: librp-utils
+Description: A library of utilities
+Version: @LIBRP_UTILS_VERSION@
+Requires: @modules@
+Conflicts:
+Libs: -L@CMAKE_INSTALL_FULL_LIBDIR@ -lrp-utils
+Cflags: -I@CMAKE_INSTALL_FULL_INCLUDEDIR@
+Requires.private: gnutls
+Libs.private: @privates@
