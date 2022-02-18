@@ -57,6 +57,7 @@ adddir(http)
 adddir(json)
 adddir(misc)
 adddir(sys)
+adddir(yaml)
 
 # install the libraries
 install(TARGETS rp-utils-static rp-utils-shared)
