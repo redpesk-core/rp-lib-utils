@@ -208,7 +208,7 @@ int path_search_make_env(struct path_search **paths, const char *var)
 
 int path_search_add_dirs(struct path_search **paths, const char *dirs, int before, struct path_search *other)
 {
-	char *ex = expand_vars_env_only(dirs, 0);
+	char *ex = rp_expand_vars_env_only(dirs, 0);
 	int rc = add_dir_expanded(paths, ex ?: dirs, before, other);
 	free(ex);
 	return rc;

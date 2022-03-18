@@ -30,7 +30,44 @@
 #include <stddef.h>
 
 /**
- * Definition of the type of callback functions for @see expand_vars_function
+ * structure for returning the value found
+ */
+typedef struct {
+	/** the value found for the given name */
+	const char *value;
+
+	/** length (used if filled) */
+	size_t length;
+
+	/** when some action must be taken after use */
+	struct {
+		/** function to call when the value is used */
+		void (*function)(void*);
+
+		/** closure to the function */
+		void *closure;
+	} dispose;
+}
+	rp_expand_vars_result_t;
+
+/**
+ * Definition of the type of callback functions for @see rp_expand_vars_function
+ *
+ * The function receives a closure and a name represented by a pointer to
+ * characters and a length. Based on that the function returns the value
+ * associated to the name in result.
+ *
+ * @param closure the closure of the function
+ * @param name    start pointer for the name
+ * @param len     the length in chars of the name
+ * @param result the data
+ *
+ * @return a boolean indicating if found (true) or not (false)
+ */
+typedef int (*rp_expand_vars_fun_t)(void *closure, const char *name, size_t len, rp_expand_vars_result_t *result);
+
+/**
+ * Definition of the type of callback functions for @see rp_expand_vars_function
  *
  * The function receives a closure and a name represented by a pointer to
  * characters and a length. Based on that the function returns the value
@@ -42,7 +79,7 @@
  *
  * @return the value for the name or NULL if not found
  */
-typedef const char *(*expand_vars_cb)(void *closure, const char *name, size_t len);
+typedef const char *(*rp_expand_vars_cb_t)(void *closure, const char *name, size_t len);
 
 /**
  * Search for the variable in an array of variable definitions
@@ -54,7 +91,7 @@ typedef const char *(*expand_vars_cb)(void *closure, const char *name, size_t le
  *
  * @return a pointer to the value or NULL if the variable is not found
  */
-extern const char *expand_vars_search(char **vars, const char *name, size_t len);
+extern const char *rp_expand_vars_search(char **vars, const char *name, size_t len);
 
 /**
  * Search for the variable in the environment. Like getenv but the name has
@@ -65,7 +102,7 @@ extern const char *expand_vars_search(char **vars, const char *name, size_t len)
  *
  * @return a pointer to the value or NULL if the variable is not found
  */
-extern const char *expand_vars_search_env(const char *name, size_t len);
+extern const char *rp_expand_vars_search_env(const char *name, size_t len);
 
 /**
  * Return the result of expanding variables of 'value'.
@@ -81,7 +118,23 @@ extern const char *expand_vars_search_env(const char *name, size_t len);
  *
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
-extern char *expand_vars_function(const char *value, int copy, expand_vars_cb function, void *closure);
+extern char *rp_expand_vars_function(const char *value, int copy, rp_expand_vars_fun_t function, void *closure);
+
+/**
+ * Return the result of expanding variables of 'value'.
+ * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
+ * or a copy of value (when 'copy' != 0).
+ *
+ * The resolution of the variables if done by the function.
+ *
+ * @param value  the string to expand
+ * @param copy   behavior in lack of variable (0 return NULL, not zero return copy)
+ * @param function function to resolve the variables
+ * @param closure closure of the function
+ *
+ * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
+ */
+extern char *rp_expand_vars_callback(const char *value, int copy, rp_expand_vars_cb_t function, void *closure);
 
 /**
  * Return the result of expanding variables of 'value'.
@@ -97,7 +150,7 @@ extern char *expand_vars_function(const char *value, int copy, expand_vars_cb fu
  *
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
-extern char *expand_vars_array(const char *value, int copy, char ***varsarray);
+extern char *rp_expand_vars_array(const char *value, int copy, char ***varsarray);
 
 /**
  * Return the result of expanding variables of 'value'.
@@ -113,7 +166,7 @@ extern char *expand_vars_array(const char *value, int copy, char ***varsarray);
  *
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
-extern char *expand_vars_only(const char *value, int copy, char **vars);
+extern char *rp_expand_vars_only(const char *value, int copy, char **vars);
 
 /**
  * Return the result of expanding variables of 'value'.
@@ -127,7 +180,7 @@ extern char *expand_vars_only(const char *value, int copy, char **vars);
  *
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
-extern char *expand_vars_env_only(const char *value, int copy);
+extern char *rp_expand_vars_env_only(const char *value, int copy);
 
 /**
  * Return the result of expanding variables of 'value'.
@@ -146,7 +199,7 @@ extern char *expand_vars_env_only(const char *value, int copy);
  *
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
-extern char *expand_vars(const char *value, int copy, char **before, char **after);
+extern char *rp_expand_vars(const char *value, int copy, char **before, char **after);
 
 /**
  * Return the result of expanding variables of 'value'.
@@ -163,7 +216,7 @@ extern char *expand_vars(const char *value, int copy, char **before, char **afte
  *
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
-extern char *expand_vars_first(const char *value, int copy, char **vars);
+extern char *rp_expand_vars_first(const char *value, int copy, char **vars);
 
 /**
  * Return the result of expanding variables of 'value'.
@@ -180,6 +233,6 @@ extern char *expand_vars_first(const char *value, int copy, char **vars);
  *
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
-extern char *expand_vars_last(const char *value, int copy, char **vars);
+extern char *rp_expand_vars_last(const char *value, int copy, char **vars);
 
 

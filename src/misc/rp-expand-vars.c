@@ -31,13 +31,16 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "expand-vars.h"
+#include "rp-expand-vars.h"
 
-#if !defined(EXPAND_VARS_LIMIT)
-#    define  EXPAND_VARS_LIMIT           16384
+#if !defined(RP_EXPAND_VARS_LIMIT)
+#    define  RP_EXPAND_VARS_LIMIT           16384
 #endif
-#if !defined(EXPAND_VARS_DEPTH_MAX)
-#    define  EXPAND_VARS_DEPTH_MAX       10
+#if !defined(RP_EXPAND_VARS_DEPTH_MAX)
+#    define  RP_EXPAND_VARS_DEPTH_MAX       10
+#endif
+#if !defined(RP_EXPAND_VARS_CHAR)
+#    define RP_EXPAND_VARS_CHAR             '$'
 #endif
 
 extern char **environ;
@@ -53,12 +56,13 @@ extern char **environ;
  * @return NULL if no variable expansion was performed or if
  * memory allocation failed or if maximum recusion was reached
  */
-static char *expand(const char *value, expand_vars_cb function, void *closure)
+static char *expand(const char *value, rp_expand_vars_fun_t function, void *closure)
 {
 	char *result, *write, *previous, c;
 	const char *begin, *end, *val;
-	int drop, again, depth;
+	int drop, again, depth, found;
 	size_t remove, add, i, len;
+	rp_expand_vars_result_t expval;
 
 	depth = 0;
 	write = result = previous = NULL;
@@ -68,7 +72,7 @@ static char *expand(const char *value, expand_vars_cb function, void *closure)
 		remove = add = 0;
 		/* scan/expand the input */
 		while ((c = *begin++)) {
-			if (c != '$') {
+			if (c != RP_EXPAND_VARS_CHAR) {
 				/* not a variable to expand */
 				if (write)
 					*write++ = c;
@@ -102,17 +106,24 @@ static char *expand(const char *value, expand_vars_cb function, void *closure)
 					drop = 0;
 				}
 				else {
-					val = function(closure, begin, len);
-					if (val != NULL) {
+					expval.value = 0;
+					expval.length = 0;
+					expval.dispose.function = 0;
+					expval.dispose.closure = 0;
+					found = function(closure, begin, len, &expval);
+					if (found && expval.value) {
 						/* expand value of found variable */
-						for(i = 0 ; (c = val[i]) ; i++) {
-							if (write) {
-								*write++ = c;
-								again += c == '$'; /* should iterate again? */
-							}
+						if (!expval.length)
+							expval.length = strlen(expval.value);
+						if (write) {
+							memcpy(write, expval.value, expval.length);
+							write += expval.length;
+							again += NULL != memchr(expval.value, RP_EXPAND_VARS_CHAR, expval.length);
 						}
-						add += i;
+						add += expval.length;
 					}
+					if (expval.dispose.function)
+						expval.dispose.function(expval.dispose.closure);
 				}
 				begin = end;
 			}
@@ -124,7 +135,7 @@ static char *expand(const char *value, expand_vars_cb function, void *closure)
 			begin = value = previous = result;
 			*write = 0;
 			result = write = NULL;
-			if (++depth >= EXPAND_VARS_DEPTH_MAX) {
+			if (++depth >= RP_EXPAND_VARS_DEPTH_MAX) {
 				/* limit recursivity effect */
 				begin = NULL;
 			}
@@ -141,7 +152,7 @@ static char *expand(const char *value, expand_vars_cb function, void *closure)
 		else {
 			/* prepare expansion after scan */
 			i = (size_t)(begin - value) + add - remove;
-			if (i >= EXPAND_VARS_LIMIT) {
+			if (i >= RP_EXPAND_VARS_LIMIT) {
 				/* limit expansion size */
 				begin = NULL;
 			}
@@ -155,31 +166,40 @@ static char *expand(const char *value, expand_vars_cb function, void *closure)
 	return result;
 }
 
+struct adaptor
+{
+	rp_expand_vars_cb_t function;
+	void *closure;
+};
+
+static int adaptor(void *closure, const char *name, size_t len, rp_expand_vars_result_t *result)
+{
+	struct adaptor *cfa = closure;
+	result->value = cfa->function(cfa->closure, name, len);
+	return result->value != NULL;
+}
+
 /**
  * Internal routine used to get variables from arrays
- *
- * @param closure array of array of variable definitions
- * @param name begin of the name of the variable
- * @param len  len of the variable
- *
- * @return a pointer to the value or NULL if the variable is not found
  */
-static const char *getvar(void *closure, const char *name, size_t len)
+static int getvar(void *closure, const char *name, size_t len, rp_expand_vars_result_t *result)
 {
 	char ***varsarray = closure;
 	char **ivar;
 	const char *res;
 
 	for (ivar = *varsarray ; ivar ; ivar = *++varsarray) {
-		res = expand_vars_search(ivar, name, len);
-		if (res)
-			return res;
+		res = rp_expand_vars_search(ivar, name, len);
+		if (res) {
+			result->value = res;
+			return 1;
+		}
 	}
-	return NULL;
+	return 0;
 }
 
 /* search in vars */
-const char *expand_vars_search(char **vars, const char *name, size_t len)
+const char *rp_expand_vars_search(char **vars, const char *name, size_t len)
 {
 	char *var;
 
@@ -191,56 +211,63 @@ const char *expand_vars_search(char **vars, const char *name, size_t len)
 }
 
 /* search in env */
-const char *expand_vars_search_env(const char *name, size_t len)
+const char *rp_expand_vars_search_env(const char *name, size_t len)
 {
-	return expand_vars_search(environ, name, len);
+	return rp_expand_vars_search(environ, name, len);
 }
 
 /* expand using function */
-char *expand_vars_function(const char *value, int copy, expand_vars_cb function, void *closure)
+char *rp_expand_vars_function(const char *value, int copy, rp_expand_vars_fun_t function, void *closure)
 {
 	char *expanded = expand(value, function, closure);
 	return expanded ?: copy ? strdup(value) : 0;
 }
 
-/* expand using array of definitions */
-char *expand_vars_array(const char *value, int copy, char ***varsarray)
+/* expand using function */
+char *rp_expand_vars_callback(const char *value, int copy, rp_expand_vars_cb_t function, void *closure)
 {
-	char *expanded = expand(value, getvar, varsarray);
+	struct adaptor ada = { function, closure };
+	char *expanded = expand(value, adaptor, &ada);
 	return expanded ?: copy ? strdup(value) : 0;
 }
 
+/* expand using array of definitions */
+char *rp_expand_vars_array(const char *value, int copy, char ***varsarray)
+{
+	return rp_expand_vars_function(value, copy, getvar, varsarray);
+}
+
 /* expand using variables definition */
-char *expand_vars_only(const char *value, int copy, char **vars)
+char *rp_expand_vars_only(const char *value, int copy, char **vars)
 {
 	char **array[] = { vars, 0 };
-	return expand_vars_array(value, copy, array);
+	return rp_expand_vars_array(value, copy, array);
 }
 
 /* expand using environment */
-char *expand_vars_env_only(const char *value, int copy)
+char *rp_expand_vars_env_only(const char *value, int copy)
 {
 	char **array[] = { environ, 0 };
-	return expand_vars_array(value, copy, array);
+	return rp_expand_vars_array(value, copy, array);
 }
 
 /* expand using variables and environment */
-char *expand_vars(const char *value, int copy, char **before, char **after)
+char *rp_expand_vars(const char *value, int copy, char **before, char **after)
 {
 	char **array[] = { before, environ, after, 0 };
-	return expand_vars_array(value, copy, &array[!before]);
+	return rp_expand_vars_array(value, copy, &array[!before]);
 }
 
 /* expand using variables and environment */
-char *expand_vars_first(const char *value, int copy, char **vars)
+char *rp_expand_vars_first(const char *value, int copy, char **vars)
 {
 	char **array[] = { vars, environ, 0 };
-	return expand_vars_array(value, copy, &array[!vars]);
+	return rp_expand_vars_array(value, copy, &array[!vars]);
 }
 
 /* expand using variables and environment */
-char *expand_vars_last(const char *value, int copy, char **vars)
+char *rp_expand_vars_last(const char *value, int copy, char **vars)
 {
 	char **array[] = { environ, vars, 0 };
-	return expand_vars_array(value, copy, array);
+	return rp_expand_vars_array(value, copy, array);
 }
