@@ -26,26 +26,73 @@
 
 #include <errno.h>
 
-#define X_E2BIG		-E2BIG
-#define X_EAGAIN	-EAGAIN
-#define X_EBADMSG       -EBADMSG
-#define X_EBUSY		-EBUSY
-#define X_ECANCELED	-ECANCELED
-#define X_ECONNABORTED	-ECONNABORTED
-#define X_EEXIST	-EEXIST
-#define X_EFAULT	-EFAULT
-#define X_EINTR		-EINTR
-#define X_EINVAL	-EINVAL
-#define X_EMSGSIZE	-EMSGSIZE
-#define X_ENAMETOOLONG	-ENAMETOOLONG
-#define X_ENODATA	-ENODATA
-#define X_ENOENT	-ENOENT
-#define X_ENOMEM	-ENOMEM
-#define X_ENOTDIR	-ENOTDIR
-#define X_ENOTSUP	-ENOTSUP
-#define X_EOVERFLOW	-EOVERFLOW
-#define X_EPERM		-EPERM
-#define X_EPIPE		-EPIPE
-#define X_EPROTO	-EPROTO
-#define X_ERANGE	-ERANGE
-#define X_ETIMEDOUT	-ETIMEDOUT
+#ifndef X_E2BIG
+#define X_E2BIG           -E2BIG
+#endif
+#ifndef X_EAGAIN
+#define X_EAGAIN          -EAGAIN
+#endif
+#ifndef X_EBADMSG
+#define X_EBADMSG         -EBADMSG
+#endif
+#ifndef X_EBUSY
+#define X_EBUSY           -EBUSY
+#endif
+#ifndef X_ECANCELED
+#define X_ECANCELED       -ECANCELED
+#endif
+#ifndef X_ECONNABORTED
+#define X_ECONNABORTED    -ECONNABORTED
+#endif
+#ifndef X_EEXIST
+#define X_EEXIST          -EEXIST
+#endif
+#ifndef X_EFAULT
+#define X_EFAULT          -EFAULT
+#endif
+#ifndef X_EINTR
+#define X_EINTR           -EINTR
+#endif
+#ifndef X_EINVAL
+#define X_EINVAL          -EINVAL
+#endif
+#ifndef X_EMSGSIZE
+#define X_EMSGSIZE        -EMSGSIZE
+#endif
+#ifndef X_ENAMETOOLONG
+#define X_ENAMETOOLONG    -ENAMETOOLONG
+#endif
+#ifndef X_ENODATA
+#define X_ENODATA         -ENODATA
+#endif
+#ifndef X_ENOENT
+#define X_ENOENT          -ENOENT
+#endif
+#ifndef X_ENOMEM
+#define X_ENOMEM          -ENOMEM
+#endif
+#ifndef X_ENOTDIR
+#define X_ENOTDIR         -ENOTDIR
+#endif
+#ifndef X_ENOTSUP
+#define X_ENOTSUP         -ENOTSUP
+#endif
+#ifndef X_EOVERFLOW
+#define X_EOVERFLOW       -EOVERFLOW
+#endif
+#ifndef X_EPERM
+#define X_EPERM           -EPERM
+#endif
+#ifndef X_EPIPE
+#define X_EPIPE           -EPIPE
+#endif
+#ifndef X_EPROTO
+#define X_EPROTO          -EPROTO
+#endif
+#ifndef X_ERANGE
+#define X_ERANGE          -ERANGE
+#endif
+#ifndef X_ETIMEDOUT
+#define X_ETIMEDOUT       -ETIMEDOUT
+#endif
+
