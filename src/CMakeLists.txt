@@ -32,14 +32,22 @@ macro(addhdr)
 	endforeach(hdr)
 endmacro(addhdr)
 
+# macro for adding properties
+macro(addprop name values)
+	get_property(lv GLOBAL PROPERTY ${name})
+	list(APPEND lv ${values})
+	list(REMOVE_DUPLICATES lv)
+	set_property(GLOBAL PROPERTY ${name} ${lv})
+endmacro(addprop)
+
 # macro for requiring modules
 macro(reqmod)
 	pkg_check_modules(mods REQUIRED ${ARGV})
 	target_compile_options(rp-utils-static PUBLIC ${mods_CFLAG})
 	target_compile_options(rp-utils-shared PUBLIC ${mods_CFLAG})
 	target_link_options(rp-utils-shared PUBLIC ${mods_LDFLAGS})
-	set_property(GLOBAL APPEND PROPERTY modules ${ARGV})
-	set_property(GLOBAL APPEND PROPERTY privates ${mods_LDFLAGS})
+	addprop(modules "${ARGV}")
+	addprop(privates "${mods_LDFLAGS}")
 endmacro(reqmod)
 
 # macro for adding documentation
