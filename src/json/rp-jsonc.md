@@ -19,10 +19,10 @@ while the format string `"[ssb]"` or the equivalent `"[s, s, b]"`
 specifies an array value with two strings and a boolean as its items:
 
     /* Create the JSON integer 42 */
-    rp_json_wrap_pack(&result, "i", 42);
+    rp_jsonc_pack(&result, "i", 42);
 
     /* Create the JSON array ["foo", "bar", true] */
-    rp_json_wrap_pack(&result, "[ssb]", "foo", "bar", 1);
+    rp_jsonc_pack(&result, "[ssb]", "foo", "bar", 1);
 
 Here's the full list of format specifiers. The type in parentheses
 denotes the resulting JSON type, and the type in brackets (if any)
@@ -153,27 +153,27 @@ Whitespace, `:` and `,` are ignored.
 More examples:
 
     /* Build an empty JSON object */
-    rp_json_wrap_pack(&result, "{}");
+    rp_jsonc_pack(&result, "{}");
 
     /* Build the JSON object {"foo": 42, "bar": 7} */
-    rp_json_wrap_pack(&result, "{sisi}", "foo", 42, "bar", 7);
+    rp_jsonc_pack(&result, "{sisi}", "foo", 42, "bar", 7);
 
     /* Like above, ':', ',' and whitespace are ignored */
-    rp_json_wrap_pack(&result, "{s:i, s:i}", "foo", 42, "bar", 7);
+    rp_jsonc_pack(&result, "{s:i, s:i}", "foo", 42, "bar", 7);
 
     /* Build the JSON array [[1, 2], {"cool": true}] */
-    rp_json_wrap_pack(&result, "[[i,i],{s:b}]", 1, 2, "cool", 1);
+    rp_jsonc_pack(&result, "[[i,i],{s:b}]", 1, 2, "cool", 1);
 
     /* Build a string from a non-null terminated buffer */
     char buffer[4] = {'t', 'e', 's', 't'};
-    rp_json_wrap_pack(&result, "s#", buffer, 4);
+    rp_jsonc_pack(&result, "s#", buffer, 4);
 
     /* Concatenate strings together to build the JSON string "foobarbaz" */
-    rp_json_wrap_pack(&result, "s++", "foo", "bar", "baz");
+    rp_jsonc_pack(&result, "s++", "foo", "bar", "baz");
 
     /* Create an empty object or array when optional members are missing */
-    rp_json_wrap_pack(&result, "{s:s*,s:o*,s:O*}", "foo", NULL, "bar", NULL, "baz", NULL);
-    rp_json_wrap_pack(&result, "[s*,o*,O*]", NULL, NULL, NULL);
+    rp_jsonc_pack(&result, "{s:s*,s:o*,s:O*}", "foo", NULL, "bar", NULL, "baz", NULL);
+    rp_jsonc_pack(&result, "[s*,o*,O*]", NULL, NULL, NULL);
 
 Parsing and Validating Values
 -----------------------------
@@ -286,27 +286,27 @@ Examples:
 
     /* root is the JSON integer 42 */
     int myint;
-    rp_json_wrap_unpack(root, "i", &myint);
+    rp_jsonc_unpack(root, "i", &myint);
     assert(myint == 42);
 
     /* root is the JSON object {"foo": "bar", "quux": true} */
     const char *str;
     int boolean;
-    rp_json_wrap_unpack(root, "{s:s, s:b}", "foo", &str, "quux", &boolean);
+    rp_jsonc_unpack(root, "{s:s, s:b}", "foo", &str, "quux", &boolean);
     assert(strcmp(str, "bar") == 0 && boolean == 1);
 
     /* root is the JSON array [[1, 2], {"baz": null} */
-    rp_json_wrap_check(root, "[[i,i], {s:n}]", "baz");
+    rp_jsonc_check(root, "[[i,i], {s:n}]", "baz");
     /* returns 0 for validation success, nothing is extracted */
 
     /* root is the JSON array [1, 2, 3, 4, 5] */
     int myint1, myint2;
-    rp_json_wrap_unpack(root, "[ii!]", &myint1, &myint2);
+    rp_jsonc_unpack(root, "[ii!]", &myint1, &myint2);
     /* returns -1 for failed validation */
 
     /* root is an empty JSON object */
     int myint = 0, myint2 = 0, myint3 = 0;
-    rp_json_wrap_unpack(root, "{s?i, s?[ii]}",
+    rp_jsonc_unpack(root, "{s?i, s?[ii]}",
                 "foo", &myint1,
                 "bar", &myint2, &myint3);
     /* myint1, myint2 or myint3 is no touched as "foo" and "bar" don't exist */

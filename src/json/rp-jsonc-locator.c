@@ -29,7 +29,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "rp-json-locator.h"
+#include "rp-jsonc-locator.h"
 
 #if JSON_C_MINOR_VERSION < 13 /************* DONT IMPLEMENT LOCATOR *********/
 

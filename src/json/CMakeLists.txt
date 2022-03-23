@@ -2,9 +2,9 @@
 reqmod(json-c)
 
 # our files
-addsrc(rp-json-expand.c rp-json-locator.c rp-json-path.c rp-jsonstr.c rp-json-wrap.c)
-addhdr(rp-json-expand.h rp-json-locator.h rp-json-path.h rp-jsonstr.h rp-json-wrap.h)
-adddoc(rp-wrap-json.md)
+addsrc(rp-jsonc-expand.c rp-jsonc-locator.c rp-jsonc-path.c rp-jsonstr.c rp-jsonc.c)
+addhdr(rp-jsonc-expand.h rp-jsonc-locator.h rp-jsonc-path.h rp-jsonstr.h rp-jsonc.h)
+adddoc(rp-jsonc.md)
 
 # for nlohmann/json c++
 addhdr(json.hpp)

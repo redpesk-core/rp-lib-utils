@@ -29,7 +29,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "rp-json-path.h"
+#include "rp-jsonc-path.h"
 
 /**
  * Structure recording the path path of the expansion

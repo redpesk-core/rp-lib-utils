@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "rp-json-expand.h"
+#include "rp-jsonc-expand.h"
 
 /**
  * Structure recording the path path of the expansion

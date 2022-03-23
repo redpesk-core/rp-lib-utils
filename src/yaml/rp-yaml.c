@@ -30,7 +30,7 @@
 #include <json-c/json.h>
 
 #include "rp-yaml.h"
-#include "../json/rp-json-locator.h"
+#include "../json/rp-jsonc-locator.h"
 
 // it is safe to call yaml_event_delete more than one time
 
