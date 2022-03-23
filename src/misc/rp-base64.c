@@ -23,9 +23,9 @@
  SOFTWARE.
 */
 
-#include "wrap-base64.h"
+#include "rp-base64.h"
 
-int wrap_base64_encode(
+int rp_base64_encode(
 		const uint8_t *data,
 		size_t datalen,
 		char **encoded,
@@ -55,7 +55,7 @@ int wrap_base64_encode(
 	/* allocate the output */
 	result = malloc(rlen + 1);
 	if (result == NULL)
-		return wrap_base64_nomem;
+		return rp_base64_nomem;
 
 	/* compute the formatted output */
 	iw = width;
@@ -120,10 +120,10 @@ int wrap_base64_encode(
 	result[out] = 0;
 	*encoded = result;
 	*encodedlen = rlen;
-	return wrap_base64_ok;
+	return rp_base64_ok;
 }
 
-int wrap_base64_decode(
+int rp_base64_decode(
 		const char *data,
 		size_t datalen,
 		uint8_t **decoded,
@@ -138,7 +138,7 @@ int wrap_base64_decode(
 	/* allocate enougth output */
 	result = malloc(datalen + 1);
 	if (result == NULL)
-		return wrap_base64_nomem;
+		return rp_base64_nomem;
 
 	/* decode the input */
 	u16 = 0;
@@ -163,7 +163,7 @@ int wrap_base64_decode(
 				u8 = (uint8_t)63;
 			else {
 				free(result);
-				return wrap_base64_invalid;
+				return rp_base64_invalid;
 			}
 			if (!iin) {
 				u16 = (uint16_t)u8;
@@ -180,16 +180,16 @@ int wrap_base64_decode(
 		c = data[in++];
 		if (c != '=' && c != '\n' && c != '\r') {
 			free(result);
-			return wrap_base64_invalid;
+			return rp_base64_invalid;
 		}
 	}
 	/* terminate */
 	*decoded = realloc(result, out + 1);
 	if (out && *decoded == NULL) {
 		free(result);
-		return wrap_base64_nomem;
+		return rp_base64_nomem;
 	}
 	decoded[out] = 0; /* add zero at end to make life sweeter */
 	*decodedlen = out;
-	return wrap_base64_ok;
+	return rp_base64_ok;
 }

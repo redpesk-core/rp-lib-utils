@@ -28,9 +28,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define wrap_base64_ok        0
-#define wrap_base64_nomem     -1
-#define wrap_base64_invalid   -2
+#define rp_base64_ok        0
+#define rp_base64_nomem     -1
+#define rp_base64_invalid   -2
 
 /**
  * encode a buffer of data as a fresh allocated base64 string
@@ -43,11 +43,11 @@
  * @param pad         if not zero pads with = according standard
  * @param url         if not zero emit url variant of base64
  *
- * @return wrap_base64_ok in case of success
- *    or wrap_base64_nomem if allocation memory failed
+ * @return rp_base64_ok in case of success
+ *    or rp_base64_nomem if allocation memory failed
  */
 extern
-int wrap_base64_encode(
+int rp_base64_encode(
 		const uint8_t *data,
 		size_t datalen,
 		char **encoded,
@@ -68,12 +68,12 @@ int wrap_base64_encode(
  *                     - url > 0: only url variant
  *                     - url < 0: only standard variant
  *
- * @return wrap_base64_ok in case of success,
- *  wrap_base64_nomem if allocation memory failed,
- *  or wrap_base64_invalid if the data isn't a valid base64 input
+ * @return rp_base64_ok in case of success,
+ *  rp_base64_nomem if allocation memory failed,
+ *  or rp_base64_invalid if the data isn't a valid base64 input
  */
 extern
-int wrap_base64_decode(
+int rp_base64_decode(
 	const char *data,
 	size_t datalen,
 	uint8_t **decoded,

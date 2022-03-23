@@ -27,7 +27,7 @@
 #include <limits.h>
 
 #include "rp-json-wrap.h"
-#include "../misc/wrap-base64.h"
+#include "../misc/rp-base64.h"
 
 #define STACKCOUNT  32
 
@@ -225,7 +225,7 @@ int rp_json_wrap_vpack(struct json_object **result, const char *desc, va_list ar
 			if (bytes.in == NULL || bytes.insz == 0)
 				obj = NULL;
 			else {
-				rc = wrap_base64_encode(bytes.in, bytes.insz,
+				rc = rp_base64_encode(bytes.in, bytes.insz,
 					&bytes.out, &bytes.outsz, 0, 0, c == 'y');
 				if (rc < 0)
 					goto out_of_memory;
@@ -517,7 +517,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 					if (!json_object_is_type(obj, json_type_string))
 						goto missfit;
 					if (store && py && pz) {
-						rc = wrap_base64_decode(
+						rc = rp_base64_decode(
 							json_object_get_string(obj),
 							(size_t)json_object_get_string_len(obj),
 							py, pz, 0);
