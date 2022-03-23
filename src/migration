@@ -1,0 +1,16 @@
+
+# pour verbose -> rp-verbose
+
+s:\(#include[ 	][ 	]*\)[<"]\(.*/\)verbose\.h[">]:\1<rp-utils/rp-verbose.h>:
+s:\<\(ERROR\|WARNING\|NOTICE\|INFO\|DEBUG\)\>(:RP_&:g
+
+# pour wrap-base64 -> rp-base64
+
+s:\(#include[ 	][ 	]*\)[<"]\(.*/\)wrap-base64\.h[">]:\1<rp-utils/rp-base64.h>:
+s:\<wrap\(_base64_\(en\|de\)code\)\>:rp_&:g
+
+# pour wrap-json -> rp-jsonc
+
+s:\(#include[ 	][ 	]*\)[<"]\(.*/\)wrap-json\.h[">]:\1<rp-utils/rp-jsonc.h>:
+s:\<wrap_json\(_[a-zA-Z0-9_]*\)\>:rp_jsonc&:g
+
