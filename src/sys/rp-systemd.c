@@ -23,7 +23,7 @@
  */
 
 
-#if WITH_SYSTEMD
+#ifndef WITHOUT_SYSTEMD
 
 #include <unistd.h>
 
@@ -31,8 +31,17 @@
 #include <systemd/sd-bus.h>
 #include <systemd/sd-daemon.h>
 
-#include "systemd.h"
+#include "rp-systemd.h"
 #include "x-errno.h"
+
+/*
+
+struct sd_event;
+struct sd_bus;
+extern struct sd_event *systemd_get_event_loop();
+extern struct sd_bus *systemd_get_user_bus();
+extern struct sd_bus *systemd_get_system_bus();
+
 
 static int sdbusopen(struct sd_bus **p, int (*f)(struct sd_bus **))
 {
@@ -82,6 +91,8 @@ struct sd_bus *systemd_get_system_bus()
 	return result;
 }
 
+*/
+
 static int fds_names(char ***result)
 {
 	static char *null;
@@ -100,13 +111,13 @@ static int fds_names(char ***result)
 	return rc;
 }
 
-int systemd_fds_init()
+int rp_systemd_fds_init()
 {
 	char **names;
 	return fds_names(&names);
 }
 
-int systemd_fds_for(const char *name)
+int rp_systemd_fds_for(const char *name)
 {
 	int idx;
 	char **names;

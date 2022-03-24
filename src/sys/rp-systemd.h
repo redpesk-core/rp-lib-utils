@@ -24,18 +24,9 @@
 
 #pragma once
 
-#include <libafb/libafb-config.h>
+#ifndef WITHOUT_SYSTEMD
 
-#if WITH_SYSTEMD
-
-struct sd_event;
-struct sd_bus;
-
-extern struct sd_event *systemd_get_event_loop();
-extern struct sd_bus *systemd_get_user_bus();
-extern struct sd_bus *systemd_get_system_bus();
-
-extern int systemd_fds_init();
-extern int systemd_fds_for(const char *name);
+extern int rp_systemd_fds_init();
+extern int rp_systemd_fds_for(const char *name);
 
 #endif
