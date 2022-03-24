@@ -29,7 +29,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "uuid.h"
+#include "rp-uuid.h"
 
 #if WITH_LIBUUID
 
@@ -51,7 +51,7 @@ static void b2h(const unsigned char *uu, char *out, int count, char term)
 	*out = term;
 }
 
-static void uuid_unparse_lower(const uuid_binary_t uu, uuid_stringz_t out)
+static void uuid_unparse_lower(const rp_uuid_binary_t uu, rp_uuid_stringz_t out)
 {
 	/* 01234567-9012-4567-9012-456789012345 */
 	b2h(&uu[0], &out[0], 4, '-');
@@ -65,7 +65,7 @@ static void uuid_unparse_lower(const uuid_binary_t uu, uuid_stringz_t out)
 /**
  * generate a new fresh 'uuid'
  */
-void uuid_new_binary(uuid_binary_t uuid)
+void rp_uuid_new_binary(rp_uuid_binary_t uuid)
 {
 #if defined(USE_UUID_GENERATE)
 	uuid_generate(uuid);
@@ -131,9 +131,9 @@ void uuid_new_binary(uuid_binary_t uuid)
 #endif
 }
 
-void uuid_new_stringz(uuid_stringz_t uuid)
+void rp_uuid_new_stringz(rp_uuid_stringz_t uuid)
 {
-	uuid_binary_t newuuid;
-	uuid_new_binary(newuuid);
+	rp_uuid_binary_t newuuid;
+	rp_uuid_new_binary(newuuid);
 	uuid_unparse_lower(newuuid, uuid);
 }

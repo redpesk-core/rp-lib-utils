@@ -24,11 +24,11 @@
 
 #pragma once
 
-#define UUID_BINARY_LENGTH   16
-#define UUID_STRINGZ_LENGTH  37
+#define RP_UUID_BINARY_LENGTH   16
+#define RP_UUID_STRINGZ_LENGTH  37
 
-typedef unsigned char uuid_binary_t[UUID_BINARY_LENGTH];
-typedef char uuid_stringz_t[UUID_STRINGZ_LENGTH];
+typedef unsigned char rp_uuid_binary_t[RP_UUID_BINARY_LENGTH];
+typedef char rp_uuid_stringz_t[RP_UUID_STRINGZ_LENGTH];
 
-void uuid_new_binary(uuid_binary_t uuid);
-void uuid_new_stringz(uuid_stringz_t uuid);
+void rp_uuid_new_binary(rp_uuid_binary_t uuid);
+void rp_uuid_new_stringz(rp_uuid_stringz_t uuid);
