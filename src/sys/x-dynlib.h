@@ -25,8 +25,6 @@
 #pragma once
 
 
-#if WITH_EXTENSION || WITH_DYNAMIC_BINDING
-
 typedef struct { void *handle; } x_dynlib_t;
 
 extern int x_dynlib_open(const char *filename, x_dynlib_t *dynlib, int global, int lazy);
@@ -37,4 +35,3 @@ extern int x_dynlib_symbol(x_dynlib_t *dynlib, const char* name, void** ptr);
 
 extern const char* x_dynlib_error(const x_dynlib_t *dynlib);
 
-#endif

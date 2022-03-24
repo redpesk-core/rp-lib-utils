@@ -24,8 +24,6 @@
 
 #define _GNU_SOURCE /* for secure_getenv */
 
-#if WITH_EXTENSION || WITH_DYNAMIC_BINDING
-
 #include <stdlib.h>
 #include <dlfcn.h>
 
@@ -67,5 +65,3 @@ const char* x_dynlib_error(const x_dynlib_t *dynlib)
 {
 	return dlerror();
 }
-
-#endif
