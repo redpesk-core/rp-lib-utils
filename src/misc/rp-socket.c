@@ -55,9 +55,6 @@ enum type {
 	/** type systemd */
 	Type_Systemd,
 
-	/** type virtual socket of L4 */
-	Type_L4,
-
 	/** type Unix */
 	Type_Unix,
 
@@ -96,10 +93,6 @@ static struct entry entries[] = {
 		.type = Type_Systemd,
 		.noreuseaddr = 1,
 		.nolisten = 1
-	},
-	{
-		.prefix = "l4vsock:",
-		.type = Type_L4
 	},
 	{
 		.prefix = "unix:",
