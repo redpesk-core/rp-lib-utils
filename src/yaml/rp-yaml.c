@@ -298,7 +298,6 @@ y2j_root(y2j_t *y2jt, json_object **root)
 			}
 		}
 	}
-	while (y2jt_parse(y2jt) == 0 && y2jt->event.type != YAML_STREAM_END_EVENT);
 	return rc;
 }
 
