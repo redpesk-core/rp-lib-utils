@@ -207,6 +207,8 @@ y2j_node(y2j_t *y2jt, json_object **node)
 		value = json_tokener_parse(text);
 		if (value == NULL && strcmp(text, "null"))
 			value = json_object_new_string(text);
+		else
+			json_object_set_serializer(value, NULL, NULL, NULL); /* unset userdata */
 		*node = value;
 		y2j_rec_line(y2jt, value, y2jt->event.start_mark.line);
 		rc = y2j_rec_anchor(y2jt, value, y2jt->event.data.sequence_start.anchor);
