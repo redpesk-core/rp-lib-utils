@@ -30,7 +30,10 @@
 #include <json-c/json.h>
 
 #include "rp-yaml.h"
+
+#ifndef RP_YAML_NOLOC
 #include "../json/rp-jsonc-locator.h"
+#endif
 
 // it is safe to call yaml_event_delete more than one time
 
@@ -45,7 +48,9 @@ struct y2j_s
 	const char   *buffer;
 	size_t        readpos;
 	size_t        size;
+#ifndef RP_YAML_NOLOC
 	rp_jsonc_locator_t *locator;
+#endif
 };
 
 /**
@@ -83,6 +88,7 @@ int
 y2jt_init(y2j_t *y2jt, const char *name)
 {
 	int rc;
+#ifndef RP_YAML_NOLOC
 	if (name == NULL)
 		y2jt->locator = NULL;
 	else {
@@ -90,12 +96,15 @@ y2jt_init(y2j_t *y2jt, const char *name)
 		if (rc < 0)
 			return rc;
 	}
+#endif
 	y2jt->aliases = json_object_new_object();
 	if (y2jt->aliases == NULL
 	|| !yaml_parser_initialize(&y2jt->parser)) {
 		json_object_put(y2jt->aliases);
+#ifndef RP_YAML_NOLOC
 		if (y2jt->locator != NULL)
 			rp_jsonc_locator_end(y2jt->locator);
+#endif
 		return -ENOMEM;
 	}
 	yaml_parser_set_input(&y2jt->parser, y2jt_read, y2jt);
@@ -138,8 +147,10 @@ static
 void
 y2jt_deinit(y2j_t *y2jt)
 {
+#ifndef RP_YAML_NOLOC
 	if (y2jt->locator != NULL)
 		rp_jsonc_locator_end(y2jt->locator);
+#endif
 	yaml_event_delete(&y2jt->event);
 	yaml_parser_delete(&y2jt->parser);
 	json_object_put(y2jt->aliases);
@@ -180,8 +191,10 @@ y2j_rec_anchor(y2j_t *y2jt, json_object *node, const char *anchor)
 static void
 y2j_rec_line(y2j_t *y2jt, json_object *node, size_t line)
 {
+#ifndef RP_YAML_NOLOC
 	if (y2jt->locator != NULL)
 		rp_jsonc_locator_set_location(y2jt->locator, node, (unsigned)(line + 1));
+#endif
 }
 
 static int
@@ -272,7 +285,6 @@ y2j_node(y2j_t *y2jt, json_object **node)
 
 	return rc;
 }
-
 
 static
 int
