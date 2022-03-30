@@ -173,7 +173,7 @@ static char *search(struct json_object *root, struct json_object *jso, struct pa
 }
 
 /* get the path  from root to json or NULL if none exists */
-char *rp_json_locator_search_path(struct json_object *root, struct json_object *jso)
+char *rp_jsonc_locator_search_path(struct json_object *root, struct json_object *jso)
 {
 	return search(root, jso, NULL);
 }

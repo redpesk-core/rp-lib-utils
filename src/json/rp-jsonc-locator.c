@@ -33,27 +33,27 @@
 
 #if JSON_C_MINOR_VERSION < 13 /************* DONT IMPLEMENT LOCATOR *********/
 
-int rp_json_locator_begin(rp_json_locator_t **locator, const char *name)
+int rp_jsonc_locator_begin(rp_jsonc_locator_t **locator, const char *name)
 {
 	*locator = NULL;
 	return 0;
 }
 
-void rp_json_locator_end(rp_json_locator_t *locator)
+void rp_jsonc_locator_end(rp_jsonc_locator_t *locator)
 {
 }
 
-int rp_json_locator_set_location(rp_json_locator_t *locator, unsigned *linenum, struct json_object *jso)
+int rp_jsonc_locator_set_location(rp_jsonc_locator_t *locator, unsigned *linenum, struct json_object *jso)
 {
 	return 0;
 }
 
-const char *rp_json_locator_locate(struct json_object *jso, unsigned *linenum)
+const char *rp_jsonc_locator_locate(struct json_object *jso, unsigned *linenum)
 {
 	return NULL;
 }
 
-void rp_json_locator_copy(struct json_object *from, struct json_object *to)
+void rp_jsonc_locator_copy(struct json_object *from, struct json_object *to)
 {
 }
 
@@ -81,7 +81,7 @@ struct tagline
 };
 
 /** structure for creation of locators */
-struct rp_json_locator_s
+struct rp_jsonc_locator_s
 {
 	struct tagline *root;
 	struct tagline *last;
@@ -121,10 +121,10 @@ static void untag_object(struct json_object *jso, void *userdata)
 }
 
 /** create a tagging context */
-int rp_json_locator_begin(rp_json_locator_t **result, const char *name)
+int rp_jsonc_locator_begin(rp_jsonc_locator_t **result, const char *name)
 {
 	struct tagline *root;
-	rp_json_locator_t *locator;
+	rp_jsonc_locator_t *locator;
 
 	*result = locator = malloc(sizeof *locator);
 	if (locator != NULL) {
@@ -145,14 +145,14 @@ int rp_json_locator_begin(rp_json_locator_t **result, const char *name)
 }
 
 /** destroy a tagging context */
-void rp_json_locator_end(rp_json_locator_t *locator)
+void rp_jsonc_locator_end(rp_jsonc_locator_t *locator)
 {
 	tag_unref(locator->root);
 	free(locator);
 }
 
 /** set the location of jso */
-int rp_json_locator_set_location(rp_json_locator_t *locator, struct json_object *jso, unsigned line)
+int rp_jsonc_locator_set_location(rp_jsonc_locator_t *locator, struct json_object *jso, unsigned line)
 {
 	struct tagline *item;
 
@@ -184,7 +184,7 @@ int rp_json_locator_set_location(rp_json_locator_t *locator, struct json_object 
 }
 
 /* return the file and the line of the object jso */
-const char *rp_json_locator_locate(struct json_object *jso, unsigned *linenum)
+const char *rp_jsonc_locator_locate(struct json_object *jso, unsigned *linenum)
 {
 	struct tagline *tagfile, *tagline;
 	const char *result;
@@ -209,7 +209,7 @@ const char *rp_json_locator_locate(struct json_object *jso, unsigned *linenum)
 }
 
 /* copy the locator */
-void rp_json_locator_copy(struct json_object *from, struct json_object *to)
+void rp_jsonc_locator_copy(struct json_object *from, struct json_object *to)
 {
 	struct tagline *tagfile, *tagline;
 
@@ -231,7 +231,7 @@ void rp_json_locator_copy(struct json_object *from, struct json_object *to)
 #if JSON_C_MINOR_VERSION < 13 || __GLIBC_PREREQ(2,34)
  /************* DONT IMPLEMENT LOCATOR *********/
 
-int rp_json_locator_from_file(struct json_object **jso, const char *filename)
+int rp_jsonc_locator_from_file(struct json_object **jso, const char *filename)
 {
 	*jso = json_object_from_file(filename);
 	return *jso ? 0 : -ENOMEM;
@@ -431,7 +431,7 @@ static void hook_lino(unsigned lino)
  */
 
 
-static void tag_objects(rp_json_locator_t *locator, struct json_object *jso)
+static void tag_objects(rp_jsonc_locator_t *locator, struct json_object *jso)
 {
 #if JSON_C_VERSION_NUM >= 0x000d00
 	size_t idx, len;
@@ -448,7 +448,7 @@ static void tag_objects(rp_json_locator_t *locator, struct json_object *jso)
 	/* search the object in tagged blocks */
 	tag = searchtag(jso);
 	if (tag != NULL)
-		rp_json_locator_set_location(locator, jso, (unsigned)(intptr_t)tag);
+		rp_jsonc_locator_set_location(locator, jso, (unsigned)(intptr_t)tag);
 
 	/* inspect type of the jso */
 	switch (json_object_get_type(jso)) {
@@ -492,7 +492,7 @@ static int get_from_file(struct json_object **object, const char *filename, FILE
 	ssize_t linelen;
 	json_tokener *tok;
 	struct json_object *obj;
-	rp_json_locator_t *locator;
+	rp_jsonc_locator_t *locator;
 
 	/* create the tokenizer */
 	tok = json_tokener_new_ex(JSON_TOKENER_DEFAULT_DEPTH);
@@ -502,7 +502,7 @@ static int get_from_file(struct json_object **object, const char *filename, FILE
 	}
 
 	/* create the file tag */
-	rc = rp_json_locator_begin(&locator, filename);
+	rc = rp_jsonc_locator_begin(&locator, filename);
 	if (rc < 0)
 		goto end2;
 
@@ -554,7 +554,7 @@ static int get_from_file(struct json_object **object, const char *filename, FILE
 		/* record the result */
 		*object = obj;
 	}
-	rp_json_locator_end(locator);
+	rp_jsonc_locator_end(locator);
 end2:
 	json_tokener_free(tok);
 end:
@@ -563,7 +563,7 @@ end:
 }
 
 /* parse the file of filename and make its json object representation */
-int rp_json_locator_from_file(struct json_object **object, const char *filename)
+int rp_jsonc_locator_from_file(struct json_object **object, const char *filename)
 {
 	FILE *file;
 	int rc;

@@ -1,6 +1,6 @@
 
 #include "rp-yaml.h"
-#include "../json/rp-json-locator.h"
+#include "../json/rp-jsonc-locator.h"
 
 static void p(unsigned lino, unsigned depth, const char *text0, const char *text1, const char *text2)
 {
@@ -17,7 +17,7 @@ static void dump(struct json_object *jso, unsigned depth, const char *text0, con
 	struct json_object_iterator it, end;
 
 	unsigned lino;
-	const char *file = rp_json_locator_locate(jso, &lino);
+	const char *file = rp_jsonc_locator_locate(jso, &lino);
 
 	/* inspect type of the jso */
 	switch (json_object_get_type(jso)) {

@@ -27,13 +27,13 @@
 /**
  * Structure recording the path path of the expansion
  */
-struct rp_json_expandpath
+struct rp_jsonc_expandpath
 {
 	/** depth */
 	int depth;
 
 	/** previous, aka parent, path */
-	rp_json_expandpath_t previous;
+	rp_jsonc_expandpath_t previous;
 
 	/** object in expansion at current depth */
 	struct json_object *object;
@@ -55,8 +55,8 @@ struct rp_json_expandpath
  * @return the path of the index or NULL if the index is invalid
  */
 static inline
-rp_json_expandpath_t
-at(rp_json_expandpath_t path, int index)
+rp_jsonc_expandpath_t
+at(rp_jsonc_expandpath_t path, int index)
 {
 	if (index < 0 || path->depth < index)
 		return NULL;
@@ -80,9 +80,9 @@ struct json_object *
 expand(
 	struct json_object *object,
 	void *closure,
-	rp_json_expandcb expand_object,
-	rp_json_expandcb expand_string,
-	rp_json_expandpath_t previous
+	rp_jsonc_expandcb expand_object,
+	rp_jsonc_expandcb expand_string,
+	rp_jsonc_expandpath_t previous
 ) {
 #if JSON_C_VERSION_NUM >= 0x000d00
 	size_t idx, len;
@@ -92,7 +92,7 @@ expand(
 	enum json_type type;
 	struct json_object_iterator it, end;
 	struct json_object *curval, *nxtval;
-	struct rp_json_expandpath path;
+	struct rp_jsonc_expandpath path;
 
 	/* inspect type of the object */
 	type = json_object_get_type(object);
@@ -156,10 +156,10 @@ struct json_object *
 expand_json(
 	struct json_object *object,
 	void *closure,
-	rp_json_expandcb expand_object,
-	rp_json_expandcb expand_string
+	rp_jsonc_expandcb expand_object,
+	rp_jsonc_expandcb expand_string
 ) {
-	struct rp_json_expandpath path;
+	struct rp_jsonc_expandpath path;
 
 	path.depth = -1;
 	path.previous = NULL;
@@ -171,41 +171,41 @@ expand_json(
 }
 
 /* length of the path */
-int rp_json_expandpath_length(rp_json_expandpath_t path)
+int rp_jsonc_expandpath_length(rp_jsonc_expandpath_t path)
 {
 	return path->depth + 1;
 }
 
 /* object at index */
-struct json_object *rp_json_expandpath_get(rp_json_expandpath_t path, int index)
+struct json_object *rp_jsonc_expandpath_get(rp_jsonc_expandpath_t path, int index)
 {
 	path = at(path, index);
 	return path ? path->object : NULL;
 }
 
 /* is object at index an object? */
-int rp_json_expandpath_is_object(rp_json_expandpath_t path, int index)
+int rp_jsonc_expandpath_is_object(rp_jsonc_expandpath_t path, int index)
 {
 	path = at(path, index);
 	return path && path->key != NULL;
 }
 
 /* is object at index an array */
-int rp_json_expandpath_is_array(rp_json_expandpath_t path, int index)
+int rp_jsonc_expandpath_is_array(rp_jsonc_expandpath_t path, int index)
 {
 	path = at(path, index);
 	return path && path->key == NULL;
 }
 
 /* key of the subobject of the object at index */
-const char *rp_json_expandpath_key(rp_json_expandpath_t path, int index)
+const char *rp_jsonc_expandpath_key(rp_jsonc_expandpath_t path, int index)
 {
 	path = at(path, index);
 	return path ? path->key : NULL;
 }
 
 /* index of the subobject of the array at index */
-size_t rp_json_expandpath_index(rp_json_expandpath_t path, int index)
+size_t rp_jsonc_expandpath_index(rp_jsonc_expandpath_t path, int index)
 {
 	path = at(path, index);
 	return path ? path->index : 0;

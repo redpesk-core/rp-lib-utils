@@ -35,4 +35,4 @@
  *
  * @return NULL if jso is not part of root or a string that must be freed using 'free'
  */
-extern char *rp_json_path(struct json_object *root, struct json_object *jso);
+extern char *rp_jsonc_path(struct json_object *root, struct json_object *jso);

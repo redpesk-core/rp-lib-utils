@@ -45,7 +45,7 @@ struct y2j_s
 	const char   *buffer;
 	size_t        readpos;
 	size_t        size;
-	rp_json_locator_t *locator;
+	rp_jsonc_locator_t *locator;
 };
 
 /**
@@ -86,7 +86,7 @@ y2jt_init(y2j_t *y2jt, const char *name)
 	if (name == NULL)
 		y2jt->locator = NULL;
 	else {
-		rc = rp_json_locator_begin(&y2jt->locator, name);
+		rc = rp_jsonc_locator_begin(&y2jt->locator, name);
 		if (rc < 0)
 			return rc;
 	}
@@ -95,7 +95,7 @@ y2jt_init(y2j_t *y2jt, const char *name)
 	|| !yaml_parser_initialize(&y2jt->parser)) {
 		json_object_put(y2jt->aliases);
 		if (y2jt->locator != NULL)
-			rp_json_locator_end(y2jt->locator);
+			rp_jsonc_locator_end(y2jt->locator);
 		return -ENOMEM;
 	}
 	yaml_parser_set_input(&y2jt->parser, y2jt_read, y2jt);
@@ -139,7 +139,7 @@ void
 y2jt_deinit(y2j_t *y2jt)
 {
 	if (y2jt->locator != NULL)
-		rp_json_locator_end(y2jt->locator);
+		rp_jsonc_locator_end(y2jt->locator);
 	yaml_event_delete(&y2jt->event);
 	yaml_parser_delete(&y2jt->parser);
 	json_object_put(y2jt->aliases);
@@ -181,7 +181,7 @@ static void
 y2j_rec_line(y2j_t *y2jt, json_object *node, size_t line)
 {
 	if (y2jt->locator != NULL)
-		rp_json_locator_set_location(y2jt->locator, node, (unsigned)(line + 1));
+		rp_jsonc_locator_set_location(y2jt->locator, node, (unsigned)(line + 1));
 }
 
 static int
