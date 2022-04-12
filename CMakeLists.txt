@@ -25,7 +25,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(rp-lib-utils
-	VERSION 0.0.0
+	VERSION 0.0.1
 	DESCRIPTION  "Programming utilities"
 	HOMEPAGE_URL "https://github.com/redpesk-core/rp-lib-utils"
 	LANGUAGES C)
@@ -33,6 +33,6 @@ project(rp-lib-utils
 include(FindPkgConfig)
 include(GNUInstallDirs)
 
-set(LIBRP_UTILS_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+set(LIBRP_UTILS_VERSION "${PROJECT_VERSION}")
 
 add_subdirectory(src)
