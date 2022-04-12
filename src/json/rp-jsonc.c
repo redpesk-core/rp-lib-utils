@@ -1132,6 +1132,34 @@ int rp_jsonc_contains(struct json_object *x, struct json_object *y)
 	return !jcmp(x, y, 1, 0);
 }
 
+/* get or creates the subobject of 'object' with 'key' */
+int rp_jsonc_subobject(struct json_object *object, const char *key, struct json_object **subobject)
+{
+	json_object *obj = NULL;
+	if (!json_object_object_get_ex(object, key, &obj)) {
+		json_object_object_add(object, key, json_object_new_object());
+		json_object_object_get_ex(object, key, &obj);
+	}
+	if (subobject != NULL)
+		*subobject = obj;
+	return json_object_is_type(obj, json_type_object);
+}
+
+/* add the 'value' to the 'object' with the 'key' */
+int rp_jsonc_add(struct json_object *object, const char *key, struct json_object *value)
+{
+	if (value == NULL)
+		return 0;
+	json_object_object_add(object, key, value);
+	return json_object_object_get_ex(object, key, NULL);
+}
+
+/* adds the 'string' to the 'object' with the 'key', but only if 'string' is not NULL */
+int rp_jsonc_add_string(struct json_object *object, const char *key, const char *string)
+{
+	return string == NULL ? 0 : rp_jsonc_add(object, key, json_object_new_string(string));
+}
+
 /**********************************************************************/
 /*                TESTING                                             */
 /**********************************************************************/

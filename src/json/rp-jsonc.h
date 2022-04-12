@@ -509,6 +509,39 @@ extern int rp_jsonc_equal(struct json_object *x, struct json_object *y);
  */
 extern int rp_jsonc_contains(struct json_object *x, struct json_object *y);
 
+/**
+ * Gets or creates *'subobject' from 'object' with 'key'
+ *
+ * @param object the main object
+ * @param key key of the sub-object within 'object'
+ * @param subobject pointer where to store the found or created subobject
+ *
+ * @return 1 if successful or 0 if something failed
+ */
+extern int rp_jsonc_subobject(struct json_object *object, const char *key, struct json_object **subobject);
+
+/**
+ * Adds the 'value' to the 'object' with the 'key', but only if 'value' is not NULL
+ *
+ * @param object the main object
+ * @param key key of the value to add
+ * @param value the value to add
+ *
+ * @return 1 if successful or 0 if something failed or 'value' is NULL
+ */
+extern int rp_jsonc_add(struct json_object *object, const char *key, struct json_object *value);
+
+/**
+ * Adds the 'string' to the 'object' with the 'key', but only if 'string' is not NULL
+ *
+ * @param object the main object
+ * @param key key of the value to add
+ * @param string the string to addd
+ *
+ * @return 1 if successful or 0 if something failed or 'string' is NULL
+ */
+extern int rp_jsonc_add_string(struct json_object *object, const char *key, const char *string);
+
 #ifdef __cplusplus
     }
 #endif
