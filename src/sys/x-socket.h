@@ -24,8 +24,6 @@
 
 #pragma once
 
-#include <libafb/libafb-config.h>
-
 #if __ZEPHYR__
 
 #include <net/socket.h>
