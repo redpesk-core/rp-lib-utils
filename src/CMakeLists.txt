@@ -76,7 +76,10 @@ install(FILES ${headers} DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/rp-utils"
 
 # create and install the pkgconfig (PC) file
 get_property(modules GLOBAL PROPERTY modules)
-list(JOIN modules " " modules)
+list(JOIN modules ", " modules)
+string(REGEX REPLACE "([=<>])" " \\1 " modules "${modules}")
+string(REGEX REPLACE "<  =" "<=" modules "${modules}")
+string(REGEX REPLACE ">  =" ">=" modules "${modules}")
 get_property(privates GLOBAL PROPERTY privates)
 list(JOIN privates " " privates)
 configure_file(librp-utils.pc.in librp-utils.pc @ONLY)
