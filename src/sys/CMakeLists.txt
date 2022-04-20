@@ -1,3 +1,4 @@
+reqmod(libsystemd>=222)
 addsrc(
 	rp-verbose.c
 	rp-systemd.c

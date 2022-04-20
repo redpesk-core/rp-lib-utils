@@ -1,3 +1,5 @@
+# add our requirements
+reqmod(libsystemd>=222)
 # add our files
 addsrc(
 	rp-base64.c

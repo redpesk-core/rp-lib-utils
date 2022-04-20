@@ -232,7 +232,7 @@ static int open_tcp(const char *spec, int server, int reuseaddr)
 }
 
 /******************************************************************************/
-#ifndef WITHOUT_UNIX_SYSTEMD
+#ifndef WITHOUT_SYSTEMD
 
 #include "../sys/rp-systemd.h"
 
