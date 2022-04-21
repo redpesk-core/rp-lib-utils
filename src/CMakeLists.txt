@@ -1,3 +1,7 @@
+
+# ensure relocatable
+add_compile_options(-fPIC)
+
 # current directory prefix
 set(dirprefix "")
 
