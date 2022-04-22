@@ -1,6 +1,7 @@
 
 # ensure relocatable
-add_compile_options(-fPIC)
+add_compile_options(-fPIC -ffunction-sections -fdata-sections)
+add_link_options(-Wl,--as-needed -Wl,--gc-sections)
 
 # current directory prefix
 set(dirprefix "")
