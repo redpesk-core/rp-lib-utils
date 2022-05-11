@@ -1,0 +1,7 @@
+Name: librp-utils-static
+Description: A library of utilities
+Version: @LIBRP_UTILS_VERSION@
+Requires: @modules@
+Conflicts:
+Libs: -L@CMAKE_INSTALL_FULL_LIBDIR@ -l:librp-utils.a @privates@
+Cflags: -I@CMAKE_INSTALL_FULL_INCLUDEDIR@
