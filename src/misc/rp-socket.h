@@ -23,8 +23,25 @@
 
 #pragma once
 
+/**
+ * open socket for client or server with a default scheme
+ *
+ * @param uri the specification of the socket
+ * @param server 0 for client, server otherwise
+ * @param scheme the default scheme to use if none is set in uri (can be NULL)
+ *
+ * @return the file descriptor number of the socket or e negative value in case of error
+ */
 extern int rp_socket_open_scheme(const char *uri, int server, const char *scheme);
 
+/**
+ * open socket for client or server
+ *
+ * @param uri the specification of the socket
+ * @param server 0 for client, server otherwise
+ *
+ * @return the file descriptor number of the socket or e negative value in case of error
+ */
 static inline int rp_socket_open(const char *uri, int server)
 {
 	return rp_socket_open_scheme(uri, server, 0);

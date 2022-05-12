@@ -349,6 +349,7 @@ static int open_uri(const char *uri, int server, const char *scheme)
 		if (!e->nolisten) {
 			rc = listen(fd, RP_SOCKET_BACKLOG);
 			if (rc < 0) {
+				rc = -errno;
 				close(fd);
 				fd = rc;
 			}

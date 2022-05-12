@@ -25,8 +25,6 @@
 #pragma once
 
 #ifndef WITHOUT_SYSTEMD
-
-extern int rp_systemd_fds_init();
-extern int rp_systemd_fds_for(const char *name);
-
 #endif
+
+extern int rp_systemd_fds_for(const char *name);
