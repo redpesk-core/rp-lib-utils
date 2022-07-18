@@ -30,7 +30,7 @@
  * The expansion path is used to retrieve information on
  * the path of an object to "expand"
  */
-typedef struct rp_jsonc_expandpath *rp_jsonc_expandpath_t;
+typedef struct rp_jsonc_expand_path *rp_jsonc_expand_path_t;
 
 /**
  * Callback function called during expansion of json.
@@ -44,13 +44,13 @@ typedef struct rp_jsonc_expandpath *rp_jsonc_expandpath_t;
  * The other parameters it receives are a closure and
  * an object representing the path of the object to process.
  *
- * @param closure the closure given to @see expand_json
+ * @param closure the closure given to @see rp_jsonc_expand
  * @param object the json object to process
  * @param path an object for querying data on path of object
  *
  * @return the object or its replacement
  */
-typedef struct json_object *(*rp_jsonc_expandcb)(void *closure, struct json_object* object, rp_jsonc_expandpath_t path);
+typedef struct json_object *(*rp_jsonc_expandcb)(void *closure, struct json_object* object, rp_jsonc_expand_path_t path);
 
 /**
  * Expand the given object using the given expansion functions
@@ -62,7 +62,7 @@ typedef struct json_object *(*rp_jsonc_expandcb)(void *closure, struct json_obje
  *
  * @return the result of the expansion that can be equal to object
  */
-extern struct json_object *expand_json(
+extern struct json_object *rp_jsonc_expand(
 	struct json_object *object,
 	void *closure,
 	rp_jsonc_expandcb expand_object,
@@ -76,7 +76,7 @@ extern struct json_object *expand_json(
  *
  * @return the length of the path
  */
-extern int rp_jsonc_expandpath_length(rp_jsonc_expandpath_t path);
+extern int rp_jsonc_expand_path_length(rp_jsonc_expand_path_t path);
 
 /**
  * Returns the object at given index in the path.
@@ -87,7 +87,7 @@ extern int rp_jsonc_expandpath_length(rp_jsonc_expandpath_t path);
  *
  * @return the object at index or NULL if index is invalid
  */
-extern struct json_object *rp_jsonc_expandpath_get(rp_jsonc_expandpath_t path, int index);
+extern struct json_object *rp_jsonc_expand_path_get(rp_jsonc_expand_path_t path, int index);
 
 /**
  * Returns if the object at given index is an object.
@@ -98,7 +98,7 @@ extern struct json_object *rp_jsonc_expandpath_get(rp_jsonc_expandpath_t path, i
  *
  * @return true if index is valid and object at index is an object
  */
-extern int rp_jsonc_expandpath_is_object(rp_jsonc_expandpath_t path, int index);
+extern int rp_jsonc_expand_path_is_object(rp_jsonc_expand_path_t path, int index);
 
 /**
  * Returns if the object at given index is an array.
@@ -109,7 +109,7 @@ extern int rp_jsonc_expandpath_is_object(rp_jsonc_expandpath_t path, int index);
  *
  * @return true if index is valid and object at index is an array
  */
-extern int rp_jsonc_expandpath_is_array(rp_jsonc_expandpath_t path, int index);
+extern int rp_jsonc_expand_path_is_array(rp_jsonc_expand_path_t path, int index);
 
 /**
  * Returns the key inspected for the object at index
@@ -121,7 +121,7 @@ extern int rp_jsonc_expandpath_is_array(rp_jsonc_expandpath_t path, int index);
  * @return the key if index is valid and object at index is an object,
  *         or otherwise NULL
  */
-extern const char *rp_jsonc_expandpath_key(rp_jsonc_expandpath_t path, int index);
+extern const char *rp_jsonc_expand_path_key(rp_jsonc_expand_path_t path, int index);
 
 /**
  * Returns the key inspected for the array at index
@@ -133,4 +133,4 @@ extern const char *rp_jsonc_expandpath_key(rp_jsonc_expandpath_t path, int index
  * @return the index if index is valid and object at index is an array,
  *         or otherwise zero
  */
-extern size_t rp_jsonc_expandpath_index(rp_jsonc_expandpath_t path, int index);
+extern size_t rp_jsonc_expand_path_index(rp_jsonc_expand_path_t path, int index);
