@@ -8,6 +8,7 @@ addsrc(
 	rp-pearson.c
 	rp-socket.c
 	rp-uuid.c
+	sha1.c
 )
 addhdr(
 	rp-base64.h
@@ -16,4 +17,5 @@ addhdr(
 	rp-pearson.h
 	rp-socket.h
 	rp-uuid.h
+	sha1.h
 )
