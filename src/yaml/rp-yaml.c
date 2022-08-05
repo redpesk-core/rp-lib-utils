@@ -216,7 +216,7 @@ y2j_node(y2j_t *y2jt, json_object **node)
 		break;
 
 	case YAML_SCALAR_EVENT:
-		text = y2jt->event.data.scalar.value;
+		text = (char*)y2jt->event.data.scalar.value;
 		value = json_tokener_parse(text);
 		if (value == NULL && strcmp(text, "null"))
 			value = json_object_new_string(text);
@@ -224,14 +224,14 @@ y2j_node(y2j_t *y2jt, json_object **node)
 			json_object_set_serializer(value, NULL, NULL, NULL); /* unset userdata */
 		*node = value;
 		y2j_rec_line(y2jt, value, y2jt->event.start_mark.line);
-		rc = y2j_rec_anchor(y2jt, value, y2jt->event.data.sequence_start.anchor);
+		rc = y2j_rec_anchor(y2jt, value, (char*)y2jt->event.data.sequence_start.anchor);
 		rc = 0;
 		break;
 
 	case YAML_SEQUENCE_START_EVENT:
 		*node = value = json_object_new_array();
 		y2j_rec_line(y2jt, value, y2jt->event.start_mark.line);
-		rc = y2j_rec_anchor(y2jt, value, y2jt->event.data.sequence_start.anchor);
+		rc = y2j_rec_anchor(y2jt, value, (char*)y2jt->event.data.sequence_start.anchor);
 		while (rc == 0) {
 			rc = y2jt_parse(y2jt);
 			if (rc == 0) {
@@ -247,7 +247,7 @@ y2j_node(y2j_t *y2jt, json_object **node)
 	case YAML_MAPPING_START_EVENT:
 		*node = value = json_object_new_object();
 		y2j_rec_line(y2jt, value, y2jt->event.start_mark.line);
-		rc = y2j_rec_anchor(y2jt, value, y2jt->event.data.mapping_start.anchor);
+		rc = y2j_rec_anchor(y2jt, value, (char*)y2jt->event.data.mapping_start.anchor);
 		while (rc == 0) {
 			rc = y2jt_parse(y2jt);
 			if (rc == 0) {
@@ -256,7 +256,7 @@ y2j_node(y2j_t *y2jt, json_object **node)
 				if (y2jt->event.type != YAML_SCALAR_EVENT)
 					rc = -1;
 				else {
-					text = strdup(y2jt->event.data.scalar.value);
+					text = strdup((char*)y2jt->event.data.scalar.value);
 					if (text == NULL)
 						rc = -1;
 					else {
@@ -290,10 +290,7 @@ static
 int
 y2j_root(y2j_t *y2jt, json_object **root)
 {
-	size_t written = 0;
-	int count = 0;
 	int rc;
-	int k;
 
 	rc = y2jt_parse(y2jt);
 	if (rc == 0) {

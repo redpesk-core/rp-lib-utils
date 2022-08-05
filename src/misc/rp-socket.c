@@ -306,7 +306,6 @@ static int open_uri(const char *uri, int server, const char *scheme)
 {
 	int fd, offset, rc;
 	struct entry *e;
-	const char *api;
 
 	/* search for the entry */
 	e = get_entry(uri, &offset, scheme);

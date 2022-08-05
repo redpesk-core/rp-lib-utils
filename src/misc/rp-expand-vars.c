@@ -59,7 +59,7 @@ extern char **environ;
 static char *expand(const char *value, rp_expand_vars_fun_t function, void *closure)
 {
 	char *result, *write, *previous, c;
-	const char *begin, *end, *val;
+	const char *begin, *end;
 	int drop, again, depth, found;
 	size_t remove, add, i, len;
 	rp_expand_vars_result_t expval;
