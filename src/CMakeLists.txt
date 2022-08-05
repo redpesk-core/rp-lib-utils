@@ -37,23 +37,23 @@ macro(addhdr)
 	endforeach(hdr)
 endmacro(addhdr)
 
-# macro for adding properties
-macro(addprop name values)
+# function for adding properties
+function(addprop name values)
 	get_property(lv GLOBAL PROPERTY ${name})
 	list(APPEND lv ${values})
 	list(REMOVE_DUPLICATES lv)
 	set_property(GLOBAL PROPERTY ${name} ${lv})
-endmacro(addprop)
+endfunction(addprop)
 
-# macro for requiring modules
-macro(reqmod)
+# function for requiring modules
+function(reqmod)
 	pkg_check_modules(mods REQUIRED ${ARGV})
 	target_compile_options(rp-utils-static PUBLIC ${mods_CFLAG})
 	target_compile_options(rp-utils-shared PUBLIC ${mods_CFLAG})
-	target_link_options(rp-utils-shared PUBLIC ${mods_LDFLAGS})
+	target_link_libraries(rp-utils-shared PUBLIC ${mods_LDFLAGS})
 	addprop(modules "${ARGV}")
 	addprop(privates "${mods_LDFLAGS}")
-endmacro(reqmod)
+endfunction(reqmod)
 
 # macro for adding documentation
 macro(adddoc)
@@ -91,3 +91,4 @@ configure_file(librp-utils.pc.in librp-utils.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librp-utils.pc DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
 configure_file(librp-utils-static.pc.in librp-utils-static.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librp-utils-static.pc DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
+
