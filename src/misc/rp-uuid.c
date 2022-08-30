@@ -60,6 +60,46 @@ static void uuid_unparse_lower(const rp_uuid_binary_t uu, rp_uuid_stringz_t out)
 	b2h(&uu[8], &out[19], 2, '-');
 	b2h(&uu[10], &out[24], 6, 0);
 }
+
+static int h2b(const char *uu, unsigned char *out, int count, char term)
+{
+	int x, y;
+
+	do {
+		x = *uu++;
+		if ('0' <= x && x <= '9')
+			x -= '0';
+		else if ('a' <= x && x <= 'f')
+			x -= 'a' - 10;
+		else if ('A' <= x && x <= 'F')
+			x -= 'A' - 10;
+		else
+			return 0;
+		y = x << 4;
+		x = *uu++;
+		if ('0' <= x && x <= '9')
+			x -= '0';
+		else if ('a' <= x && x <= 'f')
+			x -= 'a' - 10;
+		else if ('A' <= x && x <= 'F')
+			x -= 'A' - 10;
+		else
+			return 0;
+		y |= x;
+		*out++ = (char)y;
+	} while(--count);
+	return *uu == term;
+}
+
+static int uuid_parse(const rp_uuid_stringz_t from, rp_uuid_binary_t to)
+{
+	return (h2b(&from[0], &to[0], 4, '-')
+	 && h2b(&from[9], &to[4], 2, '-')
+	 && h2b(&from[14], &to[6], 2, '-')
+	 && h2b(&from[19], &to[8], 2, '-')
+	 && h2b(&from[24], &to[10], 6, 0)) - 1;
+}
+
 #endif
 
 /**
@@ -136,4 +176,20 @@ void rp_uuid_new_stringz(rp_uuid_stringz_t uuid)
 	rp_uuid_binary_t newuuid;
 	rp_uuid_new_binary(newuuid);
 	uuid_unparse_lower(newuuid, uuid);
+}
+
+void rp_uuid_bin_to_text(const rp_uuid_binary_t from, rp_uuid_stringz_t to)
+{
+	uuid_unparse_lower(from, to);
+}
+
+int rp_uuid_text_to_bin(const char *from, rp_uuid_binary_t to)
+{
+	return !uuid_parse(from, (unsigned char*)to);
+}
+
+int rp_uuid_check_text(const char *text)
+{
+	rp_uuid_binary_t tmp;
+	return rp_uuid_text_to_bin(text, tmp);
 }

@@ -24,11 +24,63 @@
 
 #pragma once
 
+/**
+ * @brief length of binary buffer for UUID in bytes
+ */
 #define RP_UUID_BINARY_LENGTH   16
+
+/**
+ * @brief length of text buffer for UUID in ASCII-chars (including tailing zero)
+ */
 #define RP_UUID_STRINGZ_LENGTH  37
 
+/**
+ * @brief buffer type for holding binary UUID
+ */
 typedef unsigned char rp_uuid_binary_t[RP_UUID_BINARY_LENGTH];
+
+/**
+ * @brief buffer type for holding text UUID
+ */
 typedef char rp_uuid_stringz_t[RP_UUID_STRINGZ_LENGTH];
 
+/**
+ * @brief creates a new binary UUID
+ *
+ * @param uuid buffer for storing the UUID
+ */
 void rp_uuid_new_binary(rp_uuid_binary_t uuid);
+
+/**
+ * @brief creates a new text UUID
+ *
+ * @param uuid buffer for storing the UUID
+ */
 void rp_uuid_new_stringz(rp_uuid_stringz_t uuid);
+
+/**
+ * @brief translate binary UUID to text UUID
+ *
+ * @param from  buffer of the binary UUID
+ * @param to    buffer for storing the text UUID
+ */
+void rp_uuid_bin_to_text(const rp_uuid_binary_t from, rp_uuid_stringz_t to);
+
+/**
+ * @brief translate text UUID to binary UUID
+ *
+ * @param from  buffer of the text UUID
+ * @param to    buffer for storing the binary UUID
+ *
+ * @return 1 on success or 0 on error
+ */
+int rp_uuid_text_to_bin(const char * from, rp_uuid_binary_t to);
+
+/**
+ * @brief check if a text is an text UUID
+ *
+ * @param text the text to check
+ *
+ * @return 1 on success or 0 on error
+ */
+int rp_uuid_check_text(const char *text);
