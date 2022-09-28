@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "escape.h"
+#include "rp-escape.h"
 
 /*
  * Test if 'c' is to be escaped or not.
@@ -253,87 +253,117 @@ static size_t unescape_to(const char *itext, size_t ilen, char *otext, size_t ol
 }
 
 /* create an url */
-char *escape_url(const char *base, const char *path, const char * const *args, size_t *length)
+static size_t escape_url_to(const char *base, const char *path, const char * const *args, char *buffer, size_t length, size_t lenbase, size_t lenpath)
 {
 	int i;
-	size_t lb, lp, lq, l, L;
-	const char *null;
-	char *result;
+	size_t l;
 
-	/* ensure args */
+	l = lenbase;
+	if (lenbase) {
+		if (length)
+			memcpy(buffer, base, length >= lenbase ? lenbase : length);
+		if (base[lenbase - 1] != '/' && lenpath && path[0] != '/') {
+			if (l < length)
+				buffer[l] = '/';
+			l++;
+		}
+	}
+	if (lenpath) {
+		if (l < length)
+			memcpy(buffer + l, path, length - l >= lenpath ? lenpath : length - l);
+		l += lenpath;
+	}
+	i = 0;
+	while (args[i]) {
+		if (i) {
+			if (l < length)
+				buffer[l] = '&';
+			l++;
+		} else if (lenbase | lenpath) {
+			if (l < length)
+				buffer[l] = memchr(buffer, '?', l) ? '&' : '?';
+			l++;
+		}
+		l += escape_to(args[i], strlen(args[i]), buffer + l, l < length ? length - l : 0);
+		i++;
+		if (args[i]) {
+			if (l < length)
+				buffer[l] = '=';
+			l++;
+			l += escape_to(args[i], strlen(args[i]), buffer + l, l < length ? length - l : 0);
+		}
+		i++;
+	}
+	if (l < length)
+		buffer[l] = 0;
+	return l;
+}
+
+
+/* create an url */
+size_t rp_escape_url_to(const char *base, const char *path, const char * const *args, char *buffer, size_t length)
+{
+	size_t lenbase, lenpath;
+	const char *null;
+
+	/* normalize args */
+	lenbase = base ? strlen(base) : 0;
+	lenpath = path ? strlen(path) : 0;
 	if (!args) {
 		null = NULL;
 		args = &null;
 	}
 
-	/* compute lengths */
-	lb = base ? strlen(base) : 0;
-	lp = path ? strlen(path) : 0;
-	lq = 0;
-	i = 0;
-	while (args[i]) {
-		lq += 1 + escaped_length(args[i], strlen(args[i]));
-		i++;
-		if (args[i])
-			lq += 1 + escaped_length(args[i], strlen(args[i]));
-		i++;
+	/* make the URL */
+	return escape_url_to(base, path, args, buffer, length, lenbase, lenpath);
+}
+
+/* create an url */
+char *rp_escape_url(const char *base, const char *path, const char * const *args, size_t *length)
+{
+	size_t rlen, lenbase, lenpath;
+	char *result;
+	const char *null;
+
+	/* normalize args */
+	lenbase = base ? strlen(base) : 0;
+	lenpath = path ? strlen(path) : 0;
+	if (!args) {
+		null = NULL;
+		args = &null;
 	}
 
-	/* allocation */
-	L = lb + lp + lq + 1;
-	result = malloc(L + 1);
-	if (result) {
-		/* make the resulting url */
-		l = lb;
-		if (lb) {
-			memcpy(result, base, lb);
-			if (result[l - 1] != '/' && path && path[0] != '/')
-				result[l++] = '/';
-		}
-		if (lp) {
-			memcpy(result + l, path, lp);
-			l += lp;
-		}
-		i = 0;
-		while (args[i]) {
-			if (i) {
-				result[l++] = '&';
-			} else if (base || path) {
-				result[l] = memchr(result, '?', l) ? '&' : '?';
-				l++;
-			}
-			l += escape_to(args[i], strlen(args[i]), result + l, L - l);
-			i++;
-			if (args[i]) {
-				result[l++] = '=';
-				l += escape_to(args[i], strlen(args[i]), result + l, L - l);
-			}
-			i++;
-		}
-		result[l] = 0;
-		if (length)
-			*length = l;
-	}
+	/* compute size */
+	rlen = escape_url_to(base, path, args, NULL, 0, lenbase, lenpath);
+	if (length)
+		*length = rlen;
+
+	/* allocates */
+	result = malloc(++rlen);
+	if (result)
+		/* make the URL */
+		escape_url_to(base, path, args, result, rlen, lenbase, lenpath);
 	return result;
 }
 
-char *escape_args(const char * const *args, size_t *length)
+char *rp_escape_args(const char * const *args, size_t *length)
 {
-	return escape_url(NULL, NULL, args, length);
+	return rp_escape_url(NULL, NULL, args, length);
 }
 
-char *escape_str(const char* str, size_t *length)
+char *rp_escape_str(const char* str, size_t *length)
 {
-	const char *a[3] = { str, NULL, NULL };
-	return escape_args(a, length);
+	const char *args[3] = { str, NULL, NULL };
+	return rp_escape_url(NULL, NULL, args, length);
 }
 
-char **unescape_args(const char *args)
+const char **rp_unescape_args(const char *args)
 {
 	char **r, **q;
 	char c, *p;
 	size_t j, z, l, n, lt;
 
+	/* count: number of args (n) text length (lt) */
 	lt = n = 0;
 	if (args[0]) {
 		z = 0;
@@ -354,11 +384,13 @@ char **unescape_args(const char *args)
 		} while(c);
 	}
 
+	/* alloc the result */
 	l = lt + (2 * n + 1) * sizeof(char *);
 	r = malloc(l);
 	if (!r)
-		return r;
+		return (const char **)r;
 
+	/* fill the result */
 	q = r;
 	p = (void*)&r[2 * n + 1];
 	if (args[0]) {
@@ -386,14 +418,16 @@ char **unescape_args(const char *args)
 		} while(c);
 	}
 	q[0] = NULL;
-	return r;
+	return (const char **)r;
 }
 
-char *escape(const char *text, size_t textlen, size_t *reslength)
+char *rp_escape(const char *text, size_t textlen, size_t *reslength)
 {
 	size_t len;
 	char *result;
 
+	if (!textlen)
+		textlen = strlen(text);
 	len = 1 + escaped_length(text, textlen);
 	result = malloc(len);
 	if (result)
@@ -403,11 +437,13 @@ char *escape(const char *text, size_t textlen, size_t *reslength)
 	return result;
 }
 
-char *unescape(const char *text, size_t textlen, size_t *reslength)
+char *rp_unescape(const char *text, size_t textlen, size_t *reslength)
 {
 	size_t len;
 	char *result;
 
+	if (!textlen)
+		textlen = strlen(text);
 	len = 1 + unescaped_length(text, textlen);
 	result = malloc(len);
 	if (result)

@@ -372,100 +372,25 @@ OnErrorExit:
 // build request with query
 int httpBuildQuery(const char *uid, char *response, size_t maxlen, const char *prefix, const char *url, httpKeyValT *query)
 {
-    size_t index = 0;
-    maxlen = maxlen - 1; // space for '\0'
-
-    // hoops nothing to build url
-    if (!prefix && !url)
-        goto OnErrorExit;
-
-    // place prefix
-    if (prefix)
-    {
-        for (int idx = 0; prefix[idx]; idx++)
-        {
-            response[index++] = prefix[idx];
-            if (index == maxlen)
-                goto OnErrorExit;
-        }
-        response[index++] = '/';
-    }
-
-    // place url
-    if (url)
-    {
-        for (int idx = 0; url[idx]; idx++)
-        {
-            response[index++] = url[idx];
-            if (index == maxlen)
-                goto OnErrorExit;
-        }
-    }
-
-    // loop on query arguments
-    if (query) {
-        // if no static query params initialize params list
-        if (response[index-1] != '&') response[index++] = '?';
-
-        for (int idx = 0; query[idx].tag; idx++)
-        {
-            for (int jdx = 0; query[idx].tag[jdx]; jdx++)
-            {
-                response[index++] = query[idx].tag[jdx];
-                if (index == maxlen)
-                    goto OnErrorExit;
-            }
-            if (query[idx].value) {
-                response[index++] = '=';
-                for (int jdx = 0; query[idx].value[jdx]; jdx++)
-                {
-                    response[index++] = query[idx].value[jdx];
-                    if (index == maxlen)
-                        goto OnErrorExit;
-                }
-            }
-            response[index++] = '&';
-        }
-    }
-    response[index] = '\0'; // remove last '&'
-    return 0;
-
-OnErrorExit:
+    size_t len = rp_escape_url_to(prefix, url, (const char * const *)query, response, maxlen);
+    if (len < maxlen) /* not equal because of ending zero */
+        return 0;
     fprintf(stderr, "[url-too-long] idp=%s url=%s cannot add query to url (httpMakeRequest)", uid, url);
     return 1;
 }
 
 // convert a string into base64
-char * httpEncode64 (const char* inputData, size_t inputLen) {
-    if (!inputLen) inputLen=strlen(inputData);
-    int status;
-    char *data64;
-    size_t len64;
-
-    status= rp_base64_encode ((uint8_t*)inputData, inputLen, &data64, &len64,0,1,0);
-    if (status) goto OnErrorExit;
-
-    return (data64);
-
-OnErrorExit:
-    if (data64) free (data64);
-    return NULL;
+char * httpEncode64 (const char *inData, size_t inLen) {
+    char *outData;
+    size_t outLen;
+    int status = rp_base64_encode((const uint8_t*)inData, inLen ?: strlen(inData), &outData, &outLen, 0, 1, 0);
+    return status == rp_base64_ok ? outData : NULL;
 }
 
 // decode a string into base64
-char * httpDecode64 (const char* inputData, size_t inputLen, int url) {
-    if (!inputLen) inputLen=strlen(inputData);
-    int status;
-    char *data64;
-    size_t len64;
-
-    status= rp_base64_decode (inputData, inputLen, (uint8_t**)&data64, &len64, url);
-    if (status) goto OnErrorExit;
-
-    data64[len64]='\0';
-    return (data64);
-
-OnErrorExit:
-    if (data64) free (data64);
-    return NULL;
+char * httpDecode64 (const char* inData, size_t inLen, int url) {
+    char *outData;
+    size_t outLen;
+    int status = rp_base64_decode(inData, inLen ?: strlen(inData), (uint8_t**)&outData, &outLen, url);
+    return status == rp_base64_ok ? outData : NULL;
 }

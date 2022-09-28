@@ -27,29 +27,29 @@
 
 #include <curl/curl.h>
 
-extern int curl_wrap_perform (CURL * curl, char **result, size_t * size);
+extern int rp_curl_perform (CURL * curl, char **result, size_t * size);
 
-extern void curl_wrap_do(CURL *curl, void (*callback)(void *closure, int status, CURL *curl, const char *result, size_t size), void *closure);
+extern void rp_curl_do(CURL *curl, void (*callback)(void *closure, int status, CURL *curl, const char *result, size_t size), void *closure);
 
-extern int curl_wrap_content_type_is (CURL * curl, const char *value);
+extern int rp_curl_content_type_is (CURL * curl, const char *value);
 
-extern long curl_wrap_response_code_get(CURL *curl);
+extern long rp_curl_response_code_get(CURL *curl);
 
-extern CURL *curl_wrap_prepare_get_url(const char *url);
+extern CURL *rp_curl_prepare_get_url(const char *url);
 
-extern CURL *curl_wrap_prepare_get(const char *base, const char *path, const char * const *args);
+extern CURL *rp_curl_prepare_get(const char *base, const char *path, const char * const *args);
 
-extern CURL *curl_wrap_prepare_post_url_data(const char *url, const char *datatype, const char *data, size_t szdata);
+extern CURL *rp_curl_prepare_post_url_data(const char *url, const char *datatype, const char *data, size_t szdata);
 
-extern int curl_wrap_add_header(CURL *curl, const char *header);
+extern int rp_curl_add_header(CURL *curl, const char *header);
 
-extern int curl_wrap_add_header_value(CURL *curl, const char *name, const char *value);
+extern int rp_curl_add_header_value(CURL *curl, const char *name, const char *value);
 
-CURL *curl_wrap_prepare_post_simple_unescaped(const char *base, const char *path, const char *args);
+extern CURL *rp_curl_prepare_post_simple_unescaped(const char *base, const char *path, const char *args);
 
-CURL *curl_wrap_prepare_post_simple_escaped(const char *base, const char *path, char *args);
+extern CURL *rp_curl_prepare_post_simple_escaped(const char *base, const char *path, char *args);
 
-CURL *curl_wrap_prepare_post_unescaped(const char *base, const char *path, const char *separator, const char * const *args);
+extern CURL *rp_curl_prepare_post_unescaped(const char *base, const char *path, const char *separator, const char * const *args);
 
-CURL *curl_wrap_prepare_post_escaped(const char *base, const char *path, const char * const *args);
+extern CURL *rp_curl_prepare_post_escaped(const char *base, const char *path, const char * const *args);
 

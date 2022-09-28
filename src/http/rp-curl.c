@@ -30,8 +30,8 @@
 
 #include <curl/curl.h>
 
-#include "curl-wrap.h"
-#include "escape.h"
+#include "rp-curl.h"
+#include "rp-escape.h"
 
 
 /* internal representation of buffers */
@@ -109,7 +109,7 @@ static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdat
  * zero. This facility allows to handle the returned content as a
  * null terminated C-string.
  */
-int curl_wrap_perform(CURL *curl, char **result, size_t *size)
+int rp_curl_perform(CURL *curl, char **result, size_t *size)
 {
 	int rc;
 	struct buffer buffer;
@@ -148,7 +148,7 @@ int curl_wrap_perform(CURL *curl, char **result, size_t *size)
 	return rc;
 }
 
-void curl_wrap_do(CURL *curl, void (*callback)(void *closure, int status, CURL *curl, const char *result, size_t size), void *closure)
+void rp_curl_do(CURL *curl, void (*callback)(void *closure, int status, CURL *curl, const char *result, size_t size), void *closure)
 {
 	int rc;
 	char *result;
@@ -156,7 +156,7 @@ void curl_wrap_do(CURL *curl, void (*callback)(void *closure, int status, CURL *
 	char errbuf[CURL_ERROR_SIZE];
 
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
-	rc = curl_wrap_perform(curl, &result, &size);
+	rc = rp_curl_perform(curl, &result, &size);
 	if (rc)
 		callback(closure, rc, curl, result, size);
 	else
@@ -165,7 +165,7 @@ void curl_wrap_do(CURL *curl, void (*callback)(void *closure, int status, CURL *
 	curl_easy_cleanup(curl);
 }
 
-int curl_wrap_content_type_is(CURL *curl, const char *value)
+int rp_curl_content_type_is(CURL *curl, const char *value)
 {
 	char *actual;
 	CURLcode code;
@@ -177,7 +177,7 @@ int curl_wrap_content_type_is(CURL *curl, const char *value)
 	return !strncasecmp(actual, value, strcspn(actual, "; "));
 }
 
-long curl_wrap_response_code_get(CURL *curl)
+long rp_curl_response_code_get(CURL *curl)
 {
 	long rc;
 	CURLcode code;
@@ -186,7 +186,7 @@ long curl_wrap_response_code_get(CURL *curl)
 	return (code == CURLE_OK) ? rc : 0;
 }
 
-CURL *curl_wrap_prepare_get_url(const char *url)
+CURL *rp_curl_prepare_get_url(const char *url)
 {
 	CURL *curl;
 	CURLcode code;
@@ -201,18 +201,18 @@ CURL *curl_wrap_prepare_get_url(const char *url)
 	return NULL;
 }
 
-CURL *curl_wrap_prepare_get(const char *base, const char *path, const char * const *args)
+CURL *rp_curl_prepare_get(const char *base, const char *path, const char * const *args)
 {
 	CURL *res;
 	char *url;
 
-	url = escape_url(base, path, args, NULL);
-	res = url ? curl_wrap_prepare_get_url(url) : NULL;
+	url = rp_escape_url(base, path, args, NULL);
+	res = url ? rp_curl_prepare_get_url(url) : NULL;
 	free(url);
 	return res;
 }
 
-int curl_wrap_add_header(CURL *curl, const char *header)
+int rp_curl_add_header(CURL *curl, const char *header)
 {
 	int rc;
 	struct curl_slist *list;
@@ -225,19 +225,19 @@ int curl_wrap_add_header(CURL *curl, const char *header)
 	return rc;
 }
 
-int curl_wrap_add_header_value(CURL *curl, const char *name, const char *value)
+int rp_curl_add_header_value(CURL *curl, const char *name, const char *value)
 {
 	char *h;
 	int rc;
 
 	rc = asprintf(&h, "%s: %s", name, value);
-	rc = rc < 0 ? 0 : curl_wrap_add_header(curl, h);
+	rc = rc < 0 ? 0 : rp_curl_add_header(curl, h);
 	free(h);
 	return rc;
 }
 
 
-CURL *curl_wrap_prepare_post_url_data(const char *url, const char *datatype, const char *data, size_t szdata)
+CURL *rp_curl_prepare_post_url_data(const char *url, const char *datatype, const char *data, size_t szdata)
 {
 	CURL *curl;
 
@@ -246,55 +246,55 @@ CURL *curl_wrap_prepare_post_url_data(const char *url, const char *datatype, con
 	&& CURLE_OK == curl_easy_setopt(curl, CURLOPT_URL, url)
 	&& (!szdata || CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, szdata))
 	&& CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data)
-	&& (!datatype || curl_wrap_add_header_value(curl, "content-type", datatype)))
+	&& (!datatype || rp_curl_add_header_value(curl, "content-type", datatype)))
 		return curl;
 	curl_easy_cleanup(curl);
 	return NULL;
 }
 
-static CURL *curl_wrap_prepare_post(const char *base, const char *path, int unescape_flag, const char *separator, const char * const *args, const char *simple_args)
+static CURL *rp_curl_prepare_post(const char *base, const char *path, int unescape_flag, const char *separator, const char * const *args, const char *simple_args)
 {
 	CURL *res;
 	char *url;
 	const char *data = NULL;
 	size_t szdata = 0;
 
-	url = escape_url(base, path, NULL, NULL);
+	url = rp_escape_url(base, path, NULL, NULL);
 	if(args) {
 		data = unescape_flag ?
 			curl_concatenate_args(args, separator, &szdata) :
-			escape_args(args, &szdata);
+			rp_escape_args(args, &szdata);
 	}
 	else {
 		data = unescape_flag ?
-			escape_str(simple_args, &szdata) :
+			rp_escape_str(simple_args, &szdata) :
 			simple_args;
 	}
 	szdata = szdata ? szdata : strlen(data);
 
-	res = url ? curl_wrap_prepare_post_url_data(url, NULL, data, szdata) : NULL;
+	res = url ? rp_curl_prepare_post_url_data(url, NULL, data, szdata) : NULL;
 	free(url);
 	return res;
 }
 
-CURL *curl_wrap_prepare_post_simple_unescaped(const char *base, const char *path, const char *args)
+CURL *rp_curl_prepare_post_simple_unescaped(const char *base, const char *path, const char *args)
 {
-	return curl_wrap_prepare_post(base, path, 1, NULL, NULL, args);
+	return rp_curl_prepare_post(base, path, 1, NULL, NULL, args);
 }
 
-CURL *curl_wrap_prepare_post_simple_escaped(const char *base, const char *path, char *args)
+CURL *rp_curl_prepare_post_simple_escaped(const char *base, const char *path, char *args)
 {
-	return curl_wrap_prepare_post(base, path, 0, NULL, NULL, args);
+	return rp_curl_prepare_post(base, path, 0, NULL, NULL, args);
 }
 
-CURL *curl_wrap_prepare_post_unescaped(const char *base, const char *path, const char *separator, const char * const *args)
+CURL *rp_curl_prepare_post_unescaped(const char *base, const char *path, const char *separator, const char * const *args)
 {
-	return curl_wrap_prepare_post(base, path, 1, separator, args, NULL);
+	return rp_curl_prepare_post(base, path, 1, separator, args, NULL);
 }
 
-CURL *curl_wrap_prepare_post_escaped(const char *base, const char *path, const char * const *args)
+CURL *rp_curl_prepare_post_escaped(const char *base, const char *path, const char * const *args)
 {
-	return curl_wrap_prepare_post(base, path, 0, NULL, args, NULL);
+	return rp_curl_prepare_post(base, path, 0, NULL, args, NULL);
 }
 
 /* vim: set colorcolumn=80: */
