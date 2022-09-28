@@ -317,6 +317,101 @@ extern void rp_jsonc_optobject_for_all(struct json_object *object, void (*callba
 extern void rp_jsonc_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure);
 
 /**
+ * Calls the callback for each item of an array, in order, until the callback
+ * returns a not null value.
+ *
+ * If the object is not an array, the callback is called for the object itself.
+ *
+ * The given callback receives 2 arguments:
+ *  1. the closure
+ *  2. the item
+ *
+ * @param object   the item to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ *
+ * @return the last not null value returned or zero
+ */
+extern int rp_jsonc_optarray_until(struct json_object *object, int (*callback)(void*,struct json_object*), void *closure);
+
+/**
+ * Calls the callback for each item of an array, in order, until the callback
+ * returns a not null value.
+ *
+ * If the object is not an array, nothing is done, the callback is not called.
+ *
+ * The given callback receives 2 arguments:
+ *  1. the closure
+ *  2. the item
+ *
+ * @param object   the item to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ *
+ * @return the last not null value returned or zero
+ */
+extern int rp_jsonc_array_until(struct json_object *object, int (*callback)(void*,struct json_object*), void *closure);
+
+/**
+ * Calls the callback for each item of an object until the callback
+ * returns a not null value.
+ *
+ * If the object is not a dictionary, nothing is done, the callback is not called.
+ *
+ * The given callback receives 3 arguments:
+ *  1. the closure
+ *  2. the item
+ *  3. the name of the item
+ *
+ * @param object   the item to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ *
+ * @return the last not null value returned or zero
+ */
+extern int rp_jsonc_object_until(struct json_object *object, int (*callback)(void*,struct json_object*,const char*), void *closure);
+
+/**
+ * Calls the callback for each item of an object until the callback
+ * returns a not null value.
+ *
+ * If the object is not a dictionary, the callback is called for the object itself
+ * with a NULL name.
+ *
+ * The given callback receives 3 arguments:
+ *  1. the closure
+ *  2. the item
+ *  3. the name of the item it its parent object or NULL
+ *
+ * @param object   the item to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ *
+ * @return the last not null value returned or zero
+ */
+extern int rp_jsonc_optobject_until(struct json_object *object, int (*callback)(void*,struct json_object*,const char*), void *closure);
+
+/**
+ * Calls the callback for each item of object. Each item depends on
+ * the nature of the object:
+ *  - object: each element of the object with its name
+ *  - array: each item of the array, in order, without name
+ *  - other: the item without name
+ *
+ * The given callback receives 3 arguments:
+ *  1. the closure
+ *  2. the item
+ *  3. the name of the item it its parent object or NULL
+ *
+ * @param object   the item to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ *
+ * @return the last not null value returned or zero
+ */
+extern int rp_jsonc_until(struct json_object *object, int (*callback)(void*,struct json_object*,const char*), void *closure);
+
+/**
  * Clones the 'object': returns a copy of it. But doesn't clones
  * the content. Synonym of rp_jsonc_clone_depth(object, 1).
  *

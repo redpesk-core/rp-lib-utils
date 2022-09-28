@@ -788,6 +788,105 @@ void rp_jsonc_for_all(struct json_object *object, void (*callback)(void*,struct 
 }
 
 /**
+ * Call the callback for each item of the given object
+ * until it returns not null value.
+ * The given callback receives 3 arguments:
+ *  1. the closure
+ *  2. the item
+ *  3. the name of the item
+ *
+ * @param object   the object to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ *
+ * @return either 0 if all elements where called or the latest not nul returned value
+ */
+static int object_until(struct json_object *object, int (*callback)(void*,struct json_object*,const char*), void *closure)
+{
+	int res = 0;
+	struct json_object_iterator it = json_object_iter_begin(object);
+	struct json_object_iterator end = json_object_iter_end(object);
+	while (res == 0 && !json_object_iter_equal(&it, &end)) {
+		res = callback(closure, json_object_iter_peek_value(&it), json_object_iter_peek_name(&it));
+		json_object_iter_next(&it);
+	}
+	return res;
+}
+
+/**
+ * Call the callback for each item of the given array
+ * until it returns not null value.
+ * The given callback receives 2 arguments:
+ *  1. the closure
+ *  2. the item
+ *
+ * @param object   the array to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ *
+ * @return either 0 if all elements where called or the latest not nul returned value
+ */
+static int array_until(struct json_object *object, int (*callback)(void*,struct json_object*), void *closure)
+{
+	int res = 0;
+	int i = 0;
+	int n = (int)json_object_array_length(object);
+	while(res == 0 && i < n)
+		res = callback(closure, json_object_array_get_idx(object, (rp_jsonc_index_t)i++));
+	return res;
+}
+
+/* apply callback until it returns not null to items of an array or to it if not an array */
+int rp_jsonc_optarray_until(struct json_object *object, int (*callback)(void*,struct json_object*), void *closure)
+{
+	return json_object_is_type(object, json_type_array)
+		? array_until(object, callback, closure)
+		: callback(closure, object);
+}
+
+/* apply callback until it returns not null to items of an array */
+int rp_jsonc_array_until(struct json_object *object, int (*callback)(void*,struct json_object*), void *closure)
+{
+	return json_object_is_type(object, json_type_array)
+		? array_until(object, callback, closure)
+		: 0;
+}
+
+/* apply callback until it returns not null to items of an object */
+int rp_jsonc_object_until(struct json_object *object, int (*callback)(void*,struct json_object*,const char*), void *closure)
+{
+	return json_object_is_type(object, json_type_object)
+		? object_until(object, callback, closure)
+		: 0;
+}
+
+/* apply callback until it returns not null to items of an object or to it if not an object */
+int rp_jsonc_optobject_until(struct json_object *object, int (*callback)(void*,struct json_object*,const char*), void *closure)
+{
+	return json_object_is_type(object, json_type_object)
+		? object_until(object, callback, closure)
+		: callback(closure, object, NULL);
+}
+
+/* apply callback to items or object */
+int rp_jsonc_until(struct json_object *object, int (*callback)(void*,struct json_object*,const char*), void *closure)
+{
+	int i, n, res;
+	if (!object)
+		res = 0;
+	else if (json_object_is_type(object, json_type_object))
+		res = object_until(object, callback, closure);
+	else if (!json_object_is_type(object, json_type_array))
+		res = callback(closure, object, NULL);
+	else {
+		n = (int)json_object_array_length(object);
+		for (res = i = 0 ; res == 0 && i < n ; i++)
+			res = callback(closure, json_object_array_get_idx(object, (rp_jsonc_index_t)i), NULL);
+	}
+	return res;
+}
+
+/**
  * Clones the 'object' for the depth 'subdepth'. The object 'object' is
  * duplicated and all its fields are cloned with the depth 'subdepth'.
  *
