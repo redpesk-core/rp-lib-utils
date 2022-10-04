@@ -109,6 +109,8 @@ extern const char *rp_expand_vars_search_env(const char *name, size_t len);
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
  *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
+ *
  * The resolution of the variables if done by the function.
  *
  * @param value  the string to expand
@@ -124,6 +126,8 @@ extern char *rp_expand_vars_function(const char *value, int copy, rp_expand_vars
  * Return the result of expanding variables of 'value'.
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
+ *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
  *
  * The resolution of the variables if done by the function.
  *
@@ -141,6 +145,8 @@ extern char *rp_expand_vars_callback(const char *value, int copy, rp_expand_vars
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
  *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
+ *
  * The resolution of the variables if done by searching in the null terminated array
  * of array of null terminated of variable definitions in the form "NAME=VALUE..."
  *
@@ -156,6 +162,8 @@ extern char *rp_expand_vars_array(const char *value, int copy, char ***varsarray
  * Return the result of expanding variables of 'value'.
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
+ *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
  *
  * The resolution of the variables if done by searching in the null terminated array
  * of variable definitions in the form "NAME=VALUE..."
@@ -173,6 +181,8 @@ extern char *rp_expand_vars_only(const char *value, int copy, char **vars);
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
  *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
+ *
  * The resolution of the variables if done using the environment
  *
  * @param value  the string to expand
@@ -186,6 +196,8 @@ extern char *rp_expand_vars_env_only(const char *value, int copy);
  * Return the result of expanding variables of 'value'.
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
+ *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
  *
  * The resolution of the variables if done by searching
  *   1. in the null terminated array 'before'
@@ -206,6 +218,8 @@ extern char *rp_expand_vars(const char *value, int copy, char **before, char **a
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
  *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
+ *
  * The resolution of the variables if done by searching
  *   1. in the null terminated array 'vars'
  *   2. in the environment
@@ -223,6 +237,8 @@ extern char *rp_expand_vars_first(const char *value, int copy, char **vars);
  * When 'value' does not contains variables, returns either NULL (when 'copy' == 0)
  * or a copy of value (when 'copy' != 0).
  *
+ * The variables can appear in one of the form ${...} or $(...) or $ALPHA_NUM
+ *
  * The resolution of the variables if done by searching
  *   1. in the environment
  *   2. in the null terminated array 'vars''
@@ -234,5 +250,3 @@ extern char *rp_expand_vars_first(const char *value, int copy, char **vars);
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
 extern char *rp_expand_vars_last(const char *value, int copy, char **vars);
-
-
