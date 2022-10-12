@@ -406,7 +406,9 @@ static int search_in_dir(struct search *search, DIR *dir, struct direntlist *pre
 
 	search->entry.action = rp_path_search_directory_enter;
 	if (!stop && (flags & RP_PATH_SEARCH_RECURSIVE)
-		&& (!search->filter || search->filter(search->filter_closure, &search->entry))) {
+		&& (!(flags & RP_PATH_SEARCH_DIRECTORY)
+			|| !search->filter
+			|| search->filter(search->filter_closure, &search->entry))) {
 
 		onlen = search->entry.namelen;
 		oplen = search->entry.pathlen;
@@ -572,7 +574,7 @@ static int matchnamecb(void *parameter, const rp_path_search_entry_t *entry)
 	if (mn->len_filename != 0) {
 		if (len != mn->len_filename)
 			return 0;
-		if (memcmp(mn->extension, entry->name, mn->len_filename) != 0)
+		if (memcmp(mn->filename, entry->name, mn->len_filename) != 0)
 			return 0;
 	}
 	return 1;
