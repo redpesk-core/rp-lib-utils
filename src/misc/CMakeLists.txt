@@ -7,6 +7,7 @@ addsrc(
 	rp-file.c
 	rp-path-search.c
 	rp-pearson.c
+	rp-read-fd-name.c
 	rp-socket.c
 	rp-uuid.c
 	sha1.c
@@ -17,6 +18,7 @@ addhdr(
 	rp-file.h
 	rp-path-search.h
 	rp-pearson.h
+	rp-read-fd-name.h
 	rp-socket.h
 	rp-uuid.h
 	sha1.h
