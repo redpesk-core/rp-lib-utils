@@ -23,7 +23,7 @@ test -f CMakeCache.txt -a -f Makefile || \
 cmake \
 	-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX:=$PREFIX} \
 	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:=Debug} \
-	..
+	"$h"
 
 make -j "$@"
 
