@@ -62,10 +62,12 @@ enum rp_jsonc_error_codes {
 	rp_jsonc_error_null_key,
 	rp_jsonc_error_null_string,
 	rp_jsonc_error_out_of_range,
-	rp_jsonc_error_incomplete,
+	rp_jsonc_error_dictionary_incomplete,
 	rp_jsonc_error_missfit_type,
 	rp_jsonc_error_key_not_found,
 	rp_jsonc_error_bad_base64,
+	rp_jsonc_error_array_incomplete,
+	rp_jsonc_error_array_extra_field,
 	_rp_jsonc_error_count_
 };
 

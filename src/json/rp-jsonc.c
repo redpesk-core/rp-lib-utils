@@ -54,10 +54,12 @@ static const char *pack_errors[_rp_jsonc_error_count_] =
 	[rp_jsonc_error_null_key] = "key is NULL",
 	[rp_jsonc_error_null_string] = "string is NULL",
 	[rp_jsonc_error_out_of_range] = "array too small",
-	[rp_jsonc_error_incomplete] = "incomplete container",
+	[rp_jsonc_error_dictionary_incomplete] = "dictionary either incomplete or with extra item",
 	[rp_jsonc_error_missfit_type] = "missfit of type",
 	[rp_jsonc_error_key_not_found] = "key not found",
-	[rp_jsonc_error_bad_base64] = "bad base64 encoding"
+	[rp_jsonc_error_bad_base64] = "bad base64 encoding",
+	[rp_jsonc_error_array_incomplete] = "incomplete array",
+	[rp_jsonc_error_array_extra_field] = "array with extra item"
 };
 
 /* position of the error code */
@@ -578,8 +580,14 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 		case '!':
 			if (*d != xacc[0] || top == NULL)
 				goto invalid_character;
-			if (!ignore && top->index != top->count)
-				goto incomplete;
+			if (!ignore && top->index != top->count) {
+				if (xacc[0] == '}')
+					goto dictionary_incomplete;
+				else if (top->index < top->count)
+					goto array_incomplete;
+				else
+					goto array_extra_field;
+			}
 			/*@fallthrough@*/
 		case '*':
 			acc = xacc;
@@ -635,8 +643,14 @@ null_key:
 out_of_range:
 	rc = rp_jsonc_error_out_of_range;
 	goto error;
-incomplete:
-	rc = rp_jsonc_error_incomplete;
+dictionary_incomplete:
+	rc = rp_jsonc_error_dictionary_incomplete;
+	goto error;
+array_incomplete:
+	rc = rp_jsonc_error_array_incomplete;
+	goto error;
+array_extra_field:
+	rc = rp_jsonc_error_array_extra_field;
 	goto error;
 missfit:
 	rc = rp_jsonc_error_missfit_type;
