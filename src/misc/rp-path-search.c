@@ -157,7 +157,7 @@ int add_dir_expanded(
 		rp_path_search_t *parent
 ) {
 	int rc;
-	rp_path_search_t *head, *iter, *tail, *tmp;
+	rp_path_search_t *head;
 
 	head = rp_path_search_addref(parent);
 	rc = dirs == NULL ? X_EINVAL : make(&head, dirs, before);
