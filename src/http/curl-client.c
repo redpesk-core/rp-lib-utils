@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 "IoT.bzh"
- * Author "Fulup Ar Foll" <fulup@iot.bzh>
+ * Copyright (C) 2021-2023 IoT.bzh Company
+ * Author: "Fulup Ar Foll" <fulup@iot.bzh>
  *
  * Use of this source code is governed by an MIT-style
  * license that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
