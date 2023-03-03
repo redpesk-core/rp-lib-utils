@@ -155,6 +155,8 @@ int rp_verbose_colorize(int value)
 
 	if (value >= 0)
 		colorized = 1 + (is_tty() && value);
+	else if (!colorized)
+		colorized = 1 + is_tty();
 	return colorized - 1;
 }
 
