@@ -1,0 +1,4 @@
+
+add	pkg	librp-utils librp-utils-static
+req	pkg	json-c yaml-0.1 libsystemd>=222
+
