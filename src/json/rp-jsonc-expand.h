@@ -124,7 +124,7 @@ extern int rp_jsonc_expand_path_is_array(rp_jsonc_expand_path_t path, int index)
 extern const char *rp_jsonc_expand_path_key(rp_jsonc_expand_path_t path, int index);
 
 /**
- * Returns the key inspected for the array at index
+ * Returns the index inspected for the array at index
  * Valid index are from 0 for the root to LENGTH-1
  *
  * @param path the queried path
