@@ -28,7 +28,12 @@
 
 #include "rp-verbose.h"
 
+#ifndef RP_VERBOSE_CONTEXT_DEPTH
+#define RP_VERBOSE_CONTEXT_DEPTH 8
+#endif
 
+static const char *contexts[RP_VERBOSE_CONTEXT_DEPTH];
+static unsigned short contexts_depth;
 
 /**********************************************************************************
 * Log with SYSLOG or SYSTEMD
@@ -126,16 +131,17 @@ static const char *colored_prefixes[] = {
 	"<7> " RP_VERBOSE_COLOR_DEBUG		"    DEBUG"	RP_VERBOSE_COLOR_DEFAULT
 };
 
-static const char chars[] =  { '\n', '?', ':', ' ', '[', ',', ']' };
+static const char chars[] =  { '\n', '?', ':', ' ', '[', ']', ',', ' ' };
 #define CHAR_EOL		(&chars[0])
 #define CHAR_QUESTION		(&chars[1])
 #define CHAR_COLON		(&chars[2])
 #define CHAR_SPACE		(&chars[3])
 #define CHAR_OBRACE		(&chars[4])
-#define CHAR_COMMA		(&chars[5])
-#define CHAR_CBRACE		(&chars[6])
+#define CHAR_CBRACE		(&chars[5])
+#define CHAR_COMMA		(&chars[6])
 #define CHARS_COLON_SPACE	CHAR_COLON
 #define CHARS_SPACE_OBRACE	CHAR_SPACE
+#define CHARS_COMMA_SPACE	CHAR_COMMA
 
 static x_mutex_t mutex = X_MUTEX_INITIALIZER;
 
@@ -147,7 +153,6 @@ static int is_tty()
 		tty = 1 + isatty(STDERR_FILENO);
 	return tty - 1;
 }
-
 
 int rp_verbose_colorize(int value)
 {
@@ -170,7 +175,8 @@ static void _vverbose_(int loglevel, const char *file, int line, const char *fun
 	char buffer[4000];
 	char lino[40]; /* line number with more than 39 digits are difficult to find */
 	int n, rc, addcolor;
-	struct iovec iov[20];
+	unsigned idx;
+	struct iovec iov[20 + RP_VERBOSE_CONTEXT_DEPTH + RP_VERBOSE_CONTEXT_DEPTH];
 	int tty;
 
 	/* check if tty (2) or not (1) */
@@ -189,6 +195,12 @@ static void _vverbose_(int loglevel, const char *file, int line, const char *fun
 	iov[1].iov_len = 2;
 
 	n = 2;
+	for (idx = 0 ; idx < contexts_depth && idx < RP_VERBOSE_CONTEXT_DEPTH ; idx++) {
+		iov[n].iov_base = (void*)contexts[idx];
+		iov[n++].iov_len = strlen(contexts[idx]);
+		iov[n].iov_base = (void*)CHARS_COMMA_SPACE;
+		iov[n++].iov_len = 0;
+	}
 	if (fmt) {
 		iov[n].iov_base = buffer;
 		errno = saverr;
@@ -405,3 +417,17 @@ const char *rp_verbose_name_of_level(int level)
 {
 	return level == CROP_LOGLEVEL(level) ? names[level] : NULL;
 }
+
+void rp_verbose_push(const char *context)
+{
+	if (contexts_depth < RP_VERBOSE_CONTEXT_DEPTH)
+		contexts[contexts_depth] = context;
+	contexts_depth++;
+}
+
+void rp_verbose_pop()
+{
+	if (contexts_depth)
+		contexts_depth--;
+}
+

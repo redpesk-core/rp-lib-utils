@@ -101,6 +101,9 @@ extern int rp_verbose_is_colorized();
 extern int rp_verbose_level_of_name(const char *name);
 extern const char *rp_verbose_name_of_level(int level);
 
+extern void rp_verbose_push(const char *context);
+extern void rp_verbose_pop();
+
 
 typedef void (*rp_verbose_observer_cb)(
 	int loglevel,
