@@ -1,5 +1,6 @@
 
 # ensure relocatable
+include_directories(http json misc sys yaml)
 add_compile_options(-fPIC -ffunction-sections -fdata-sections)
 add_link_options(-Wl,--as-needed -Wl,--gc-sections)
 
