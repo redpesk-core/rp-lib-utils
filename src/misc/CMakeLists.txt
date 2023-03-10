@@ -3,6 +3,7 @@ reqmod(libsystemd>=222)
 # add our files
 addsrc(
 	rp-base64.c
+	rp-enum-map.c
 	rp-expand-vars.c
 	rp-file.c
 	rp-path-search.c
@@ -14,6 +15,7 @@ addsrc(
 )
 addhdr(
 	rp-base64.h
+	rp-enum-map.h
 	rp-expand-vars.h
 	rp-file.h
 	rp-path-search.h
