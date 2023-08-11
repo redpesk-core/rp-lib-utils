@@ -121,7 +121,7 @@ extern void rp_path_search_unref(rp_path_search_t *paths);
 * (in one of the form ${...} or $(...) or $ALPHA_NUM)
 * that will be expanded.
 *
-* Synonym of rp_path_search_make_dirs(paths, dirs, 1, NULL)
+* Synonym of rp_path_search_add_dirs(paths, dirs, 1, NULL)
 *
 * @param paths address receiving the created path's list
 * @param dirs  string indicating the directories colon separated

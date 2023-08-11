@@ -128,16 +128,16 @@ static int add(rp_path_search_t **paths, const char *value, int length, int befo
 static int make(rp_path_search_t **paths, const char *dirs, int before)
 {
 	int rc;
-	char *where;
+	const char *where;
 
 	/* drop any leading collon */
 	while (*dirs == PATH_SEPARATOR_CHARACTER)
 		dirs++;
 	/* search the first colon */
-	where = strchr(dirs, PATH_SEPARATOR_CHARACTER);
-	if (where == NULL) {
+	for (where = dirs ; *where && *where != PATH_SEPARATOR_CHARACTER ; where++);
+	if (!*where) {
 		/* no colon just add it */
-		rc = add(paths, dirs, (int)strlen(dirs), before);
+		rc = add(paths, dirs, (int)(where - dirs), before);
 	}
 	else {
 		/* create recursively in direct or reverse order */
