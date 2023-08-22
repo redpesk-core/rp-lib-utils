@@ -2,8 +2,10 @@ reqmod(libsystemd>=222)
 addsrc(
 	rp-verbose.c
 	rp-systemd.c
+	rp-socket.c
 )
 addhdr(
 	rp-verbose.h
 	rp-systemd.h
+	rp-socket.h
 )

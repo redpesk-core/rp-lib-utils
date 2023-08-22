@@ -236,7 +236,7 @@ static int open_tcp(const char *spec, int server, int reuseaddr)
 /******************************************************************************/
 #ifndef WITHOUT_SYSTEMD
 
-#include "../sys/rp-systemd.h"
+#include "rp-systemd.h"
 
 /**
  * open a systemd socket for server
