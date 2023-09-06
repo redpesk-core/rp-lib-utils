@@ -1,2 +1,5 @@
+* version 0.0.6
+- move rp-socket to sys
+
 * version 0.0.5
 - fix abstract sockect length
