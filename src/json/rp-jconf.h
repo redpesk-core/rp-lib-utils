@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 IoT.bzh Company
+ * Copyright (C) 2015-2024 IoT.bzh Company
  * Author jobol
  *
  * $RP_BEGIN_LICENSE$
