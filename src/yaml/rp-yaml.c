@@ -217,11 +217,23 @@ y2j_node(y2j_t *y2jt, json_object **node)
 
 	case YAML_SCALAR_EVENT:
 		text = (char*)y2jt->event.data.scalar.value;
-		value = json_tokener_parse(text);
-		if (value == NULL && strcmp(text, "null"))
+		switch (y2jt->event.data.scalar.style) {
+		case YAML_ANY_SCALAR_STYLE:
+		case YAML_PLAIN_SCALAR_STYLE:
+			if (strcmp(text, "null") == 0) {
+				value = NULL;
+				break;
+			}
+			value = json_tokener_parse(text);
+			if (value != NULL) {
+				json_object_set_serializer(value, NULL, NULL, NULL); /* unset userdata */
+				break;
+			}
+			/*@fallthrough@*/
+		default:
 			value = json_object_new_string(text);
-		else
-			json_object_set_serializer(value, NULL, NULL, NULL); /* unset userdata */
+			break;
+		}
 		*node = value;
 		y2j_rec_line(y2jt, value, y2jt->event.start_mark.line);
 		rc = y2j_rec_anchor(y2jt, value, (char*)y2jt->event.data.sequence_start.anchor);
