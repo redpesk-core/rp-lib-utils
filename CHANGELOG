@@ -1,3 +1,6 @@
+*version 0.0.7
+- correctly read quoted numbers, booleans or nulls
+
 * version 0.0.6
 - move rp-socket to sys
 
