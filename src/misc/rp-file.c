@@ -24,14 +24,14 @@
 
 #define _GNU_SOURCE
 
+#include "rp-file.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-#include "rp-file.h"
 
 int rp_file_get(const char *file, char **content, size_t *size)
 {

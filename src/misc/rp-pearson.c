@@ -22,8 +22,6 @@
  * SOFTWARE.
  */
 
-#include <stddef.h>
-
 #include "rp-pearson.h"
 
 static uint8_t TP4[16] = {

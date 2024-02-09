@@ -25,13 +25,14 @@
 
 #ifndef WITHOUT_SYSTEMD
 
+#include "rp-systemd.h"
+
 #include <unistd.h>
 
 #include <systemd/sd-event.h>
 #include <systemd/sd-bus.h>
 #include <systemd/sd-daemon.h>
 
-#include "rp-systemd.h"
 #include "x-errno.h"
 
 /*

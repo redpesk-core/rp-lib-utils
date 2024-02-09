@@ -26,5 +26,12 @@
 
 #ifndef WITHOUT_SYSTEMD
 #endif
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 extern int rp_systemd_fds_for(const char *name);
+
+#ifdef	__cplusplus
+}
+#endif

@@ -23,6 +23,12 @@
  */
 #pragma once
 
+#include <stddef.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
 * @brief build the url and escape its arguments in a preallocated buffer
 * @param base NULL or base name of the URL (ex: "https://u:p@server.int:4444/appli")
@@ -79,5 +85,9 @@ extern const char **rp_unescape_args(const char *args);
 * @return NULL or the unescaped text that must be freed using free
 */
 extern char *rp_unescape(const char *text, size_t textlen, size_t *reslength);
+
+#ifdef	__cplusplus
+}
+#endif
 
 /* vim: set colorcolumn=80: */

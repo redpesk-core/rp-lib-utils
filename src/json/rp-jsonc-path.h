@@ -26,6 +26,10 @@
 
 #include <json-c/json.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * Computes the path location of jso within root. The returned path is a string
  * that must be freed by the caller. NULL is returned if jso is not part of root.
@@ -36,3 +40,7 @@
  * @return NULL if jso is not part of root or a string that must be freed using 'free'
  */
 extern char *rp_jsonc_path(struct json_object *root, struct json_object *jso);
+
+#ifdef	__cplusplus
+}
+#endif

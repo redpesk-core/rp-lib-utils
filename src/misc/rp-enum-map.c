@@ -22,10 +22,11 @@
 
 #define _GNU_SOURCE
 
+#include "rp-enum-map.h"
+
 #include <stdbool.h>
 #include <string.h>
 
-#include "rp-enum-map.h"
 #include "rp-verbose.h"
 
 static const rp_enum_map_t *search_label(const rp_enum_map_t *keyvals, const char *label)

@@ -25,6 +25,8 @@
 
 #include "rp-base64.h"
 
+#include <stdlib.h>
+
 int rp_base64_encode(
 		const uint8_t *data,
 		size_t datalen,

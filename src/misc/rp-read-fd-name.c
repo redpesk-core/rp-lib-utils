@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "rp-read-fd-name.h"
 
 #include <stdlib.h>
 #include <unistd.h>

@@ -23,11 +23,11 @@
  */
 #define _GNU_SOURCE
 
+#include "rp-escape.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "rp-escape.h"
 
 /*
  * Test if 'c' is to be escaped or not.

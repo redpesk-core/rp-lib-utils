@@ -24,6 +24,12 @@
 
 #pragma once
 
+#include <stddef.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * Reads the 'file' relative to 'dfd' (see openat) in a freshly
  * allocated memory and returns it in 'content' and 'size' (if not NULL).
@@ -79,3 +85,7 @@ extern int rp_file_put_at(int dfd, const char *file, const void *content, size_t
  * @return 0 in case of success or else -errno
  */
 extern int rp_file_put(const char *file, const void *content, size_t size);
+
+#ifdef	__cplusplus
+}
+#endif

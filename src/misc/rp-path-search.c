@@ -25,12 +25,13 @@
  * limitations under the License.
  */
 
+#include "rp-path-search.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
 
-#include "rp-path-search.h"
 #include "rp-expand-vars.h"
 #include "rp-file.h"
 

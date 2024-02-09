@@ -27,6 +27,10 @@
 
 #include <stdarg.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /*
  Log level is defined by syslog standard:
        KERN_EMERG             0        System is unusable
@@ -127,3 +131,7 @@ extern rp_verbose_observer_cb rp_verbose_observer;
 #define RP_VERBOSE_COLOR_API		"\x1B[1m"
 #define RP_VERBOSE_COLOR_FILE		"\x1B[90m"
 #define RP_VERBOSE_COLOR_DEFAULT	"\x1B[0m"
+
+#ifdef	__cplusplus
+}
+#endif

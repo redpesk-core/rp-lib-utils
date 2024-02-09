@@ -24,8 +24,12 @@
 
 #pragma once
 
-#include <stdlib.h>
+#include <stddef.h>
 #include <stdint.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 /*
  * Returns a 8 bits hash value for the 'text'.
@@ -172,3 +176,7 @@ _DEF_RP_PEARSON_(7)
  */
 inline uint8_t rp_pearson7_len(const char *text, size_t length)
 _DEF_RP_PEARSON_LEN_(7)
+
+#ifdef	__cplusplus
+}
+#endif

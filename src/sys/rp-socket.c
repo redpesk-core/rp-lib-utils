@@ -23,6 +23,8 @@
 
 #define _GNU_SOURCE
 
+#include "rp-socket.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,8 +33,6 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-
-#include "rp-socket.h"
 
 #include "../sys/rp-verbose.h"
 #include "../sys/x-socket.h"

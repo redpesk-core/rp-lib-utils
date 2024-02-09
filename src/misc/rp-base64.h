@@ -25,8 +25,12 @@
 
 #pragma once
 
-#include <stdlib.h>
+#include <stddef.h>
 #include <stdint.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 #define rp_base64_ok        0
 #define rp_base64_nomem     -1
@@ -79,3 +83,7 @@ int rp_base64_decode(
 	uint8_t **decoded,
 	size_t *decodedlen,
 	int url);
+
+#ifdef	__cplusplus
+}
+#endif

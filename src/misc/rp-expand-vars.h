@@ -29,6 +29,10 @@
 
 #include <stddef.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * structure for returning the value found
  */
@@ -250,3 +254,7 @@ extern char *rp_expand_vars_first(const char *value, int copy, char **vars);
  * @return The result of expanding variables of value or NULL if lake of variables and copy == 0
  */
 extern char *rp_expand_vars_last(const char *value, int copy, char **vars);
+
+#ifdef	__cplusplus
+}
+#endif

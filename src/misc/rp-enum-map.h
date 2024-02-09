@@ -24,6 +24,10 @@
 
 #include <stdbool.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /** structure for TEXT <> INTEGER association */
 typedef struct
 {
@@ -76,3 +80,6 @@ extern int rp_enum_map_value_def(const rp_enum_map_t *keyvals, const char *label
 */
 extern const char *rp_enum_map_label_def(const rp_enum_map_t *keyvals, int value, const char *def);
 
+#ifdef	__cplusplus
+}
+#endif

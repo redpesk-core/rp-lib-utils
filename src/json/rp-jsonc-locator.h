@@ -26,6 +26,10 @@
 
 #include <json-c/json.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * opaque type for location objects
  */
@@ -92,3 +96,7 @@ extern void rp_jsonc_locator_copy(struct json_object *from, struct json_object *
  * @return 0 in case of success or the negative value of detected errno
  */
 extern int rp_jsonc_locator_from_file(struct json_object **jso, const char *filename);
+
+#ifdef	__cplusplus
+}
+#endif

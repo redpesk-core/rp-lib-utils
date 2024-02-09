@@ -23,14 +23,13 @@
  */
 #define _GNU_SOURCE
 
+#include "rp-curl.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
-#include <curl/curl.h>
-
-#include "rp-curl.h"
 #include "rp-escape.h"
 
 

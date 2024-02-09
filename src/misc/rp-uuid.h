@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief length of binary buffer for UUID in bytes
  */
@@ -84,3 +88,7 @@ int rp_uuid_text_to_bin(const char * from, rp_uuid_binary_t to);
  * @return 1 on success or 0 on error
  */
 int rp_uuid_check_text(const char *text);
+
+#ifdef	__cplusplus
+}
+#endif

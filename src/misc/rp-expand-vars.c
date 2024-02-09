@@ -26,12 +26,12 @@
  */
 
 
+#include "rp-expand-vars.h"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
-
-#include "rp-expand-vars.h"
 
 #if !defined(RP_EXPAND_VARS_LIMIT)
 #    define  RP_EXPAND_VARS_LIMIT           16384

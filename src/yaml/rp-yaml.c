@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
+#include "rp-yaml.h"
+
 #include <stdio.h>
 #include <errno.h>
 #include <limits.h>
 
 #include <yaml.h>
 #include <json-c/json.h>
-
-#include "rp-yaml.h"
 
 #ifndef RP_YAML_NOLOC
 #include "../json/rp-jsonc-locator.h"

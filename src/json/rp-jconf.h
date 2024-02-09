@@ -26,7 +26,9 @@
 #include <stdbool.h>
 #include <json-c/json.h>
 
-#include "rp-enum-map.h"
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 extern bool jconf_any(
 		json_object *conf,
@@ -58,6 +60,8 @@ extern bool jconf_string(
 		const char **store,
 		const char *defvalue);
 
+#include "rp-enum-map.h"
+
 extern bool jconf_enum(
 		json_object *conf,
 		const char *key,
@@ -66,3 +70,6 @@ extern bool jconf_enum(
 		int defvalue,
 		const rp_enum_map_t *keyvals);
 
+#ifdef	__cplusplus
+}
+#endif

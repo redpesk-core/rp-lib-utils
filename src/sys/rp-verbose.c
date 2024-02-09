@@ -23,10 +23,9 @@
  SOFTWARE.
 */
 
-#include <stdio.h>
-#include <stdarg.h>
-
 #include "rp-verbose.h"
+
+#include <stdio.h>
 
 #ifndef RP_VERBOSE_CONTEXT_DEPTH
 #define RP_VERBOSE_CONTEXT_DEPTH 8

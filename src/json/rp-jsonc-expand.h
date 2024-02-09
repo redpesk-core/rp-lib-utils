@@ -26,6 +26,10 @@
 
 #include <json-c/json.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * The expansion path is used to retrieve information on
  * the path of an object to "expand"
@@ -134,3 +138,7 @@ extern const char *rp_jsonc_expand_path_key(rp_jsonc_expand_path_t path, int ind
  *         or otherwise zero
  */
 extern size_t rp_jsonc_expand_path_index(rp_jsonc_expand_path_t path, int index);
+
+#ifdef	__cplusplus
+}
+#endif

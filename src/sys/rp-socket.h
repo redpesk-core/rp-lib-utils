@@ -23,6 +23,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * open socket for client or server with a default scheme
  *
@@ -46,3 +50,7 @@ static inline int rp_socket_open(const char *uri, int server)
 {
 	return rp_socket_open_scheme(uri, server, 0);
 }
+
+#ifdef	__cplusplus
+}
+#endif

@@ -26,6 +26,10 @@
 
 #include <stddef.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * Compute the length of string as escaped for JSON
  * without the enclosing double quotes.
@@ -89,3 +93,6 @@ extern size_t rp_jsonstr_string_escape_unsafe(char *dest, const char *string, si
  */
 extern int rp_jsonstr_test(const char *string, size_t stringlenmax, size_t *size);
 
+#ifdef	__cplusplus
+}
+#endif

@@ -27,6 +27,10 @@
 
 #include <curl/curl.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 extern int rp_curl_perform (CURL * curl, char **result, size_t * size);
 
 extern void rp_curl_do(CURL *curl, void (*callback)(void *closure, int status, CURL *curl, const char *result, size_t size), void *closure);
@@ -53,3 +57,6 @@ extern CURL *rp_curl_prepare_post_unescaped(const char *base, const char *path, 
 
 extern CURL *rp_curl_prepare_post_escaped(const char *base, const char *path, const char * const *args);
 
+#ifdef	__cplusplus
+}
+#endif

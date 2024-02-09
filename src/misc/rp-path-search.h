@@ -27,6 +27,12 @@
 
 #pragma once
 
+#include <stddef.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
 * structure for searching in path list
 */
@@ -310,3 +316,7 @@ extern int rp_path_search(rp_path_search_t *paths, int flags, rp_path_search_ite
 * 
 */
 extern int rp_path_search_match(rp_path_search_t *paths, int flags, const char *name, const char *extension, rp_path_search_item_cb callback, void *closure);
+
+#ifdef	__cplusplus
+}
+#endif

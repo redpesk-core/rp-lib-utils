@@ -24,7 +24,12 @@
 
 #pragma once
 
-#include <stdlib.h>
+#include <stddef.h>
+#include <sys/types.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief read in buffer the filename attached to the file descriptor fileno
@@ -36,3 +41,7 @@
  * @return the count of byte read or -1 in case of error
  */
 extern ssize_t rp_read_fd_name(int fileno, char *buffer, size_t size);
+
+#ifdef	__cplusplus
+}
+#endif
