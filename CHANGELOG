@@ -1,4 +1,7 @@
-*version 0.0.7
+* version 0.0.8
+- improve usability of includes
+
+* version 0.0.7
 - correctly read quoted numbers, booleans or nulls
 
 * version 0.0.6
