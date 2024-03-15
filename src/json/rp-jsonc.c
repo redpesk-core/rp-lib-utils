@@ -23,10 +23,11 @@
  SOFTWARE.
 */
 
+#include "rp-jsonc.h"
+
 #include <string.h>
 #include <limits.h>
 
-#include "rp-jsonc.h"
 #include "../misc/rp-base64.h"
 
 #define STACKCOUNT  32

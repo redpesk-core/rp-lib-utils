@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
+#include "rp-jsonc-locator.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
 #include <malloc.h>
 #include <string.h>
 #include <errno.h>
-
-#include "rp-jsonc-locator.h"
 
 #if JSON_C_MINOR_VERSION < 13 /************* DONT IMPLEMENT LOCATOR *********/
 

@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
+#include "rp-jsonc-path.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
 #include <malloc.h>
 #include <string.h>
 #include <errno.h>
-
-#include "rp-jsonc-path.h"
 
 /**
  * Structure recording the path path of the expansion

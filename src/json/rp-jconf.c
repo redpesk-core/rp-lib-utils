@@ -21,11 +21,12 @@
  * $RP_END_LICENSE$
 */
 
+#include "rp-jconf.h"
+
 #include <stdbool.h>
 #include <json-c/json.h>
 
 #include "rp-enum-map.h"
-#include "rp-jconf.h"
 #include "rp-verbose.h"
 
 static bool jconf_get(
