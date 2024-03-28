@@ -31,9 +31,14 @@
 #include <string.h>
 #include <errno.h>
 
-#if (JSON_C_VERSION_NUM == 0 && JSON_C_MINOR_VERSION < 13) || !defined(__GLIBC_PREREQ) || __GLIBC_PREREQ(2,34)
+#if (JSON_C_VERSION_NUM == 0 && JSON_C_MINOR_VERSION < 13) || !defined(__GLIBC_PREREQ)
 # undef WITHOUT_JSON_LOCATOR
 # define WITHOUT_JSON_LOCATOR 1
+#else
+# if __GLIBC_PREREQ(2,34)
+#  undef WITHOUT_JSON_LOCATOR
+#  define WITHOUT_JSON_LOCATOR 1
+# endif
 #endif
 
 #if WITHOUT_JSON_LOCATOR /************* DONT IMPLEMENT LOCATOR *********/
