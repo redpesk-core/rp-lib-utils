@@ -31,7 +31,12 @@
 #include <string.h>
 #include <errno.h>
 
-#if JSON_C_MINOR_VERSION < 13 /************* DONT IMPLEMENT LOCATOR *********/
+#if (JSON_C_VERSION_NUM == 0 && JSON_C_MINOR_VERSION < 13) || !defined(__GLIBC_PREREQ) || __GLIBC_PREREQ(2,34)
+# undef WITHOUT_JSON_LOCATOR
+# define WITHOUT_JSON_LOCATOR 1
+#endif
+
+#if WITHOUT_JSON_LOCATOR /************* DONT IMPLEMENT LOCATOR *********/
 
 int rp_jsonc_locator_begin(rp_jsonc_locator_t **locator, const char *name)
 {
@@ -43,7 +48,7 @@ void rp_jsonc_locator_end(rp_jsonc_locator_t *locator)
 {
 }
 
-int rp_jsonc_locator_set_location(rp_jsonc_locator_t *locator, unsigned *linenum, struct json_object *jso)
+int rp_jsonc_locator_set_location(rp_jsonc_locator_t *locator, struct json_object *jso, unsigned linenum)
 {
 	return 0;
 }
@@ -55,6 +60,12 @@ const char *rp_jsonc_locator_locate(struct json_object *jso, unsigned *linenum)
 
 void rp_jsonc_locator_copy(struct json_object *from, struct json_object *to)
 {
+}
+
+int rp_jsonc_locator_from_file(struct json_object **jso, const char *filename)
+{
+	*jso = json_object_from_file(filename);
+	return *jso ? 0 : -ENOMEM;
 }
 
 #else /************* IMPLEMENT LOCATOR *************************/
@@ -224,20 +235,6 @@ void rp_jsonc_locator_copy(struct json_object *from, struct json_object *to)
 		}
 	}
 }
-
-#endif
-
-
-#if JSON_C_MINOR_VERSION < 13 || __GLIBC_PREREQ(2,34)
- /************* DONT IMPLEMENT LOCATOR *********/
-
-int rp_jsonc_locator_from_file(struct json_object **jso, const char *filename)
-{
-	*jso = json_object_from_file(filename);
-	return *jso ? 0 : -ENOMEM;
-}
-
-#else
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
