@@ -23,7 +23,7 @@
  */
 
 
-#ifndef WITHOUT_SYSTEMD
+#if WITH_SYSTEMD
 
 #include "rp-systemd.h"
 

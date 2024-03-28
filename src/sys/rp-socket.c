@@ -106,7 +106,7 @@ static struct entry entries[] = {
 };
 
 /******************************************************************************/
-#ifndef WITHOUT_UNIX_SOCKET
+#if !WITHOUT_UNIX_SOCKET
 /**
  * open a unix domain socket for client or server
  *
@@ -234,7 +234,7 @@ static int open_tcp(const char *spec, int server, int reuseaddr)
 }
 
 /******************************************************************************/
-#ifndef WITHOUT_SYSTEMD
+#if WITH_SYSTEMD
 
 #include "rp-systemd.h"
 
@@ -317,7 +317,7 @@ static int open_uri(const char *uri, int server, const char *scheme)
 
 	/* open the socket */
 	switch (e->type) {
-#ifndef WITHOUT_UNIX_SOCKET
+#if !WITHOUT_UNIX_SOCKET
 	case Type_Unix:
 		fd = open_unix(uri, server);
 		break;
@@ -325,7 +325,7 @@ static int open_uri(const char *uri, int server, const char *scheme)
 	case Type_Inet:
 		fd = open_tcp(uri, server, !e->noreuseaddr);
 		break;
-#ifndef WITHOUT_SYSTEMD
+#if WITH_SYSTEMD
 	case Type_Systemd:
 		if (server)
 			fd = open_systemd(uri);

@@ -1,11 +1,19 @@
-reqmod(libsystemd>=222)
+optmod(libsystemd>=222 WITH_SYSTEMD)
+
 addsrc(
 	rp-verbose.c
-	rp-systemd.c
 	rp-socket.c
 )
 addhdr(
 	rp-verbose.h
-	rp-systemd.h
 	rp-socket.h
 )
+
+if(WITH_SYSTEMD)
+	addsrc(
+		rp-systemd.c
+	)
+	addhdr(
+		rp-systemd.h
+	)
+endif()

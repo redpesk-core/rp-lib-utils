@@ -24,8 +24,6 @@
 
 #pragma once
 
-#ifndef WITHOUT_SYSTEMD
-#endif
 #ifdef	__cplusplus
 extern "C" {
 #endif
