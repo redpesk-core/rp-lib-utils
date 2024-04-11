@@ -201,8 +201,10 @@ static int
 y2j_node(y2j_t *y2jt, json_object **node)
 {
 	int rc;
-	char *text;
+	char *text, *pend;
 	json_object *value, *item;
+	long lv;
+	double ld;
 
 	*node = NULL;
 	switch (y2jt->event.type) {
@@ -224,9 +226,25 @@ y2j_node(y2j_t *y2jt, json_object **node)
 				value = NULL;
 				break;
 			}
-			value = json_tokener_parse(text);
-			if (value != NULL) {
-				json_object_set_serializer(value, NULL, NULL, NULL); /* unset userdata */
+			if (strcmp(text, "true") == 0) {
+				value = json_object_new_boolean(1);
+				break;
+			}
+			if (strcmp(text, "false") == 0) {
+				value = json_object_new_boolean(0);
+				break;
+			}
+			lv = strtol(text, &pend, 0);
+			if (*pend == '\0') {
+				value = json_object_new_int64(lv);
+				break;
+			}
+			ld = strtod(text, &pend);
+			if (*pend == '\0') {
+				value = json_object_new_double_s(ld, text);
+#ifndef RP_YAML_NOLOC
+                                json_object_set_serializer(value, NULL, NULL, NULL); /* unset userdata */
+#endif
 				break;
 			}
 			/*@fallthrough@*/
