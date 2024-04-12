@@ -305,7 +305,6 @@ int rp_path_search_filter(
 	void *filter_closure
 );
 
-
 /**
 */
 extern int rp_path_search(rp_path_search_t *paths, int flags, rp_path_search_item_cb callback, void *closure);

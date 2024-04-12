@@ -1,17 +1,27 @@
-* vervion 0.0.9
+* futur
+
+- explain that, for jsonc wrap/unwrap, I is for int64_t
+- add u and U indicators to jsonc wrap/unwrap
+
+* version 0.0.9
+
 - more useable includes
 - allow conditonnal compilation adapted to environment
 - can build on top of musl
 - rework and improved read of YAML files
 
 * version 0.0.8
+
 - improve usability of includes
 
 * version 0.0.7
+
 - correctly read quoted numbers, booleans or nulls
 
 * version 0.0.6
+
 - move rp-socket to sys
 
 * version 0.0.5
+
 - fix abstract sockect length

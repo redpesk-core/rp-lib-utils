@@ -197,12 +197,22 @@ int rp_jsonc_vpack(struct json_object **result, const char *desc, va_list args)
 				goto out_of_memory;
 			break;
 		case 'i':
-			obj = json_object_new_int(va_arg(args, int));
+			obj = json_object_new_int64((int64_t)va_arg(args, int));
 			if (!obj)
 				goto out_of_memory;
 			break;
 		case 'I':
 			obj = json_object_new_int64(va_arg(args, int64_t));
+			if (!obj)
+				goto out_of_memory;
+			break;
+		case 'u':
+			obj = json_object_new_uint64((uint64_t)va_arg(args, unsigned int));
+			if (!obj)
+				goto out_of_memory;
+			break;
+		case 'U':
+			obj = json_object_new_uint64(va_arg(args, uint64_t));
 			if (!obj)
 				goto out_of_memory;
 			break;
@@ -372,6 +382,8 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 	double *pf = NULL;
 	int *pi = NULL;
 	int64_t *pI = NULL;
+	unsigned *pu = NULL;
+	uint64_t *pU = NULL;
 	size_t *pz = NULL;
 	uint8_t **py = NULL;
 	struct { struct json_object *parent; const char *acc; int index; int count; char type; } stack[STACKCOUNT], *top;
@@ -479,6 +491,28 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 					goto missfit;
 				if (store && pI)
 					*pI = json_object_get_int64(obj);
+			}
+			break;
+		case 'u':
+			if (store)
+				pu = va_arg(args, unsigned int *);
+
+			if (!ignore) {
+				if (!json_object_is_type(obj, json_type_int))
+					goto missfit;
+				if (store && pu)
+					*pu = (unsigned int)json_object_get_uint64(obj);
+			}
+			break;
+		case 'U':
+			if (store)
+				pU = va_arg(args, uint64_t *);
+
+			if (!ignore) {
+				if (!json_object_is_type(obj, json_type_int))
+					goto missfit;
+				if (store && pU)
+					*pU = json_object_get_uint64(obj);
 			}
 			break;
 		case 'f':

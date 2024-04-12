@@ -101,9 +101,17 @@ arguments.
 
 :   Convert a C int to JSON integer.
 
-`I` (integer) \[json\_int\_t\]
+`I` (integer) \[int64\_t\]
 
-:   Convert a C json\_int\_t to JSON integer.
+:   Convert a C int64\_t to JSON integer.
+
+`u` (unsigned integer) \[unsigned\]
+
+:   Convert a C unsigned int to JSON integer.
+
+`u` (unsigned integer) \[uint\_t\]
+
+:   Convert a C uint64\_t to JSON integer.
 
 `f` (real) \[double\]
 
@@ -228,9 +236,17 @@ type whose address should be passed.
 
 :   Convert a JSON integer to C int.
 
-`I` (integer) \[json\_int\_t\]
+`I` (integer) \[int64\_t\]
 
-:   Convert a JSON integer to C json\_int\_t.
+:   Convert a JSON integer to C int64\_t.
+
+`u` (unsigned integer) \[unsigned\]
+
+:   Convert a JSON integer to C unsigned int.
+
+`U` (unsigned integer) \[uint64\_t\]
+
+:   Convert a JSON integer to C uint64\_t.
 
 `f` (real) \[double\]
 
