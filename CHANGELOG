@@ -2,6 +2,7 @@
 
 - explain that, for jsonc wrap/unwrap, I is for int64_t
 - add u and U indicators to jsonc wrap/unwrap
+- depends on json-c >= 0.14
 
 * version 0.0.9
 

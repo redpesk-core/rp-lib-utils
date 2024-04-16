@@ -1,5 +1,5 @@
 # need module json-c
-reqmod(json-c)
+reqmod(json-c>=0.14)
 
 # our files
 addsrc(rp-jconf.c rp-jsonc-expand.c rp-jsonc-locator.c rp-jsonc-path.c rp-jsonstr.c rp-jsonc.c)
