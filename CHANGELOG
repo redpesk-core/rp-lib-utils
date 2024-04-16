@@ -1,4 +1,4 @@
-* futur
+* version 0.1.0
 
 - explain that, for jsonc wrap/unwrap, I is for int64_t
 - add u and U indicators to jsonc wrap/unwrap
