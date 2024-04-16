@@ -1,10 +1,9 @@
 
 #include "rp-yaml.h"
-#include "../json/rp-jsonc-locator.h"
 
-static void p(unsigned lino, unsigned depth, const char *text0, const char *text1, const char *text2)
+static void p(unsigned depth, const char *text0, const char *text1, const char *text2)
 {
-	printf("%-5u %.*s%s%s%s\n", lino, depth<<1, "                                                             ", text0, text1, text2);
+	printf("%.*s%s%s%s\n", depth<<1, "                                                             ", text0, text1, text2);
 }
 
 static void dump(struct json_object *jso, unsigned depth, const char *text0, const char *text1)
@@ -15,9 +14,6 @@ static void dump(struct json_object *jso, unsigned depth, const char *text0, con
 	int idx, len;
 #endif
 	struct json_object_iterator it, end;
-
-	unsigned lino;
-	const char *file = rp_jsonc_locator_locate(jso, &lino);
 
 	/* inspect type of the jso */
 	switch (json_object_get_type(jso)) {
@@ -36,7 +32,7 @@ static void dump(struct json_object *jso, unsigned depth, const char *text0, con
 		}
 		break;
 	default:
-		p(lino, depth, text0, text1, json_object_get_string(jso));
+		p(depth, text0, text1, json_object_get_string(jso));
 		break;
 	}
 }
