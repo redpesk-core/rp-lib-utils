@@ -1,3 +1,7 @@
+* version 0.1.1
+
+- rollback to json-c >= 0.13
+
 * version 0.1.0
 
 - explain that, for jsonc wrap/unwrap, I is for int64_t
