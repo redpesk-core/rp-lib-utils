@@ -207,12 +207,22 @@ int rp_jsonc_vpack(struct json_object **result, const char *desc, va_list args)
 				goto out_of_memory;
 			break;
 		case 'u':
+// json-c version >= 0.14
+#if JSON_C_VERSION_NUM >= 0x000e00
 			obj = json_object_new_uint64((uint64_t)va_arg(args, unsigned int));
+#else
+			obj = json_object_new_int64((int64_t)va_arg(args, unsigned int));
+#endif
 			if (!obj)
 				goto out_of_memory;
 			break;
 		case 'U':
+// json-c version >= 0.14
+#if JSON_C_VERSION_NUM >= 0x000e00
 			obj = json_object_new_uint64(va_arg(args, uint64_t));
+#else
+			obj = json_object_new_int64((int64_t)va_arg(args, uint64_t));
+#endif
 			if (!obj)
 				goto out_of_memory;
 			break;
@@ -501,7 +511,12 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				if (!json_object_is_type(obj, json_type_int))
 					goto missfit;
 				if (store && pu)
+// json-c version >= 0.14
+#if JSON_C_VERSION_NUM >= 0x000e00
 					*pu = (unsigned int)json_object_get_uint64(obj);
+#else
+					*pu = (unsigned int)json_object_get_int64(obj);
+#endif
 			}
 			break;
 		case 'U':
@@ -512,7 +527,12 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				if (!json_object_is_type(obj, json_type_int))
 					goto missfit;
 				if (store && pU)
+// json-c version >= 0.14
+#if JSON_C_VERSION_NUM >= 0x000e00
 					*pU = json_object_get_uint64(obj);
+#else
+					*pU = (uint64_t)json_object_get_int64(obj);
+#endif
 			}
 			break;
 		case 'f':
