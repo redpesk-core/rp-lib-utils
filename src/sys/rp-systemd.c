@@ -23,80 +23,10 @@
  */
 
 
-#if WITH_SYSTEMD
-
 #include "rp-systemd.h"
 
-#include <unistd.h>
-
-#include <systemd/sd-event.h>
-#include <systemd/sd-bus.h>
-#include <systemd/sd-daemon.h>
-
-#include "x-errno.h"
-
-/*
-
-struct sd_event;
-struct sd_bus;
-extern struct sd_event *systemd_get_event_loop();
-extern struct sd_bus *systemd_get_user_bus();
-extern struct sd_bus *systemd_get_system_bus();
-
-
-static int sdbusopen(struct sd_bus **p, int (*f)(struct sd_bus **))
-{
-	int rc;
-	struct sd_bus *r;
-
-	r = *p;
-	if (r)
-		rc = 0;
-	else {
-		rc = f(&r);
-		if (rc >= 0) {
-			rc = sd_bus_attach_event(r, systemd_get_event_loop(), 0);
-			if (rc < 0)
-				sd_bus_unref(r);
-			else
-				*p = r;
-		}
-	}
-	return rc;
-}
-
-struct sd_event *systemd_get_event_loop()
-{
-	static struct sd_event *result = 0;
-	int rc;
-
-	if (!result) {
-		rc = sd_event_new(&result);
-		if (rc < 0)
-			result = NULL;
-	}
-	return result;
-}
-
-struct sd_bus *systemd_get_user_bus()
-{
-	static struct sd_bus *result = 0;
-	sdbusopen((void*)&result, (void*)sd_bus_open_user);
-	return result;
-}
-
-struct sd_bus *systemd_get_system_bus()
-{
-	static struct sd_bus *result = 0;
-	sdbusopen((void*)&result, (void*)sd_bus_open_system);
-	return result;
-}
-
-*/
-
-#endif
-
 #include <stdlib.h>
+#include "x-errno.h"
 
 #if !defined(SD_LISTEN_FDS_START)
 # define SD_LISTEN_FDS_START 3
