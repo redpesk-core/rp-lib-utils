@@ -6,7 +6,6 @@ addsrc(
 	rp-file.c
 	rp-path-search.c
 	rp-pearson.c
-	rp-read-fd-name.c
 	rp-uuid.c
 	sha1.c
 )
@@ -17,7 +16,11 @@ addhdr(
 	rp-file.h
 	rp-path-search.h
 	rp-pearson.h
-	rp-read-fd-name.h
 	rp-uuid.h
 	sha1.h
 )
+
+if(NOT WITHOUT_PROCFS)
+	addsrc(rp-read-fd-name.c)
+	addhdr(rp-read-fd-name.c)
+endif()

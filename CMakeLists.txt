@@ -35,4 +35,18 @@ include(GNUInstallDirs)
 
 set(LIBRP_UTILS_VERSION "${PROJECT_VERSION}")
 
+###########################################################################
+# TUNING
+
+option(NO_STATIC_LIB         "don't produce static library")
+option(NO_SHARED_LIB         "don't produce shared library")
+option(WITHOUT_JSON_C        "disable json-c extensions")
+option(WITHOUT_JSON_NLOHMANN "disable nlohmann extensions")
+option(WITHOUT_SYSTEMD       "disable systemd support")
+option(WITHOUT_CURL          "disable CURL support")
+option(WITHOUT_YAML          "disable YAML support")
+option(WITHOUT_PROCFS        "disable procfs dependent features")
+
+###########################################################################
+
 add_subdirectory(src)

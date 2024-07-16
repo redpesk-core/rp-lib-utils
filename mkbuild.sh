@@ -1,5 +1,7 @@
 #/bin/sh
 
+set -x
+
 h="$(dirname $0)"
 force=false
 : ${bd:=build}
@@ -15,6 +17,8 @@ while :; do
 	shift
 done
 
+cd "$h"
+h=$(pwd)
 mkdir -p "$h/$bd" || exit
 cd "$h/$bd" || exit
 
@@ -23,6 +27,14 @@ test -f CMakeCache.txt -a -f Makefile || \
 cmake \
 	-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX:=$PREFIX} \
 	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:=Debug} \
+	-DNO_STATIC_LIB=${NO_STATIC_LIB:=OFF} \
+	-DNO_SHARED_LIB=${NO_SHARED_LIB:=OFF} \
+	-DWITHOUT_JSON_C=${WITHOUT_JSON_C:=OFF} \
+	-DWITHOUT_JSON_NLOHMANN=${WITHOUT_JSON_NLOHMANN:=OFF} \
+	-DWITHOUT_SYSTEMD=${WITHOUT_SYSTEMD:=OFF} \
+	-DWITHOUT_CURL=${WITHOUT_CURL:=OFF} \
+	-DWITHOUT_YAML=${WITHOUT_YAML:=OFF} \
+	-DWITHOUT_PROCFS=${WITHOUT_PROCFS:=OFF} \
 	"$h"
 
 make -j "$@"
