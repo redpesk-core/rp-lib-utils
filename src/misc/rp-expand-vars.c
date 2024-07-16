@@ -220,7 +220,7 @@ const char *rp_expand_vars_search_env(const char *name, size_t len)
 char *rp_expand_vars_function(const char *value, int copy, rp_expand_vars_fun_t function, void *closure)
 {
 	char *expanded = expand(value, function, closure);
-	return expanded ?: copy ? strdup(value) : 0;
+	return expanded || !copy ? expanded : strdup(value);
 }
 
 /* expand using function */
@@ -228,7 +228,7 @@ char *rp_expand_vars_callback(const char *value, int copy, rp_expand_vars_cb_t f
 {
 	struct adaptor ada = { function, closure };
 	char *expanded = expand(value, adaptor, &ada);
-	return expanded ?: copy ? strdup(value) : 0;
+	return expanded || !copy ? expanded : strdup(value);
 }
 
 /* expand using array of definitions */
