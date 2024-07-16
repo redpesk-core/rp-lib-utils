@@ -1,8 +1,11 @@
 # need module curl
-optmod(libcurl WITH_LIBCURL)
+optmod(libcurl WITH_CURL)
 
 # our files
-if(WITH_LIBCURL)
-	addsrc(rp-escape.c rp-curl.c)
-	addhdr(rp-escape.h rp-curl.h)
+if(WITH_CURL)
+	addsrc(rp-curl.c)
+	addhdr(rp-curl.h)
 endif()
+
+addsrc(rp-escape.c)
+addhdr(rp-escape.h)
