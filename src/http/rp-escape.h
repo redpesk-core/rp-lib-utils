@@ -78,6 +78,14 @@ extern char *rp_escape(const char *text, size_t textlen, size_t *reslength);
 extern const char **rp_unescape_args(const char *args);
 
 /**
+ * @brief get value address matching a key in unescaped args
+ * @param args unescaped args as returned by rp_unescape_args, must not be NULL
+ * @param key identifier of the value to find, must not be NULL
+ * @return pointer inside args of the value if key was found, NULL otherwise
+ */
+extern const char *rp_unescaped_args_get(const char **args, const char *key);
+
+/**
 * @brief unescape the given text of given length
 * @param text the text to unescape must not be NULL
 * @param textlen the length of the text or 0 if unknown

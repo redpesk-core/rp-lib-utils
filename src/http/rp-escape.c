@@ -421,6 +421,17 @@ const char **rp_unescape_args(const char *args)
 	return (const char **)r;
 }
 
+const char *rp_unescaped_args_get(const char **args, const char *key)
+{
+    /* iterate to wanted key or end */
+    while (*args != NULL && strcmp(*args, key) != 0) {
+        args += 2;
+    }
+
+    /* if NULL (end) not reached, the key was found */
+    return args[*args != NULL];
+}
+
 char *rp_escape(const char *text, size_t textlen, size_t *reslength)
 {
 	size_t len;
