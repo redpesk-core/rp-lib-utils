@@ -1,6 +1,10 @@
+* version 0.1.3
+
+- add function to easily get a value after using rp_unescape_args
+
 * version 0.1.2
 
-- improvement of cmake conditionnal builds
+- improvement of cmake conditional builds
 
 * version 0.1.1
 
@@ -16,7 +20,7 @@
 * version 0.0.9
 
 - more useable includes
-- allow conditonnal compilation adapted to environment
+- allow conditional compilation adapted to environment
 - can build on top of musl
 - rework and improved read of YAML files
 
@@ -34,4 +38,4 @@
 
 * version 0.0.5
 
-- fix abstract sockect length
+- fix abstract socket length
