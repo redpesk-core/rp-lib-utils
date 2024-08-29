@@ -80,7 +80,6 @@ static
 int
 y2jt_init(y2j_t *y2jt, const char *name)
 {
-	int rc;
 	y2jt->aliases = json_object_new_object();
 	if (y2jt->aliases == NULL
 	|| !yaml_parser_initialize(&y2jt->parser)) {

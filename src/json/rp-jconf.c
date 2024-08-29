@@ -64,7 +64,7 @@ bool jconf_int(
 		int defvalue
 ) {
 	json_object *obj;
-  *store = defvalue;
+	*store = defvalue;
 	if (jconf_get(conf, key, required, &obj)) {
 		if (json_object_is_type(obj, json_type_int)) {
 			*store = json_object_get_int(obj);
@@ -86,7 +86,7 @@ bool jconf_bool(
 		bool defvalue
 ) {
 	json_object *obj;
-  *store = defvalue;
+	*store = defvalue;
 	if (jconf_get(conf, key, required, &obj)) {
 		if (json_object_is_type(obj, json_type_boolean)) {
 			*store = json_object_get_boolean(obj);
@@ -108,7 +108,7 @@ bool jconf_string(
 		const char *defvalue
 ) {
 	json_object *obj;
-  *store = defvalue;
+	*store = defvalue;
 	if (jconf_get(conf, key, required, &obj)) {
 		if (json_object_is_type(obj, json_type_string)) {
 			*store = json_object_get_string(obj);
@@ -119,6 +119,7 @@ bool jconf_string(
 	}
 	else if (!required)
 		return true;
+	return false;
 }
 
 bool jconf_enum(
@@ -131,14 +132,14 @@ bool jconf_enum(
 ) {
 	char c;
 	const char *found = NULL;
-  *store = defvalue;
+	*store = defvalue;
 	bool ok = jconf_string(conf, key, required, &found, &c);
 	if (ok && found != &c) {
-    ok = rp_enum_map_value (keyvals, found, store);
-    if (!ok) {
-      RP_ERROR("invalid value %s for key %s in %s",
-        found, key, json_object_to_json_string(conf));
-    }
+		ok = rp_enum_map_value (keyvals, found, store);
+		if (!ok) {
+			RP_ERROR("invalid value %s for key %s in %s",
+			         found, key, json_object_to_json_string(conf));
+		}
 	}
 	return ok;
 }
