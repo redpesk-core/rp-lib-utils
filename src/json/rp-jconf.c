@@ -130,7 +130,7 @@ bool jconf_enum(
 		int defvalue,
 		const rp_enum_map_t *keyvals
 ) {
-	char c;
+	char c = 0;
 	const char *found = NULL;
 	*store = defvalue;
 	bool ok = jconf_string(conf, key, required, &found, &c);
