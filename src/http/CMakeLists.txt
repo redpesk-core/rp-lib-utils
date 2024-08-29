@@ -1,6 +1,8 @@
 # need module curl
 optmod(libcurl WITH_CURL)
 
+message(STATUS "http. WITH_CURL=${WITH_CURL}")
+
 # our files
 if(WITH_CURL)
 	addsrc(rp-curl.c)

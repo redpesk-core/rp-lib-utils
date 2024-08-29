@@ -1,5 +1,7 @@
 optmod(libsystemd>=222 WITH_SYSTEMD)
 
+message(STATUS "sys. WITH_SYSTEMD=${WITH_SYSTEMD}")
+
 if(WITH_SYSTEMD)
 	addsrc(rp-systemd.c)
 	addhdr(rp-systemd.h)

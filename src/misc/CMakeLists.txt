@@ -1,4 +1,7 @@
 # add our files
+
+message(STATUS "misc. WITHOUT_PROCFS=${WITHOUT_PROCFS}")
+
 addsrc(
 	rp-base64.c
 	rp-enum-map.c
