@@ -18,11 +18,6 @@ if(NOT NO_STATIC_LIB)
 	set_target_properties(rp-utils-static PROPERTIES
 		OUTPUT_NAME rp-utils
 		VERSION "${LIBRP_UTILS_VERSION}")
-
-	configure_file(librp-utils-static.pc.in librp-utils-static.pc @ONLY)
-
-	install(TARGETS rp-utils-static)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librp-utils-static.pc DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
 endif()
 
 # the shared library target
@@ -32,11 +27,6 @@ if(NOT NO_SHARED_LIB)
 		OUTPUT_NAME rp-utils
 		VERSION "${LIBRP_UTILS_VERSION}"
 		SOVERSION 0)
-
-	configure_file(librp-utils.pc.in librp-utils.pc @ONLY)
-
-	install(TARGETS rp-utils-shared)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librp-utils.pc DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
 endif()
 
 # macro for adding a source file
@@ -142,6 +132,7 @@ adddir(yaml)
 
 # install the headers
 get_property(headers GLOBAL PROPERTY headers)
+message(STATUS "Installing headers ${headers}")
 install(FILES ${headers} DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/rp-utils")
 
 # create and install the pkgconfig (PC) file
@@ -152,4 +143,20 @@ string(REGEX REPLACE "<  =" "<=" modules "${modules}")
 string(REGEX REPLACE ">  =" ">=" modules "${modules}")
 get_property(privates GLOBAL PROPERTY privates)
 list(JOIN privates " " privates)
+message(STATUS "Computed module list ${modules}")
+message(STATUS "Computed private list ${privates}")
+
+# the static library target
+if(NOT NO_STATIC_LIB)
+	configure_file(librp-utils-static.pc.in librp-utils-static.pc @ONLY)
+	install(TARGETS rp-utils-static)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librp-utils-static.pc DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
+endif()
+
+# the shared library target
+if(NOT NO_SHARED_LIB)
+	configure_file(librp-utils.pc.in librp-utils.pc @ONLY)
+	install(TARGETS rp-utils-shared)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librp-utils.pc DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
+endif()
 
