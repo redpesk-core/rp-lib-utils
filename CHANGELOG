@@ -1,3 +1,7 @@
+* version 0.1.4
+
+- fix of build scripts
+
 * version 0.1.3
 
 - add function to easily get a value after using rp_unescape_args
