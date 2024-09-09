@@ -21,6 +21,11 @@
  * $RP_END_LICENSE$
  */
 
+// netinet/in.h: No such file or directory
+// netinet/tcp.h: No such file or directory
+
+#if 0
+
 #define _GNU_SOURCE
 
 #include "rp-socket.h"
@@ -385,3 +390,14 @@ int rp_socket_open_scheme(const char *uri, int server, const char *scheme)
 		RP_ERROR("can't open %s socket for %s: %s", server ? "server" : "client", uri, strerror(-fd));
 	return fd;
 }
+
+#else
+
+#include <stdlib.h>
+#include <stdint.h>
+int rp_socket_open_scheme(const char *uri, int server, const char *scheme)
+{
+	return -1;
+}
+
+#endif
