@@ -10,6 +10,8 @@ if(CONFIG_AFB_BINDER)
     set(WITHOUT_YAML ON)
     set(WITHOUT_PROCFS ON)
     set(WITH_DIRENT OFF)
+
+    add_definitions(-DWITH_DIRENT=OFF)
     
     add_subdirectory(.. rp-lib-utils)
 endif()
