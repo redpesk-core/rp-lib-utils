@@ -308,16 +308,15 @@ int rp_path_search_find(rp_path_search_t *paths, const char *filename, rp_path_s
 
 #if !WITH_DIRENT
 
-static void nothing() {}
 static int zero() { return 0; }
 int rp_path_search_can_list_entries()
 	__attribute__((alias("zero")));
-void rp_path_search_filter(rp_path_search_t *paths, int flags,
-		rp_path_search_item_cb callback, void *closure, rp_path_search_filter_cb filter)
-	__attribute__((alias("nothing")));
-void rp_path_search(rp_path_search_t *paths, int flags,
+int rp_path_search_filter(rp_path_search_t *paths, int flags,
+		rp_path_search_item_cb callback, void *closure, rp_path_search_filter_cb filter, void *filter_closure)
+	__attribute__((alias("zero")));
+int rp_path_search(rp_path_search_t *paths, int flags,
 		rp_path_search_item_cb callback, void *closure)
-	__attribute__((alias("nothing")));
+	__attribute__((alias("zero")));
 int rp_path_search_get_path(rp_path_search_t *paths, char **path,
 		int rec, const char *name, const char *extension)
 	__attribute__((alias("zero")));
