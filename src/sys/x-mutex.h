@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <zephyr/kernel.h>
 #include <pthread.h>
 
 #define x_mutex_t                pthread_mutex_t
