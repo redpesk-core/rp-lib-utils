@@ -42,6 +42,8 @@
 
 #define RP_EXPAND_VARS_CHAR             '$'
 #define RP_EXPAND_VARS_ESC              '\\'
+#define RP_EXPAND_VARS_DEFA             '-'
+#define RP_EXPAND_VARS_DEFX             ':'
 
 extern char **environ;
 
@@ -58,11 +60,10 @@ extern char **environ;
  */
 static char *expand(const char *value, rp_expand_vars_fun_t function, void *closure)
 {
-	char *result, *write, *previous, c, oc;
-	char *result, *write, *previous, c;
-	const char *begin, *end;
+	char *result, *write, *previous, c, oc, cdef;
+	const char *begin, *end, *def;
 	int drop, again, depth, found;
-	size_t remove, add, i, len;
+	size_t remove, add, i, len, lendef;
 	rp_expand_vars_result_t expval;
 
 	depth = 0;
@@ -89,28 +90,45 @@ static char *expand(const char *value, rp_expand_vars_fun_t function, void *clos
 					*write++ = c;
 			}
 			else {
+				/* no default */
+				cdef = 0;
+				def = NULL;
+				lendef = 0;
 				/* search name of the variable to expand */
 				switch(*begin) {
 					case '(': c = ')'; break;
 					case '{': c = '}'; break;
 					default: c = 0; break;
 				}
-				if (c) {
-					for (end = ++begin ; *end && *end != c ; end++);
-					len = (size_t)(end - begin);
-					if (*end) {
-						end++;
-						remove += 3 + len; /* length to remove */
-					}
-					else {
-						remove += 2 + len; /* length to remove */
-						drop = 1;
-					}
-				}
-				else {
+				if (c == 0) {
 					for (end = begin ; isalnum(*end) || *end == '_' ; end++);
 					len = (size_t)(end - begin);
 					remove += 1 + len; /* length to remove */
+				}
+				else {
+					for (end = ++begin ; (oc = *end) && oc != c ; end++)
+						if (cdef == 0 && (oc == RP_EXPAND_VARS_DEFA
+						   || (oc == RP_EXPAND_VARS_DEFX && end[1] == RP_EXPAND_VARS_DEFA))) {
+							cdef = oc;
+							def = end;
+						}
+					if (cdef == 0)
+						len = (size_t)(end - begin);
+					else {
+						len = (size_t)(def - begin);
+						def += 1 + (cdef == RP_EXPAND_VARS_DEFX);
+						lendef = (size_t)(end - def);
+					}
+					if (oc) {
+						/* correct termination */
+						end++;
+						remove += 3 + (size_t)(end - begin); /* length to remove */
+					}
+					else {
+						/* bad termination, ignore */
+						remove += 2 + (size_t)(end - begin); /* length to remove */
+						drop = 1;
+					}
 				}
 				/* search the value of the variable in vars and env */
 				if (drop) {
@@ -122,6 +140,17 @@ static char *expand(const char *value, rp_expand_vars_fun_t function, void *clos
 					expval.dispose.function = 0;
 					expval.dispose.closure = 0;
 					found = function(closure, begin, len, &expval);
+					if (cdef && !found
+					 || (cdef == RP_EXPAND_VARS_DEFX && !(expval.value && *expval.value))) {
+						expval.length = lendef;
+						/*
+						 * because strlen is used when length is zero
+						 * it is needed to set a value pointing an empty string
+						 * the fastest and simplest way is to point the length == 0
+						 */
+						expval.value = lendef ? def : (char*)&expval.length;
+						found = 1;
+					}
 					if (found && expval.value) {
 						/* expand value of found variable */
 						if (!expval.length)
