@@ -39,12 +39,9 @@
 #if !defined(RP_EXPAND_VARS_DEPTH_MAX)
 #    define  RP_EXPAND_VARS_DEPTH_MAX       10
 #endif
-#if !defined(RP_EXPAND_VARS_CHAR)
-#    define RP_EXPAND_VARS_CHAR             '$'
-#endif
-#if !defined(RP_EXPAND_VARS_ESC)
-#    define RP_EXPAND_VARS_ESC              '\\'
-#endif
+
+#define RP_EXPAND_VARS_CHAR             '$'
+#define RP_EXPAND_VARS_ESC              '\\'
 
 extern char **environ;
 
@@ -61,6 +58,7 @@ extern char **environ;
  */
 static char *expand(const char *value, rp_expand_vars_fun_t function, void *closure)
 {
+	char *result, *write, *previous, c, oc;
 	char *result, *write, *previous, c;
 	const char *begin, *end;
 	int drop, again, depth, found;
@@ -77,11 +75,11 @@ static char *expand(const char *value, rp_expand_vars_fun_t function, void *clos
 		while ((c = *begin++)) {
 			if (c == RP_EXPAND_VARS_ESC) {
 				/* escaping a key or escape */
-				c = *begin;
-				if (c == RP_EXPAND_VARS_ESC || c == RP_EXPAND_VARS_CHAR)
+				oc = *begin;
+				if (oc == RP_EXPAND_VARS_ESC || oc == RP_EXPAND_VARS_CHAR) {
+					c = oc;
 					begin++;
-				else
-					c = RP_EXPAND_VARS_ESC;
+				}
 				if (write)
 					*write++ = c;
 			}
