@@ -1,3 +1,9 @@
+* version 0.2.0
+
+- split in libraries: librp-utils-core, librp-utils-file, librp-utils-socket,
+  librp-utils-json-c, librp-utils-yaml and librp-utils-curl, while keeping
+  whole in one big library for compatibily librp-utils
+
 * version 0.1.5
 
 - Fix building when WITHOUT_DIRENT is ON

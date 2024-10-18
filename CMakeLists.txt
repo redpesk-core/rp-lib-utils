@@ -35,4 +35,6 @@ include(GNUInstallDirs)
 
 set(LIBRP_UTILS_VERSION "${PROJECT_VERSION}")
 
+option(NO_LIBUUID "Dont use libuuid" OFF)
+
 add_subdirectory(src)
