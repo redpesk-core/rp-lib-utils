@@ -1,3 +1,8 @@
+* version 0.1.5
+
+- Fix building when WITHOUT_DIRENT is ON
+- Added function `rp_whichprog`
+
 * version 0.1.4
 
 - fix of build scripts
