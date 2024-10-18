@@ -42,6 +42,9 @@
 #if !defined(RP_EXPAND_VARS_CHAR)
 #    define RP_EXPAND_VARS_CHAR             '$'
 #endif
+#if !defined(RP_EXPAND_VARS_ESC)
+#    define RP_EXPAND_VARS_ESC              '\\'
+#endif
 
 extern char **environ;
 
@@ -72,7 +75,17 @@ static char *expand(const char *value, rp_expand_vars_fun_t function, void *clos
 		remove = add = 0;
 		/* scan/expand the input */
 		while ((c = *begin++)) {
-			if (c != RP_EXPAND_VARS_CHAR) {
+			if (c == RP_EXPAND_VARS_ESC) {
+				/* escaping a key or escape */
+				c = *begin;
+				if (c == RP_EXPAND_VARS_ESC || c == RP_EXPAND_VARS_CHAR)
+					begin++;
+				else
+					c = RP_EXPAND_VARS_ESC;
+				if (write)
+					*write++ = c;
+			}
+			else if (c != RP_EXPAND_VARS_CHAR) {
 				/* not a variable to expand */
 				if (write)
 					*write++ = c;
