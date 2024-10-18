@@ -2,6 +2,8 @@
 
 - Fix building when WITHOUT_DIRENT is ON
 - Added function `rp_whichprog`
+- Added escaping of $ and \ in variable expansion
+- Added default variable values in expansions ${x-y} or ${x:-y}
 
 * version 0.1.4
 
