@@ -10,6 +10,7 @@ addsrc(
 	rp-path-search.c
 	rp-pearson.c
 	rp-uuid.c
+	rp-whichprog.c
 	sha1.c
 )
 addhdr(
@@ -20,6 +21,7 @@ addhdr(
 	rp-path-search.h
 	rp-pearson.h
 	rp-uuid.h
+	rp-whichprog.h
 	sha1.h
 )
 
