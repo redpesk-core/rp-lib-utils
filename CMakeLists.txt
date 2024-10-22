@@ -25,7 +25,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(rp-lib-utils
-	VERSION 0.1.5
+	VERSION 0.2.0
 	DESCRIPTION  "Programming utilities"
 	HOMEPAGE_URL "https://github.com/redpesk-core/rp-lib-utils"
 	LANGUAGES C)
