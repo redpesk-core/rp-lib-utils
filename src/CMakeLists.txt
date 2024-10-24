@@ -51,11 +51,19 @@ function(addlibll outname description)
 endfunction(addlibll)
 
 # 
-addlibll(rp-utils "all in one components" rp-utils)
+if(NOT WITH_ZEPHYR)
+	addlibll(rp-utils "all in one components" rp-utils)
+else()
+	zephyr_library_named(rp-utils)
+	target_include_directories(${ZEPHYR_CURRENT_LIBRARY} PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR})
+endif()
 
 # macro for adding a source file
 function(addlib target description)
-	addlibll(rp-utils-${target} ${description})
+	if(NOT WITH_ZEPHYR)
+		addlibll(rp-utils-${target} ${description})
+	endif()
 endfunction(addlib)
 
 # macro for adding dependencies of libs
@@ -102,8 +110,14 @@ function(addsrcll outname)
 endfunction(addsrcll)
 
 function(addsrc target)
-	addsrcll(rp-utils ${ARGN})
-	addsrcll(rp-utils-${target} ${ARGN})
+	if(WITH_ZEPHYR)
+		foreach(src ${ARGN})
+			zephyr_library_sources(${src})
+		endforeach()
+	else()
+		addsrcll(rp-utils ${ARGN})
+		addsrcll(rp-utils-${target} ${ARGN})
+	endif()
 endfunction(addsrc)
 
 # macro for adding header files

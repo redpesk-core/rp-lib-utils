@@ -30,11 +30,35 @@ project(rp-lib-utils
 	HOMEPAGE_URL "https://github.com/redpesk-core/rp-lib-utils"
 	LANGUAGES C)
 
+# Detect the platform reliably
+if(ZEPHYR_BASE)
+    if (NOT CONFIG_AFB_BINDER)
+      return()
+    endif()
+    SET(WITH_ZEPHYR YES)
+endif()
+
 include(FindPkgConfig)
 include(GNUInstallDirs)
 
 set(LIBRP_UTILS_VERSION "${PROJECT_VERSION}")
 
 option(NO_LIBUUID "Dont use libuuid" OFF)
+
+if (WITH_ZEPHYR)
+  set(NO_JSON_C  ON)
+  set(NO_YAML    ON)
+  set(NO_CURL    ON)
+  set(NO_SYSTEMD ON)
+  set(NO_LIBUUID ON)
+  set(NO_SHARED_LIB ON)
+
+  #set(WITHOUT_PROCFS ON)
+  #set(WITH_DIRENT OFF)
+
+  add_definitions(-DWITH_DIRENT=OFF)
+  add_definitions(-DWITH_ZEPHYR=ON)
+  find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+endif()
 
 add_subdirectory(src)
