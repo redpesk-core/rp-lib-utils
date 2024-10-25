@@ -140,7 +140,7 @@ static char *expand(const char *value, rp_expand_vars_fun_t function, void *clos
 					expval.dispose.function = 0;
 					expval.dispose.closure = 0;
 					found = function(closure, begin, len, &expval);
-					if (cdef && !found
+					if ((cdef && !found)
 					 || (cdef == RP_EXPAND_VARS_DEFX && !(expval.value && *expval.value))) {
 						expval.length = lendef;
 						/*
