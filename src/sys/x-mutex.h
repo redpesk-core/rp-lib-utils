@@ -24,11 +24,7 @@
 
 #pragma once
 
-#ifdef WITH_ZEPHYR
-    #include <zephyr/posix/pthread.h>
-#else
-    #include <pthread.h>
-#endif
+#include <pthread.h>
 
 #define x_mutex_t                pthread_mutex_t
 #define x_mutex_init(pmutex)     pthread_mutex_init(pmutex,NULL)

@@ -31,6 +31,8 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 
 #include "../sys/rp-verbose.h"
 #include "../sys/x-socket.h"

@@ -49,8 +49,6 @@
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/un.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
 
 #endif
 

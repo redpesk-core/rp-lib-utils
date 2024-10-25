@@ -49,7 +49,7 @@
  * strdup is not supported in Zephyr for now, overide it
  * see https://docs.zephyrproject.org/3.7.0/services/portability/posix/option_groups/index.html#id7
  */
-#ifdef WITH_ZEPHYR
+#if __ZEPHYR__
 	#include <zephyr/kernel.h>
 
 	char *zephyr_strdup(const char *str) {

@@ -53,11 +53,7 @@ if (WITH_ZEPHYR)
   set(NO_LIBUUID ON)
   set(NO_SHARED_LIB ON)
 
-  #set(WITHOUT_PROCFS ON)
-  #set(WITH_DIRENT OFF)
-
   add_definitions(-DWITH_DIRENT=0)
-  add_definitions(-DWITH_ZEPHYR=1)
   add_definitions(-DVERBOSE_WITH_SYSLOG=1)
   find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 endif()
