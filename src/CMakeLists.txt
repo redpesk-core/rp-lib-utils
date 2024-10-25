@@ -54,9 +54,9 @@ endfunction(addlibll)
 if(NOT WITH_ZEPHYR)
 	addlibll(rp-utils "all in one components" rp-utils)
 else()
-	zephyr_library_named(rp-utils)
+	zephyr_library_named(rp-lib-utils)
 	target_include_directories(${ZEPHYR_CURRENT_LIBRARY} PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR})
+		${alldirs})
 endif()
 
 # macro for adding a source file
@@ -154,14 +154,16 @@ if(SYSTEMD_FOUND)
 	addlibpkg(core SYSTEMD)
 endif()
 
-# library depending of file system
-addlib(file "filesystem functions")
-addlibdeps(file core)
-addch(file
-	misc/rp-file
-	misc/rp-path-search
-	misc/rp-whichprog
-)
+if(NOT WITH_ZEPHYR)
+	# library depending of file system
+	addlib(file "filesystem functions")
+	addlibdeps(file core)
+	addch(file
+		misc/rp-file
+		misc/rp-path-search
+		misc/rp-whichprog
+	)
+endif()
 
 # library depending of system and socket
 addlib(socket "socket functions")

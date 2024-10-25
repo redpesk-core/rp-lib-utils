@@ -26,7 +26,7 @@
 
 #if __ZEPHYR__
 
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 
 #define socket(x,y,z)  zsock_socket(x,y,z)
 #define setsockopt     zsock_setsockopt
@@ -39,7 +39,7 @@
 #define addrinfo       zsock_addrinfo
 #define getaddrinfo    zsock_getaddrinfo
 #define freeaddrinfo   zsock_freeaddrinfo
-#define AI_PASSIVE     0
+#define EAI_MEMORY     DNS_EAI_MEMORY
 
 #undef WITH_UNIX_SOCKET
 
@@ -49,6 +49,8 @@
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/un.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 
 #endif
 

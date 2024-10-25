@@ -26,6 +26,9 @@
 #include "rp-verbose.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 #ifndef RP_VERBOSE_CONTEXT_DEPTH
 #define RP_VERBOSE_CONTEXT_DEPTH 8
@@ -43,8 +46,9 @@ static unsigned short contexts_depth;
 # define MAXIMAL_LOGLEVEL	rp_Log_Level_Debug
 #endif
 
-void rp_verbose_colorize(int value)
+int rp_verbose_colorize(int value)
 {
+	return 0;
 }
 
 int rp_verbose_is_colorized()
