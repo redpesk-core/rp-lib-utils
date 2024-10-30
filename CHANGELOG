@@ -1,3 +1,7 @@
+* version 0.2.1
+
+- Fix buffer overflow in variable expansion
+
 * version 0.2.0
 
 - split in libraries: librp-utils-core, librp-utils-file, librp-utils-socket,

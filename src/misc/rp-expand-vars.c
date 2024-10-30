@@ -197,7 +197,7 @@ static char *expand(const char *value, rp_expand_vars_fun_t function, void *clos
 				begin = NULL;
 			}
 			else {
-				result = write = malloc(i);
+				result = write = malloc(i + 1);
 				begin = write ? value : NULL;
 			}
 		}
