@@ -38,8 +38,10 @@ if(ZEPHYR_BASE)
     SET(WITH_ZEPHYR YES)
 endif()
 
-include(FindPkgConfig)
-include(GNUInstallDirs)
+if (NOT WITH_ZEPHYR)
+  include(FindPkgConfig)
+  include(GNUInstallDirs)
+endif()
 
 set(LIBRP_UTILS_VERSION "${PROJECT_VERSION}")
 
