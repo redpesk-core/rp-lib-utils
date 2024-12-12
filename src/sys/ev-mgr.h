@@ -25,7 +25,7 @@
 #pragma once
 
 #include "x-epoll.h"
-
+#include <time.h>
 /******************************************************************************/
 
 struct ev_mgr;
