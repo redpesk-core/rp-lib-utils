@@ -1,1 +1,0 @@
-../http/curl-glue.h

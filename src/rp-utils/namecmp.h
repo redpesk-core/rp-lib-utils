@@ -1,1 +1,0 @@
-../misc/namecmp.h
