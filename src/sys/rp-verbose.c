@@ -40,7 +40,7 @@ static unsigned short contexts_depth;
 /**********************************************************************************
 * Log with SYSLOG or SYSTEMD
 **********************************************************************************/
-#if defined(VERBOSE_WITH_SYSLOG) || defined(VERBOSE_WITH_SYSTEMD)
+#if defined(VERBOSE_WITH_SYSLOG) || defined(VERBOSE_WITH_SYSTEMD) || __ZEPHYR__
 
 #if !defined(MAXIMAL_LOGLEVEL)
 # define MAXIMAL_LOGLEVEL	rp_Log_Level_Debug
@@ -96,6 +96,28 @@ static void _vverbose_(int loglevel, const char *file, int line, const char *fun
 		sprintf(lino, "%d", line);
 		sd_journal_printv_with_location(loglevel, file, lino, function, fmt, args);
 	}
+}
+
+/**********************************************************************************
+* Log for ZEPHYR
+**********************************************************************************/
+#elif __ZEPHYR__
+
+static void _vverbose_(int loglevel, const char *file, int line, const char *function, const char *fmt, va_list args, int saverr)
+{
+static const char *prefixes[] = {
+	"EMERGENCY",
+	"ALERT",
+	"CRITICAL",
+	"ERROR",
+	"WARNING",
+	"NOTICE",
+	"INFO",
+	"DEBUG"
+};
+	printf("%s: ", prefixes[loglevel&7]);
+	vprintf(fmt, args);
+	printf("\n");
 }
 
 /**********************************************************************************

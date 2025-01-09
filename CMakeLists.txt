@@ -56,7 +56,7 @@ if (WITH_ZEPHYR)
   set(NO_SHARED_LIB ON)
 
   add_definitions(-DWITH_DIRENT=0)
-  add_definitions(-DVERBOSE_WITH_SYSLOG=1)
+#  add_definitions(-DVERBOSE_WITH_SYSLOG=0)
   find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 endif()
 
