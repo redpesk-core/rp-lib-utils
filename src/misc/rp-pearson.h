@@ -70,7 +70,7 @@ extern uint8_t rp_pearson8_len(const char *text, size_t length);
  * @param text the text to hash
  * @return a 3 bits hash value
  */
-inline uint8_t rp_pearson3(const char *text)
+static inline uint8_t rp_pearson3(const char *text)
 _DEF_RP_PEARSON_(3)
 
 /*
@@ -82,7 +82,7 @@ _DEF_RP_PEARSON_(3)
  * @param length length of the text to hash
  * @return a 3 bits hash value
  */
-inline uint8_t rp_pearson3_len(const char *text, size_t length)
+static inline uint8_t rp_pearson3_len(const char *text, size_t length)
 _DEF_RP_PEARSON_LEN_(3)
 
 /*
@@ -93,7 +93,7 @@ _DEF_RP_PEARSON_LEN_(3)
  * @param text the text to hash
  * @return a 4 bits hash value
  */
-inline uint8_t rp_pearson4(const char *text)
+static inline uint8_t rp_pearson4(const char *text)
 _DEF_RP_PEARSON_(4)
 
 /*
@@ -105,7 +105,7 @@ _DEF_RP_PEARSON_(4)
  * @param length length of the text to hash
  * @return a 4 bits hash value
  */
-inline uint8_t rp_pearson4_len(const char *text, size_t length)
+static inline uint8_t rp_pearson4_len(const char *text, size_t length)
 _DEF_RP_PEARSON_LEN_(4)
 
 /*
@@ -116,7 +116,7 @@ _DEF_RP_PEARSON_LEN_(4)
  * @param text the text to hash
  * @return a 5 bits hash value
  */
-inline uint8_t rp_pearson5(const char *text)
+static inline uint8_t rp_pearson5(const char *text)
 _DEF_RP_PEARSON_(5)
 
 /*
@@ -128,7 +128,7 @@ _DEF_RP_PEARSON_(5)
  * @param length length of the text to hash
  * @return a 5 bits hash value
  */
-inline uint8_t rp_pearson5_len(const char *text, size_t length)
+static inline uint8_t rp_pearson5_len(const char *text, size_t length)
 _DEF_RP_PEARSON_LEN_(5)
 
 /*
@@ -139,7 +139,7 @@ _DEF_RP_PEARSON_LEN_(5)
  * @param text the text to hash
  * @return a 6 bits hash value
  */
-inline uint8_t rp_pearson6(const char *text)
+static inline uint8_t rp_pearson6(const char *text)
 _DEF_RP_PEARSON_(6)
 
 /*
@@ -151,7 +151,7 @@ _DEF_RP_PEARSON_(6)
  * @param length length of the text to hash
  * @return a 6 bits hash value
  */
-inline uint8_t rp_pearson6_len(const char *text, size_t length)
+static inline uint8_t rp_pearson6_len(const char *text, size_t length)
 _DEF_RP_PEARSON_LEN_(6)
 
 /*
@@ -162,7 +162,7 @@ _DEF_RP_PEARSON_LEN_(6)
  * @param text the text to hash
  * @return a 7 bits hash value
  */
-inline uint8_t rp_pearson7(const char *text)
+static inline uint8_t rp_pearson7(const char *text)
 _DEF_RP_PEARSON_(7)
 
 /*
@@ -174,7 +174,7 @@ _DEF_RP_PEARSON_(7)
  * @param length length of the text to hash
  * @return a 7 bits hash value
  */
-inline uint8_t rp_pearson7_len(const char *text, size_t length)
+static inline uint8_t rp_pearson7_len(const char *text, size_t length)
 _DEF_RP_PEARSON_LEN_(7)
 
 #ifdef	__cplusplus
