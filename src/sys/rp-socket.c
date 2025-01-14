@@ -354,7 +354,9 @@ static int open_uri(const char *uri, int server, const char *scheme)
 		return fd;
 
 	/* set it up */
+#if !__ZEPHYR__
 	fcntl(fd, F_SETFD, FD_CLOEXEC);
+#endif
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (server) {
 		if (!e->nolisten) {

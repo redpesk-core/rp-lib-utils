@@ -45,6 +45,28 @@
 #define RP_EXPAND_VARS_DEFA             '-'
 #define RP_EXPAND_VARS_DEFX             ':'
 
+/**
+ * strdup is not supported in Zephyr for now, overide it
+ * see https://docs.zephyrproject.org/3.7.0/services/portability/posix/option_groups/index.html#id7
+ */
+#if __ZEPHYR__
+	#include <zephyr/kernel.h>
+
+	char *zephyr_strdup(const char *str) {
+		if (str == NULL) {
+			return NULL;
+		}
+		// Allocate memory for the new string
+		size_t len = strlen(str) + 1;  // +1 for the null terminator
+		char *dup_str = k_malloc(len);
+		if (dup_str != NULL) {
+			strcpy(dup_str, str);  // Copy the string
+		}
+		return dup_str;
+	}
+	#define strdup zephyr_strdup
+#endif
+
 extern char **environ;
 
 /**
