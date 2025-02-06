@@ -1,0 +1,2 @@
+config ZEPHYR_RP_LIB_UTILS_MODULE
+	bool
