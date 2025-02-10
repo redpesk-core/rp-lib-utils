@@ -36,7 +36,7 @@ option(NO_LIBUUID    "Do not use libuuid"             OFF)
 
 # Detect the platform reliably
 if(ZEPHYR_BASE)
-	if (NOT CONFIG_AFB_BINDER)
+	if (NOT CONFIG_AFB_ZEPHYR)
 		return()
 	endif()
 	set(WITH_ZEPHYR YES)
