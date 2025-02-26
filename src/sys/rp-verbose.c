@@ -103,21 +103,27 @@ static void _vverbose_(int loglevel, const char *file, int line, const char *fun
 **********************************************************************************/
 #elif __ZEPHYR__
 
+#include <zephyr/logging/log.h>
+
 static void _vverbose_(int loglevel, const char *file, int line, const char *function, const char *fmt, va_list args, int saverr)
 {
-static const char *prefixes[] = {
-	"EMERGENCY",
-	"ALERT",
-	"CRITICAL",
-	"ERROR",
-	"WARNING",
-	"NOTICE",
-	"INFO",
-	"DEBUG"
-};
-	printf("%s: ", prefixes[loglevel&7]);
-	vprintf(fmt, args);
-	printf("\n");
+	static uint8_t zlevels[8] = {
+		LOG_LEVEL_ERR,
+		LOG_LEVEL_ERR,
+		LOG_LEVEL_ERR,
+		LOG_LEVEL_ERR,
+		LOG_LEVEL_WRN,
+		LOG_LEVEL_INF,
+		LOG_LEVEL_INF,
+		LOG_LEVEL_DBG
+	};
+	z_log_msg_runtime_vcreate(
+		Z_LOG_LOCAL_DOMAIN_ID,
+		NULL,
+		zlevels[loglevel & 7],
+		NULL, 0,
+		0,
+		fmt, args);
 }
 
 /**********************************************************************************
