@@ -55,9 +55,35 @@ enum
 	rp_Log_Level_Extra_Debug = 8
 };
 
+enum
+{
+	rp_Log_Bit_Emergency = 1 << rp_Log_Level_Emergency,
+	rp_Log_Bit_Alert = 1 << rp_Log_Level_Alert,
+	rp_Log_Bit_Critical = 1 << rp_Log_Level_Critical,
+	rp_Log_Bit_Error = 1 << rp_Log_Level_Error,
+	rp_Log_Bit_Warning = 1 << rp_Log_Level_Warning,
+	rp_Log_Bit_Notice = 1 << rp_Log_Level_Notice,
+	rp_Log_Bit_Info = 1 << rp_Log_Level_Info,
+	rp_Log_Bit_Debug = 1 << rp_Log_Level_Debug,
+	rp_Log_Bit_Extra_Debug = 1 << rp_Log_Level_Extra_Debug
+};
+
+enum
+{
+	rp_Log_Mask_Emergency = (2 << rp_Log_Level_Emergency) - 1,
+	rp_Log_Mask_Alert = (2 << rp_Log_Level_Alert) - 1,
+	rp_Log_Mask_Critical = (2 << rp_Log_Level_Critical) - 1,
+	rp_Log_Mask_Error = (2 << rp_Log_Level_Error) - 1,
+	rp_Log_Mask_Warning = (2 << rp_Log_Level_Warning) - 1,
+	rp_Log_Mask_Notice = (2 << rp_Log_Level_Notice) - 1,
+	rp_Log_Mask_Info = (2 << rp_Log_Level_Info) - 1,
+	rp_Log_Mask_Debug = (2 << rp_Log_Level_Debug) - 1,
+	rp_Log_Mask_Extra_Debug = (2 << rp_Log_Level_Extra_Debug) - 1
+};
+
 extern int rp_logmask;
 
-extern void rp_set_logmask(int lvl);
+extern void rp_set_logmask(int mask);
 
 extern void rp_verbose(int loglevel, const char *file, int line, const char *function, const char *fmt, ...) __attribute__((format(printf, 5, 6)));
 extern void rp_vverbose(int loglevel, const char *file, int line, const char *function, const char *fmt, va_list args);
