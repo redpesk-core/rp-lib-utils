@@ -1,3 +1,9 @@
+* version 0.2.2
+
+- Adaptation to Zephyr
+- Added bit masks for log settings
+- Static lib compiled with -fPIC
+
 * version 0.2.1
 
 - Fix buffer overflow in variable expansion
