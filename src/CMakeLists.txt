@@ -34,6 +34,7 @@ function(addlibll outname description)
 		add_library(${outname}-static STATIC)
 		set_target_properties(${outname}-static PROPERTIES
 			OUTPUT_NAME ${outname}
+			POSITION_INDEPENDENT_CODE ON
 			VERSION "${LIBRP_UTILS_VERSION}")
 		target_compile_options(${outname}-static PRIVATE -ffunction-sections -fdata-sections)
 		target_include_directories(${outname}-static PUBLIC ${alldirs})
