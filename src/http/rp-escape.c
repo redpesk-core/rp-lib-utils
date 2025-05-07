@@ -404,7 +404,7 @@ const char **rp_unescape_args(const char *args)
 			z += l;
 			c = args[z++];
 			if (c != '=')
-				q[1] = NULL;
+				q[1] = p - 1; /*empty string from key name*/
 			else {
 				q[1] = p;
 				l = strcspn(&args[z], "&");
@@ -469,10 +469,18 @@ char *rp_unescape(const char *text, size_t textlen, size_t *reslength)
 int main(int ac, char **av)
 {
 	int i;
-	char *x = escape_args((void*)++av, NULL);
-	char *y = escape(x, strlen(x), NULL);
-	char *z = unescape(y, strlen(y), NULL);
-	const char **v = unescape_args(x);
+	char *x, *y, *z;
+	const char **v;
+
+	for (i=1 ; i < ac ; i++)
+		if (!av[i][0])
+			av[i] = NULL;
+	av[ac] = av[ac + 1] = NULL;
+
+	x = rp_escape_args((void*)++av, NULL);
+	y = rp_escape(x, strlen(x), NULL);
+	z = rp_unescape(y, strlen(y), NULL);
+	v = rp_unescape_args(x);
 
 	printf("%s\n%s\n%s\n", x, y, z);
 	free(x);
