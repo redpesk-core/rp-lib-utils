@@ -1,3 +1,7 @@
+* version 0.2.3
+
+- Ensure empty string value when query parameter without value
+
 * version 0.2.2
 
 - Adaptation to Zephyr
