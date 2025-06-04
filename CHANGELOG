@@ -1,3 +1,7 @@
+* version ?
+
+- Remove dependency to libsystemd
+
 * version 0.2.3
 
 - Ensure empty string value when query parameter without value

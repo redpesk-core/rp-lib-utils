@@ -23,7 +23,6 @@ endmacro()
 chkpkg(JSON_C  json-c>=0.13)
 chkpkg(YAML    yaml-0.1)
 chkpkg(CURL    libcurl)
-chkpkg(SYSTEMD libsystemd>=222)
 chkpkg(LIBUUID uuid)
 
 # macro for adding a source file
@@ -150,9 +149,6 @@ addch(core
 )
 if(LIBUUID_FOUND)
 	addlibpkg(core LIBUUID)
-endif()
-if(SYSTEMD_FOUND)
-	addlibpkg(core SYSTEMD)
 endif()
 
 if(NOT WITH_ZEPHYR)
