@@ -30,6 +30,7 @@ function(addlibll outname description)
 	set_property(GLOBAL APPEND PROPERTY targetlibs ${outname})
 	set_property(GLOBAL PROPERTY ${outname}-description ${description})
 	if(NOT NO_STATIC_LIB)
+		message("Adding target ${outname}-static")
 		add_library(${outname}-static STATIC)
 		set_target_properties(${outname}-static PROPERTIES
 			OUTPUT_NAME ${outname}
@@ -40,6 +41,7 @@ function(addlibll outname description)
 		install(TARGETS ${outname}-static)
 	endif()
 	if(NOT NO_SHARED_LIB)
+		message("Adding target ${outname}-shared")
 		add_library(${outname}-shared SHARED)
 		set_target_properties(${outname}-shared PROPERTIES
 			OUTPUT_NAME ${outname}
