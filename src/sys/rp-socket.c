@@ -244,7 +244,7 @@ static int open_tcp(const char *spec, int server, int reuseaddr)
 }
 
 /******************************************************************************/
-#if WITH_SYSTEMD
+#if !WITHOUT_SYSTEMD_SOCKET
 
 #include "rp-systemd.h"
 
@@ -335,7 +335,7 @@ static int open_uri(const char *uri, int server, const char *scheme)
 	case Type_Inet:
 		fd = open_tcp(uri, server, !e->noreuseaddr);
 		break;
-#if WITH_SYSTEMD
+#if !WITHOUT_SYSTEMD_SOCKET
 	case Type_Systemd:
 		if (server)
 			fd = open_systemd(uri);
