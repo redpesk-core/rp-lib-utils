@@ -146,6 +146,7 @@ addch(core
 	misc/rp-expand-vars
 	misc/rp-pearson
 	misc/rp-uuid
+	misc/rp-str2int
 	misc/sha1
 	sys/rp-verbose
 )
@@ -266,3 +267,4 @@ Libs.private: ${privates}
 		install(FILES ${CMAKE_BINARY_DIR}/lib${outname}.pc DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig)
 	endif()
 endforeach()
+
