@@ -135,6 +135,8 @@ function(addch target)
 	endforeach()
 endfunction(addch)
 
+configure_file(misc/rp-version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/misc/rp-version.h @ONLY)
+addhdr(core misc/rp-version.h)
 
 # core library isn't depending of much things
 addlib(core "core functions")
