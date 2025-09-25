@@ -27,8 +27,10 @@
 
 #include <string.h>
 #include <limits.h>
+#include <errno.h>
 
 #include "../misc/rp-base64.h"
+#include "../misc/rp-str2int.h"
 
 #define STACKCOUNT  32
 
@@ -486,10 +488,11 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				pi = va_arg(args, int *);
 
 			if (!ignore) {
-				if (!json_object_is_type(obj, json_type_int))
+				int32_t i32;
+				if (!rp_jsonc_get_int32(obj, &i32, rp_jsonc_int_mode_number))
 					goto missfit;
 				if (store && pi)
-					*pi = json_object_get_int(obj);
+					*pi = (int)i32;
 			}
 			break;
 		case 'I':
@@ -497,10 +500,11 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				pI = va_arg(args, int64_t *);
 
 			if (!ignore) {
-				if (!json_object_is_type(obj, json_type_int))
+				int64_t i64;
+				if (!rp_jsonc_get_int64(obj, &i64, rp_jsonc_int_mode_number))
 					goto missfit;
 				if (store && pI)
-					*pI = json_object_get_int64(obj);
+					*pI = i64;
 			}
 			break;
 		case 'u':
@@ -508,15 +512,11 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				pu = va_arg(args, unsigned int *);
 
 			if (!ignore) {
-				if (!json_object_is_type(obj, json_type_int))
+				uint32_t u32;
+				if (!rp_jsonc_get_uint32(obj, &u32, rp_jsonc_int_mode_number))
 					goto missfit;
 				if (store && pu)
-// json-c version >= 0.14
-#if JSON_C_VERSION_NUM >= 0x000e00
-					*pu = (unsigned int)json_object_get_uint64(obj);
-#else
-					*pu = (unsigned int)json_object_get_int64(obj);
-#endif
+					*pu = (unsigned int)u32;
 			}
 			break;
 		case 'U':
@@ -524,15 +524,11 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				pU = va_arg(args, uint64_t *);
 
 			if (!ignore) {
-				if (!json_object_is_type(obj, json_type_int))
+				uint64_t u64;
+				if (!rp_jsonc_get_uint64(obj, &u64, rp_jsonc_int_mode_number))
 					goto missfit;
 				if (store && pU)
-// json-c version >= 0.14
-#if JSON_C_VERSION_NUM >= 0x000e00
-					*pU = json_object_get_uint64(obj);
-#else
-					*pU = (uint64_t)json_object_get_int64(obj);
-#endif
+					*pU = u64;
 			}
 			break;
 		case 'f':
@@ -1326,6 +1322,133 @@ int rp_jsonc_add(struct json_object *object, const char *key, struct json_object
 int rp_jsonc_add_string(struct json_object *object, const char *key, const char *string)
 {
 	return string == NULL ? 0 : rp_jsonc_add(object, key, json_object_new_string(string));
+}
+
+/* get an integer from the json value */
+static int getu64(struct json_object *object, uint64_t *value, rp_jsonc_int_mode_t mode)
+{
+	switch(json_object_get_type(object)) {
+
+	case json_type_null:
+		if (mode & rp_jsonc_int_mode_null) {
+			*value = 0;
+			return 1;
+		}
+		break;
+
+	case json_type_boolean:
+		if (mode & rp_jsonc_int_mode_boolean) {
+			*value = (uint64_t)(json_object_get_boolean(object) != 0);
+			return 1;
+		}
+		break;
+
+	case json_type_double:
+		if (mode & rp_jsonc_int_mode_double) {
+			double x = json_object_get_double(object);
+			*value = (uint64_t)(x < 0 ? -x : x);
+			if (x == (double)*value)
+				return x >= 0.0 ? 1 : -1;
+		}
+		break;
+
+	case json_type_int:
+// json-c version >= 0.14
+#if JSON_C_VERSION_NUM >= 0x000e00
+		errno = 0;
+		*value = json_object_get_uint64(object);
+		if (errno == 0)
+			return 1;
+		errno = 0;
+		*value = (uint64_t)-json_object_get_int64(object);
+		if (errno == 0)
+			return -1;
+#else
+		{
+			int64_t val = json_object_get_int64(object);
+			if (val < 0) {
+				*value = -val;
+				return -1;
+			}
+			*value = val;
+			return 1;
+		}
+#endif
+		break;
+
+	case json_type_string:
+		if (mode & rp_jsonc_int_mode_string)
+			return rp_str2u64(json_object_get_string(object), value);
+		break;
+
+	case json_type_object:
+	case json_type_array:
+	default:
+		break;
+	}
+	return 0;
+}
+
+int rp_jsonc_get_int64(struct json_object *object, int64_t *value, rp_jsonc_int_mode_t mode)
+{
+	uint64_t u64;
+	int rc = getu64(object, &u64, mode);
+
+	if (rc < 0) {
+		if (u64 > -(uint64_t)INT64_MIN)
+			rc = 0;
+		else {
+			*value = -(int64_t)u64;
+			rc = 1;
+		}
+	}
+	else if (rc > 0) {
+		if (u64 > INT64_MAX)
+			rc = 0;
+		else
+			*value = (int64_t)u64;
+	}
+	return rc;
+}
+
+int rp_jsonc_get_uint64(struct json_object *object, uint64_t *value, rp_jsonc_int_mode_t mode)
+{
+	int rc = getu64(object, value, mode);
+	return rc > 0;
+}
+
+int rp_jsonc_get_int32(struct json_object *object, int32_t *value, rp_jsonc_int_mode_t mode)
+{
+	uint64_t u64;
+	int rc = getu64(object, &u64, mode);
+
+	if (rc < 0) {
+		if (u64 > -(uint32_t)INT32_MIN)
+			rc = 0;
+		else {
+			*value = -(int32_t)u64;
+			rc = 1;
+		}
+	}
+	else if (rc > 0) {
+		if (u64 > INT32_MAX)
+			rc = 0;
+		else
+			*value = (int32_t)u64;
+	}
+	return rc;
+}
+
+int rp_jsonc_get_uint32(struct json_object *object, uint32_t *value, rp_jsonc_int_mode_t mode)
+{
+	uint64_t u64;
+	int rc = getu64(object, &u64, mode);
+
+	if (rc > 0 && u64 <= UINT32_MAX)
+		*value = (uint32_t)u64;
+	else
+		rc = 0;
+	return rc;
 }
 
 /**********************************************************************/

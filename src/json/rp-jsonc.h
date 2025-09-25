@@ -30,6 +30,7 @@
 #endif
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <json-c/json.h>
 
 /**
@@ -638,6 +639,83 @@ extern int rp_jsonc_add(struct json_object *object, const char *key, struct json
  * @return 1 if successful or 0 if something failed or 'string' is NULL
  */
 extern int rp_jsonc_add_string(struct json_object *object, const char *key, const char *string);
+
+/**
+ * Get int mode
+ */
+typedef enum {
+	/** only integer are supported */
+	rp_jsonc_int_mode_strict = 0,
+	/** doubles are converted to integers if possible */
+	rp_jsonc_int_mode_double = 1,
+	/** strings are converted to integers if possible */
+	rp_jsonc_int_mode_string = 2,
+	/** booleans are converted to integers */
+	rp_jsonc_int_mode_boolean = 4,
+	/** null are converted to zero */
+	rp_jsonc_int_mode_null = 8,
+	/** conversion from double and strings are accepted */
+	rp_jsonc_int_mode_number = 3,
+	/** any possible conversion is accepted */
+	rp_jsonc_int_mode_any = 15
+}
+	rp_jsonc_int_mode_t;
+
+/**
+ * Get the 64 bits signed integer value of the JSON-C 'object'. It interprets strings
+ * beginning with 0o, 0, 0x, 0b, 0d, [1-9] as  octal, octal, hexa, binary,
+ * decimal, decimal representation of the expected number.
+ *
+ * @param object the JSON object whose value is expected
+ * @param value pointer to the int64 receiving the value
+ * @param mode accepted integer modes
+ *
+ * @return 1 if successful
+ *      or 0 when object doesn't match a number or a 64 bits signed integer
+ */
+extern int rp_jsonc_get_int64(struct json_object *object, int64_t *value, rp_jsonc_int_mode_t mode);
+
+/**
+ * Get the 64 bits unsigned integer value of the JSON-C 'object'. It interprets strings
+ * beginning with 0o, 0, 0x, 0b, 0d, [1-9] as  octal, octal, hexa, binary,
+ * decimal, decimal representation of the expected number.
+ *
+ * @param object the JSON object whose value is expected
+ * @param value pointer to the int64 receiving the value
+ * @param mode accepted integer modes
+ *
+ * @return 1 if successful
+ *      or 0 when object doesn't match a number or a 64 bits unsigned integer
+ */
+extern int rp_jsonc_get_uint64(struct json_object *object, uint64_t *value, rp_jsonc_int_mode_t mode);
+
+/**
+ * Get the 32 bits signed integer value of the JSON-C 'object'. It interprets strings
+ * beginning with 0o, 0, 0x, 0b, 0d, [1-9] as  octal, octal, hexa, binary,
+ * decimal, decimal representation of the expected number.
+ *
+ * @param object the JSON object whose value is expected
+ * @param value pointer to the int64 receiving the value
+ * @param mode accepted integer modes
+ *
+ * @return 1 if successful
+ *      or 0 when object doesn't match a number or a 32 bits signed integer
+ */
+extern int rp_jsonc_get_int32(struct json_object *object, int32_t *value, rp_jsonc_int_mode_t mode);
+
+/**
+ * Get the 32 bits unsigned integer value of the JSON-C 'object'. It interprets strings
+ * beginning with 0o, 0, 0x, 0b, 0d, [1-9] as  octal, octal, hexa, binary,
+ * decimal, decimal representation of the expected number.
+ *
+ * @param object the JSON object whose value is expected
+ * @param value pointer to the int64 receiving the value
+ * @param mode accepted integer modes
+ *
+ * @return 1 if successful
+ *      or 0 when object doesn't match a number or a 32 bits unsigned integer
+ */
+extern int rp_jsonc_get_uint32(struct json_object *object, uint32_t *value, rp_jsonc_int_mode_t mode);
 
 #ifdef __cplusplus
     }
