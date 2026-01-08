@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 IoT.bzh Company
+ * Copyright (C) 2020-2026 IoT.bzh Company
  * Author: José Bollo <jose.bollo@iot.bzh>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
