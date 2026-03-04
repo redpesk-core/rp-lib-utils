@@ -114,6 +114,8 @@ START_TEST (check_order)
 	before = x_before;
 	after = x_after;
 	mc("$A $B $X $Z", "env before before last");
+
+	mc("\\\\\\$", "\\$");
 }
 END_TEST
 
