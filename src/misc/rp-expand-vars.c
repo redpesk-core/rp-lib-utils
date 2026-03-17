@@ -102,12 +102,20 @@ static char *expand(const char *value, rp_expand_vars_fun_t function, void *clos
 				if (oc == RP_EXPAND_VARS_ESC || oc == RP_EXPAND_VARS_CHAR) {
 					c = oc;
 					begin++;
+					remove++;
 				}
 				if (write)
 					*write++ = c;
 			}
 			else if (c != RP_EXPAND_VARS_CHAR) {
 				/* not a variable to expand */
+				if (write)
+					*write++ = c;
+			}
+			else if (*begin == RP_EXPAND_VARS_CHAR) {
+				/* double expand var is reduced to a single one */
+				remove++;
+				begin++;
 				if (write)
 					*write++ = c;
 			}

@@ -115,7 +115,10 @@ START_TEST (check_order)
 	after = x_after;
 	mc("$A $B $X $Z", "env before before last");
 
-	mc("\\\\\\$", "\\$");
+	mc("$$", "$");
+	mc("\\\\", "\\");
+	mc("\\$", "$");
+	mc("a\\\\b\\$c$$d", "a\\b$c$d");
 }
 END_TEST
 

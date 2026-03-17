@@ -1,3 +1,7 @@
+* version ????
+
+- add escaping of $ using $$
+
 * version 0.3.0
 
 - Add macros for testing version
