@@ -183,6 +183,7 @@ if(JSON_C_FOUND)
 	addch(json-c
 		json/rp-jconf
 		json/rp-jsonc-expand
+		json/rp-jsonc-default-expand
 		json/rp-jsonc-path
 		json/rp-jsonc
 	)
