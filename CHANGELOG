@@ -2,6 +2,7 @@
 
 - Add escaping of $ using $$
 - Tiny refactor of JSON expander
+- Renaming of functions jconf_... to rp_conf_...
 
 * version 0.3.0
 

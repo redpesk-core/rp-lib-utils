@@ -30,14 +30,14 @@
 extern "C" {
 #endif
 
-extern bool jconf_any(
+extern bool rp_jconf_any(
 		json_object *conf,
 		const char *key,
 		bool required,
 		json_object **store
 );
 
-extern bool jconf_int(
+extern bool rp_jconf_int(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -45,7 +45,7 @@ extern bool jconf_int(
 		int defvalue
 );
 
-extern bool jconf_bool(
+extern bool rp_jconf_bool(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -53,7 +53,7 @@ extern bool jconf_bool(
 		bool defvalue
 );
 
-extern bool jconf_string(
+extern bool rp_jconf_string(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -62,7 +62,7 @@ extern bool jconf_string(
 
 #include "rp-enum-map.h"
 
-extern bool jconf_enum(
+extern bool rp_jconf_enum(
 		json_object *conf,
 		const char *key,
 		bool required,

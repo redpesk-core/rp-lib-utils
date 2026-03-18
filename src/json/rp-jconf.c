@@ -44,7 +44,7 @@ static bool jconf_get(
 	return false;
 }
 
-bool jconf_any(
+bool rp_jconf_any(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -56,7 +56,7 @@ bool jconf_any(
 	return !required;
 }
 
-bool jconf_int(
+bool rp_jconf_int(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -78,7 +78,7 @@ bool jconf_int(
 	return false;
 }
 
-bool jconf_bool(
+bool rp_jconf_bool(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -100,7 +100,7 @@ bool jconf_bool(
 	return false;
 }
 
-bool jconf_string(
+bool rp_jconf_string(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -122,7 +122,7 @@ bool jconf_string(
 	return false;
 }
 
-bool jconf_enum(
+bool rp_jconf_enum(
 		json_object *conf,
 		const char *key,
 		bool required,
@@ -133,7 +133,7 @@ bool jconf_enum(
 	char c = 0;
 	const char *found = NULL;
 	*store = defvalue;
-	bool ok = jconf_string(conf, key, required, &found, &c);
+	bool ok = rp_jconf_string(conf, key, required, &found, &c);
 	if (ok && found != &c) {
 		ok = rp_enum_map_value (keyvals, found, store);
 		if (!ok) {
