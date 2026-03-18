@@ -1,6 +1,7 @@
 * version ????
 
-- add escaping of $ using $$
+- Add escaping of $ using $$
+- Tiny refactor of JSON expander
 
 * version 0.3.0
 

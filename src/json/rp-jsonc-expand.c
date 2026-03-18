@@ -25,7 +25,7 @@
 #include "rp-jsonc-expand.h"
 
 /**
- * Structure recording the path path of the expansion
+ * Structure recording the path of the expansion
  */
 struct rp_jsonc_expand_path
 {
@@ -44,6 +44,21 @@ struct rp_jsonc_expand_path
 	/** key of expanded child if object is an object */
 	const char *key;
 
+};
+
+/**
+ * Structure recording callbacks
+ */
+struct cbs
+{
+	/** closure of the callbacks */
+	void *closure;
+
+	/** callback processing objects */
+	rp_jsonc_expandcb expand_object;
+
+	/** callback processing strings */
+	rp_jsonc_expandcb expand_string;
 };
 
 /**
@@ -68,10 +83,9 @@ at(rp_jsonc_expand_path_t path, int index)
 /**
  * Internal function for expanding json objects
  *
- * @param object the object to be expanded
+ * @param object   the object to be expanded
+ * @param cbs      structure holding callbacks
  * @param previous link to the parent object
- * @param expand_object a function for replacing json objects or NULL
- * @param expand_string a function for replacing json strings or NULL
  *
  * @return either the given object or its replacement
  */
@@ -79,9 +93,7 @@ static
 struct json_object *
 expand(
 	struct json_object *object,
-	void *closure,
-	rp_jsonc_expandcb expand_object,
-	rp_jsonc_expandcb expand_string,
+	const struct cbs *cbs,
 	rp_jsonc_expand_path_t previous
 ) {
 #if JSON_C_VERSION_NUM >= 0x000d00
@@ -108,17 +120,17 @@ expand(
 		while (!json_object_iter_equal(&it, &end)) {
 			curval = json_object_iter_peek_value(&it);
 			path.key = json_object_iter_peek_name(&it);
-			nxtval = expand(curval, closure, expand_object, expand_string, &path);
+			nxtval = expand(curval, cbs, &path);
 			if (nxtval != curval)
 				json_object_object_add(object, path.key, nxtval);
 			json_object_iter_next(&it);
 		}
 		/* expand the result using the function */
-		if (expand_object != NULL) {
-			nxtval = expand_object(closure, object, previous);
+		if (cbs->expand_object != NULL) {
+			nxtval = cbs->expand_object(cbs->closure, object, previous);
 			if (nxtval != object) {
 				/* the function returned a new object, try recursive expansion of it */
-				object = expand(nxtval, closure, expand_object, expand_string, previous);
+				object = expand(nxtval, cbs, previous);
 				if (nxtval != object)
 					json_object_put(nxtval);
 			}
@@ -134,15 +146,15 @@ expand(
 		for (idx = 0 ; idx < len ; idx++) {
 			curval = json_object_array_get_idx(object, idx);
 			path.index = (size_t)idx;
-			nxtval = expand(curval, closure, expand_object, expand_string, &path);
+			nxtval = expand(curval, cbs, &path);
 			if (nxtval != curval)
 				json_object_array_put_idx(object, idx, nxtval);
 		}
 		break;
 	case json_type_string:
 		/* expansion of strings using given function */
-		if (expand_string != NULL)
-			object = expand_string(closure, object, previous);
+		if (cbs->expand_string != NULL)
+			object = cbs->expand_string(cbs->closure, object, previous);
 		break;
 	default:
 		/* no expansion on number, bool, null */
@@ -159,7 +171,12 @@ rp_jsonc_expand(
 	rp_jsonc_expandcb expand_object,
 	rp_jsonc_expandcb expand_string
 ) {
+	struct cbs cbs;
 	struct rp_jsonc_expand_path path;
+
+	cbs.closure = closure;
+	cbs.expand_object = expand_object;
+	cbs.expand_string = expand_string;
 
 	path.depth = -1;
 	path.previous = NULL;
@@ -167,7 +184,7 @@ rp_jsonc_expand(
 	path.key = NULL;
 	path.object = NULL;
 
-	return expand(object, closure, expand_object, expand_string, &path);
+	return expand(object, &cbs, &path);
 }
 
 /* length of the path */
