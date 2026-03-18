@@ -43,8 +43,8 @@
 /*********************************************************************/
 
 char input[] = "{ \"key\": [ { \"$ref\": \"$valref\" }, 5, true, 0 ], \"item\": \"x$(valitem)x\" }";
-char *vars[] = { "valref=toto", "valitem=HELLO", "toto=item", NULL };
-char output[] = "{ \"key\": [ \"toto\", 5, true, 0 ], \"item\": \"xHELLOx\" }";
+char *vars[] = { "valref=ZZ\\$(toto)ZZ", "valitem=HELLO", "toto=item", NULL };
+char output[] = "{ \"key\": [ \"ZZitemZZ\", 5, true, 0 ], \"item\": \"xHELLOx\" }";
 
 void printpath(rp_jsonc_expand_path_t path, struct json_object* object)
 {
