@@ -23,18 +23,73 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 #include "rp-yaml.h"
+
+#ifndef JSON_C_TO_STRING_COLOR
+#define JSON_C_TO_STRING_COLOR 0
+#endif
+#ifndef	JSON_C_TO_STRING_NOSLASHESCAPE
+#define	JSON_C_TO_STRING_NOSLASHESCAPE 0
+#endif
+#ifndef	JSON_C_TO_STRING_NOZERO
+#define	JSON_C_TO_STRING_NOZERO 0
+#endif
+#ifndef	JSON_C_TO_STRING_PRETTY
+#define	JSON_C_TO_STRING_PRETTY 0
+#endif
+
+#define FLAGS \
+	  JSON_C_TO_STRING_NOSLASHESCAPE \
+	| JSON_C_TO_STRING_NOZERO \
+	| JSON_C_TO_STRING_PRETTY
 
 int main(int ac, char **av)
 {
 	int rc;
 	json_object *obj;
-	const char *file = *++av;
+	const char *fname;
+	const char *arg;
+	FILE *file;
+	int ok = 0;
+	int flags = FLAGS;
+	int colorize = isatty(1);
 
-	if (file == NULL)
-		file = "/dev/stdin";
-	rc = rp_yaml_path_to_json_c(&obj, file, NULL);
-	if (rc == 0)
-		printf("%s\n", json_object_to_json_string(obj));
+	/* check coloring option */
+	while (!ok) {
+		arg = *++av;
+#define ISOPT(short,long) (strcmp(arg,short)==0 || strcmp(arg,long)==0)
+		if (arg == NULL)
+			ok = 1;
+		else if (ISOPT("-C","--color"))
+			colorize = 1;
+		else if (ISOPT("-c","--no-color"))
+			colorize = 0;
+		else
+			ok = 1;
+	}
+	if (colorize)
+		flags |= JSON_C_TO_STRING_COLOR;
+
+	/* get file to process */
+	fname = arg;
+	if (fname == NULL) {
+		fname = "<stdin>";
+		file = stdin;
+	}
+	else {
+		file = fopen(fname, "rb");
+		if (file == NULL) {
+			fprintf(stderr, "can't open %s: %m\n", fname);
+			exit(1);
+		}
+	}
+
+	/* process now */
+	rc = rp_yaml_file_to_json_c(&obj, file, fname);
+	if (rc < 0)
+		exit(1);
+	json_object_to_fd(1, obj, flags);
 	return !rc;
 }
