@@ -55,7 +55,12 @@ int rp_str2u64(const char *str, uint64_t *value)
 		case 'o': base = 8; break;
 		case 'd': base = 10; break;
 		case 'x': base = 16; break;
-		default: base = 8; str--; break;
+		default:
+			if (c == '\0') {
+				*value = 0;
+				return rc;
+			}
+			base = 8; str--; break;
 		}
 		c = *++str;
 	}

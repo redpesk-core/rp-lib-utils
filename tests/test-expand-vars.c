@@ -44,6 +44,7 @@ START_TEST (check_expand)
 {
 	char *r;
 
+	clearenv();
 	putenv("X=$Y:$Y");
 	putenv("Y=$A:$(unnom):tres:$long");
 	putenv("A=a");
@@ -95,6 +96,7 @@ START_TEST (check_order)
 	char *x_before[] = { "X=before", "B=before", 0 };
 	char *x_after[] = { "X=after", "A=after", "Z=last", 0 };
 
+	clearenv();
 	putenv("X=env");
 	putenv("A=env");
 	putenv("B=env");

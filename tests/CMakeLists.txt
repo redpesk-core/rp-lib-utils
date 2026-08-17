@@ -1,0 +1,64 @@
+
+pkg_check_modules(CHECK check IMPORTED_TARGET)
+
+if(NOT NO_STATIC_LIB)
+	set(MODE static)
+else()
+	set(MODE shared)
+endif()
+
+function(addtestfiles name)
+	if(TARGET test-${name})
+		set(lincs)
+		foreach(inp ${ARGN})
+			add_custom_command(
+				OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${inp}.inc
+				COMMAND sed "s:[\"\\\\]:\\\\&:g;s:^.*$:\"&\\\\n\":"
+				${CMAKE_CURRENT_SOURCE_DIR}/${inp}
+				> ${CMAKE_CURRENT_BINARY_DIR}/${inp}.inc
+				DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${inp}
+				VERBATIM
+			)
+			list(APPEND lincs ${CMAKE_CURRENT_BINARY_DIR}/${inp}.inc)
+		endforeach()
+		add_custom_target(incs-${name} DEPENDS ${lincs})
+		target_include_directories(test-${name} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+		add_dependencies(test-${name} incs-${name})
+	endif()
+endfunction(addtestfiles)
+
+function(addtest name)
+	set(ok TRUE)
+	set(llibs)
+	foreach(lib ${ARGN})
+		if(TARGET rp-utils-${lib}-${MODE})
+			list(APPEND llibs  rp-utils-${lib}-${MODE})
+		else()
+			set(ok FALSE)
+		endif()
+	endforeach()
+	if(ok)
+		add_executable(test-${name} test-${name}.c)
+		target_link_libraries(test-${name} PkgConfig::CHECK)
+		target_link_libraries(test-${name} ${llibs})
+		target_include_directories(test-${name} PRIVATE ../src)
+		add_test(NAME ${name} COMMAND test-${name})
+		message("Adding test ${name}")
+	else()
+		message("NO test ${name}")
+	endif()
+endfunction(addtest)
+
+if(CHECK_FOUND)
+	addtest(expand-vars core)
+	addtest(str2int core)
+#	addtest(globset core)
+#	addtest(path-search file)
+	addtest(expand-json json-c)
+#	addtest(json-locator json-c)
+	addtest(json2int json-c)
+	addtest(read-yaml-jsonc yaml json-c)
+	addtestfiles(read-yaml-jsonc y0 j0)
+else()
+	message(STATUS "no test because check library not found")
+endif()

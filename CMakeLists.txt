@@ -53,7 +53,11 @@ else()
 	set(WITH_ZEPHYR NO)
 	include(FindPkgConfig)
 	include(GNUInstallDirs)
+	include(CTest)
 endif()
 
 # build sources
 add_subdirectory(src)
+if(NOT ZEPHYR_BASE)
+	add_subdirectory(tests)
+endif()

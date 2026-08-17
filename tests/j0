@@ -1,0 +1,22 @@
+{
+	"extra": [
+		{
+			"uid": "session-setup",
+			"request": {
+				"msg": "session_setup_req",
+				"id": "01:02:03:04:05:06"
+			}
+		},
+		4096,
+		64,
+		15,
+		null,
+		true,
+		false,
+		"456ert684edrg",
+		3.15,
+		[ 1, 2, 3 ],
+		"fin"
+	],
+	"fin": "ceci n'est pas \"une pipe\" !?"
+}
