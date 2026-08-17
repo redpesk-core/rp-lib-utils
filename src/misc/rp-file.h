@@ -1,26 +1,26 @@
 /*
- Copyright (C) 2015-2026 IoT.bzh Company
-
- Author: José Bollo <jose.bollo@iot.bzh>
-
- $RP_BEGIN_LICENSE$
- Commercial License Usage
-  Licensees holding valid commercial IoT.bzh licenses may use this file in
-  accordance with the commercial license agreement provided with the
-  Software or, alternatively, in accordance with the terms contained in
-  a written agreement between you and The IoT.bzh Company. For licensing terms
-  and conditions see https://www.iot.bzh/terms-conditions. For further
-  information use the contact form at https://www.iot.bzh/contact.
-
- GNU General Public License Usage
-  Alternatively, this file may be used under the terms of the GNU General
-  Public license version 3. This license is as published by the Free Software
-  Foundation and appearing in the file LICENSE.GPLv3 included in the packaging
-  of this file. Please review the following information to ensure the GNU
-  General Public License requirements will be met
-  https://www.gnu.org/licenses/gpl-3.0.html.
- $RP_END_LICENSE$
-*/
+ * Copyright (C) 2015-2026 IoT.bzh Company
+ * Author: José Bollo <jose.bollo@iot.bzh>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #pragma once
 

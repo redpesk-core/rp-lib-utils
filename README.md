@@ -4,7 +4,8 @@ rp-lib-utils
 This project provides useful C/C++ routines used by many
 projects developped by IoT.bzh company since 2015.
 
-It is available with the liberal license MIT.
+It is available with the liberal license MIT as writen
+in the file LICENSE.txt.
 
 It also includes open source code from other origin
 with liberal license (see Third-Party below)
@@ -12,9 +13,11 @@ with liberal license (see Third-Party below)
 This project is available in github at
 https://github.com/redpesk-core/rp-lib-utils.
 
-Bug reports must be done through creation of issues.
+Bug reports must be done through creation of issues
+at https://github.com/redpesk-core/rp-lib-utils/issues/new.
 
-Contributions are welcome through creation of pull request.
+Contributions are welcome through creation of pull request,
+see https://github.com/redpesk-core/rp-lib-utils/pulls.
 
 Produced libraries
 ------------------
