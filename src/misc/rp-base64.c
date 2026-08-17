@@ -188,7 +188,10 @@ int rp_base64_decode(
 	/* terminate */
 	*decoded = realloc(result, out + 1);
 	if (out && *decoded == NULL) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuse-after-free"
 		free(result);
+#pragma GCC diagnostic pop
 		return rp_base64_nomem;
 	}
 	decoded[out] = 0; /* add zero at end to make life sweeter */

@@ -41,7 +41,7 @@ struct buffer {
 
 static const char* curl_concatenate_args(const char * const *args, const char *sep, size_t *length)
 {
-	int i;
+	unsigned i;
 	size_t lq;
 	const char *null;
 	char *result, *front;

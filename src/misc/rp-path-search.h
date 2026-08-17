@@ -51,13 +51,13 @@ struct rp_path_search_entry
   const char *name;
 
   /** length of the path */
-  short pathlen;
+  unsigned short pathlen;
 
   /** length of the name, can be zero at root */
-  short namelen;
+  unsigned short namelen;
 
   /** is entry a directory */
-  short isDir;
+  unsigned short isDir;
 
   /** action */
   enum {

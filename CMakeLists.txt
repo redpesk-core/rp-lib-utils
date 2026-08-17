@@ -54,6 +54,39 @@ else()
 	include(FindPkgConfig)
 	include(GNUInstallDirs)
 	include(CTest)
+	string(TOLOWER ${CMAKE_BUILD_TYPE} btype)
+	message("build type is ${btype}")
+	add_compile_options(
+		-g
+		-Wall
+		-Werror=format-security
+		-Wextra
+		-Wconversion
+		-Wincompatible-pointer-types
+		-Wno-unused-parameter
+		-Wsign-compare
+		-Wsign-conversion
+		-Werror=maybe-uninitialized
+		-Werror=implicit-function-declaration
+		-ffunction-sections
+		-fdata-sections
+		-pipe
+	)
+	if(btype STREQUAL debug)
+		add_compile_options(
+			-O0
+			-fstack-protector-strong 
+			-fasynchronous-unwind-tables
+			-Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3
+			-Wp,-D_GLIBCXX_ASSERTIONS
+		)
+	elseif(btype STREQUAL release)
+		add_compile_options(-O2)
+	elseif(btype STREQUAL profile)
+		add_compile_options(-O2 -pg -coverage)
+		add_link_options(-pg)
+		link_libraries(gcov)
+	endif()
 endif()
 
 # build sources

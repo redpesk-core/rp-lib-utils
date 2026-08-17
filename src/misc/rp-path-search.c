@@ -379,8 +379,8 @@ static int search_in_dir(struct search *search, DIR *dir, struct direntlist *pre
 {
 	struct direntlist dl, *idl;
 	struct stat st;
-	short pos, len;
-	short oplen, onlen;
+	unsigned short pos, len;
+	unsigned short oplen, onlen;
 	int stop, type;
 	char *name;
 	DIR *subdir;
@@ -429,7 +429,7 @@ static int search_in_dir(struct search *search, DIR *dir, struct direntlist *pre
 				continue;
 
 			/* copy name if no overflow */
-			len = (short)strlen(dl.ent->d_name);
+			len = (unsigned short)strlen(dl.ent->d_name);
 			if (len + pos >= (int)sizeof(search->path)) {
 				/* overflow detected */
 				continue;
@@ -454,7 +454,7 @@ static int search_in_dir(struct search *search, DIR *dir, struct direntlist *pre
 			/* prepare entry */
 			search->entry.name = name;
 			search->entry.namelen = len;
-			search->entry.pathlen = (short)(pos + len);
+			search->entry.pathlen = (unsigned short)(pos + len);
 
 			/* inspect type */
 			if (type == DT_REG) {
@@ -496,7 +496,7 @@ static int searchcb(void *closure, const char *path, size_t length)
 	DIR *dir;
 	struct stat st;
 
-	search->entry.pathlen = (short)length;
+	search->entry.pathlen = (unsigned short)length;
 	memcpy(search->path, path, 1 + length);
 	search->entry.namelen = 0;
 

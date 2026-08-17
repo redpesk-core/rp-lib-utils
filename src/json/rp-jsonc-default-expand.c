@@ -120,7 +120,7 @@ default_readfunc(
 	struct json_object **obj,
 	const char *filename
 ) {
-	struct expref *expref = closure;
+	/*struct expref *expref = closure;*/
 	return -!(*obj = json_object_from_file (filename));
 }
 
