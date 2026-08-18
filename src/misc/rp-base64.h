@@ -32,8 +32,11 @@
 extern "C" {
 #endif
 
+/** no error status */
 #define rp_base64_ok        0
+/** out of memory error status */
 #define rp_base64_nomem     -1
+/** invalid data status */
 #define rp_base64_invalid   -2
 
 /**

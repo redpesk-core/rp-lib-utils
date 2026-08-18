@@ -30,14 +30,20 @@
 extern "C" {
 #endif
 
-/** structure for TEXT <> INTEGER association */
+/**
+ * Structure for TEXT <> INTEGER association
+ *
+ * th
+ */
 typedef struct
 {
     const char *label; /**< text associated to the integer */
     const int  value;  /**< integer associated to the text */
-} rp_enum_map_t;
+}
+    rp_enum_map_t;
 
-/** search the 'value' in the label=NULL terminated array 'keyvals'
+/**
+* search the 'value' in the label=NULL terminated array 'keyvals'
 * if found, returns true else return false
 */
 extern bool rp_enum_map_has_value(const rp_enum_map_t *keyvals, int value);
