@@ -63,11 +63,6 @@ extern bool rp_enum_map_check_value(const rp_enum_map_t *keyvals, int value, con
 */
 extern bool rp_enum_map_check_label(const rp_enum_map_t *keyvals, const char *label, const char *context);
 
-/** search the 'value' in the label=NULL terminated array 'keyvals'
-* if found, returns true and store the label in 'result' else return false
-*/
-extern bool rp_enum_map_valid_value(const rp_enum_map_t *keyvals, int value);
-
 /** search the 'label' in the label=NULL terminated array 'keyvals'
 * if found, returns true and store the value in 'result' else return false
 */

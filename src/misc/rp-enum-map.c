@@ -76,7 +76,7 @@ bool rp_enum_map_check_label(const rp_enum_map_t *keyvals, const char *label, co
 bool rp_enum_map_value (const rp_enum_map_t *keyvals, const char *label, int *result)
 {
   keyvals = search_label(keyvals, label);
-  if (keyvals != NULL)
+  if (keyvals == NULL)
   	return false;
   *result = keyvals->value;
   return true;
@@ -85,7 +85,7 @@ bool rp_enum_map_value (const rp_enum_map_t *keyvals, const char *label, int *re
 bool rp_enum_map_label (const rp_enum_map_t *keyvals, int value, const char **result)
 {
   keyvals = search_value(keyvals, value);
-  if (keyvals != NULL)
+  if (keyvals == NULL)
   	return false;
   *result = keyvals->label;
   return true;
