@@ -66,18 +66,19 @@ int rp_file_get_at(int dfd, const char *file, char **content, size_t *size)
 					rc = -ENOMEM;
 				} else {
 					i = 0;
-					while (rc == 0 && i < sz) {
+					while (r != NULL && i < sz) {
 						rsz = read(f, r + i, sz - i);
 						if (rsz == 0)
 							sz = i;
 						else if (rsz > 0)
 							i += (size_t)rsz;
 						else if (errno != EINTR && errno != EAGAIN) {
-							free(r);
 							rc = -errno;
+							free(r);
+							r = NULL;
 						}
 					}
-					if (rc == 0) {
+					if (r != NULL) {
 						r[sz] = 0;
 						*content = r;
 					}
