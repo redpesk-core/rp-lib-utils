@@ -54,8 +54,6 @@ else()
 	include(FindPkgConfig)
 	include(GNUInstallDirs)
 	include(CTest)
-	string(TOLOWER ${CMAKE_BUILD_TYPE} btype)
-	message("build type is ${btype}")
 	add_compile_options(
 		-g
 		-Wall
@@ -72,7 +70,10 @@ else()
 		-fdata-sections
 		-pipe
 	)
+	string(TOLOWER ${CMAKE_BUILD_TYPE} btype)
+	message("build type is ${btype}")
 	if(btype STREQUAL debug)
+		message("compiling for DEBUG")
 		add_compile_options(
 			-O0
 			-fstack-protector-strong
@@ -80,12 +81,14 @@ else()
 			-Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3
 			-Wp,-D_GLIBCXX_ASSERTIONS
 		)
-	elseif(btype STREQUAL release)
-		add_compile_options(-O2)
 	elseif(btype STREQUAL profile)
+		message("compiling for PROFILE")
 		add_compile_options(-O2 -pg -coverage)
 		add_link_options(-pg)
 		link_libraries(gcov)
+	else() # if(btype STREQUAL release)
+		message("compiling for RELEASE")
+		add_compile_options(-O2)
 	endif()
 endif()
 
