@@ -70,7 +70,7 @@ else()
 		-fdata-sections
 		-pipe
 	)
-	string(TOLOWER ${CMAKE_BUILD_TYPE} btype)
+	string(TOLOWER "${CMAKE_BUILD_TYPE}" btype)
 	message("build type is ${btype}")
 	if(btype STREQUAL debug)
 		message("compiling for DEBUG")
