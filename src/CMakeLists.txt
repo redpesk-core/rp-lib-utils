@@ -2,6 +2,7 @@
 # ensure relocatable
 set(alldirs http json misc sys yaml)
 
+set_property(GLOBAL PROPERTY anasrcs)
 set_property(GLOBAL PROPERTY targetlibs)
 
 #
@@ -120,6 +121,7 @@ function(addsrc target)
 		addsrcll(rp-utils ${ARGN})
 		addsrcll(rp-utils-${target} ${ARGN})
 	endif()
+	set_property(GLOBAL APPEND PROPERTY anasrcs ${ARGN})
 endfunction(addsrc)
 
 # macro for adding header files
@@ -270,4 +272,8 @@ Libs.private: ${privates}
 		install(FILES ${CMAKE_BINARY_DIR}/lib${outname}.pc DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig)
 	endif()
 endforeach()
+
+get_property(anasrcs GLOBAL PROPERTY anasrcs)
+list(TRANSFORM anasrcs PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/)
+add_custom_target(analyze gcc -fanalyzer -S -I ${CMAKE_CURRENT_SOURCE_DIR}/rp-utils ${anasrcs})
 
