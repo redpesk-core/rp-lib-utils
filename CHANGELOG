@@ -1,3 +1,16 @@
+* version 0.4.0
+
+- Cleaning
+- Add compilation warnings
+- Add of tool yaml2json
+- Fix license to MIT
+- Add editorconfig setup
+- Full refactor with API break of rp-curl API
+- Add of tests using check library
+- Add 'make analyze' to statically analyze code
+- Fix serious bug in rp-base64
+- Fix serious bug in rp-enum-map
+
 * version 0.3.1
 
 - Add escaping of $ using $$
