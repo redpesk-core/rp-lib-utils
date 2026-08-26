@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+#define _GNU_SOURCE /* for vasprintf */
+
 #include "rp-jsonc-default-expand.h"
 
 #include <errno.h>

@@ -32,7 +32,7 @@
 
 #include "rp-escape.h"
 
-static const char content_type[] = "Content-Type";
+static const char CONTENT_TYPE[] = "Content-Type";
 
 /*
  * Perform the CURL operation for 'curl' and call given callback
@@ -56,7 +56,6 @@ int rp_curl_do(
 	code = curl_easy_perform(curl);
 	return -(code != CURLE_OK);
 }
-
 
 /* write callback for filling buffers with the response */
 static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
@@ -106,11 +105,20 @@ void rp_curl_cleanup(CURL *curl, struct curl_slist *headers)
 /* get a response header */
 const char *rp_curl_get_header(CURL * curl, const char *name)
 {
+#if LIBCURL_VERSION_NUM >= 0x078300
 	struct curl_header *hdr;
 	CURLHcode code;
 
 	code = curl_easy_header(curl, name, 0, CURLH_HEADER, -1, &hdr);
 	return code == CURLHE_OK ? hdr->value : NULL;
+#else
+	char *value;
+	CURLcode code = ~CURLE_OK;
+
+	if (strcasecmp(name, CONTENT_TYPE) == 0)
+		code = curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &value);
+	return code == CURLE_OK ? value : NULL;
+#endif
 }
 
 /* get the response code */
@@ -126,7 +134,7 @@ long rp_curl_get_response_code(CURL *curl)
 /* get the content type */
 const char *rp_curl_get_content_type(CURL *curl)
 {
-	return rp_curl_get_header(curl, content_type);
+	return rp_curl_get_header(curl, CONTENT_TYPE);
 }
 
 /* check the content type value */
@@ -160,7 +168,7 @@ int rp_curl_headers_add_keyval(struct curl_slist **headers, const char *name, co
 
 int rp_curl_headers_add_content_type(struct curl_slist **headers, const char *value)
 {
-	return rp_curl_headers_add_keyval(headers, content_type, value);
+	return rp_curl_headers_add_keyval(headers, CONTENT_TYPE, value);
 }
 
 CURL *rp_curl_prepare_url(const char *url)

@@ -86,7 +86,7 @@ static int h2b(const char *uu, unsigned char *out, int count, char term)
 		else
 			return 0;
 		y |= x;
-		*out++ = (char)y;
+		*out++ = (unsigned char)y;
 	} while(--count);
 	return *uu == term;
 }
