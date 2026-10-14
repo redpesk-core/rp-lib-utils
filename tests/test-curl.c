@@ -41,6 +41,13 @@
 # define ck_assert_ptr_nonnull(X)   ck_assert_ptr_ne(X, NULL)
 #endif
 
+/* Static analyzer presumes that  file descriptor ‘srvsock’ leaks.
+ * 1. It is wrong
+ * 2. That is just for testing
+ * So ignore that check
+ */
+#pragma GCC diagnostic ignored "-Wanalyzer-fd-leak"
+
 /*********************************************************************/
 
 char base[100];

@@ -30,13 +30,13 @@ void bin_u_max(unsigned bits, char *buf, size_t len)
 	*buf = 0;
 }
 
-void ts(unsigned b, int rce, char *b0, const char *fmt, int64_t u)
+void ts(unsigned b, int rce, char *b0, size_t lb0, const char *fmt, int64_t u)
 {
 	int rc;
 	int64_t ou;
 	json_object *obj;
 
-	sprintf(b0, fmt, (uint64_t)-u);
+	snprintf(b0, lb0, fmt, (uint64_t)-u);
 	obj = json_object_new_string(buffer);
 	rc = rp_jsonc_get_int64(obj, &ou, rp_jsonc_int_mode_number);
 	printf("%u: %d %"PRIi64" %s\n", b, rc, ou, buffer);
@@ -51,12 +51,12 @@ void tests(char char0)
 	int rc;
 	unsigned b;
 	char *b0 = buffer + !!char0;
-	size_t lb = sizeof buffer - !!char0;
+	size_t lb0 = sizeof buffer - !!char0;
 	int rce = 1;
 
 	buffer[0] = char0;
 	for(b = 0 ; b <= 65 ; b++) {
-		bin_u_max(b, b0, lb);
+		bin_u_max(b, b0, lb0);
 		obj = json_object_new_string(buffer);
 		rc = rp_jsonc_get_int64(obj, &ou, rp_jsonc_int_mode_number);
 		printf("%u: %d %"PRIi64" %s\n", b, rc, ou, buffer);
@@ -68,25 +68,25 @@ void tests(char char0)
 			ck_assert_int_eq(rc, rce);
 			ck_assert_int_eq(u, ou);
 
-			ts(b, rce, b0, "0o%"PRIo64, u);
-			ts(b, rce, b0, "0O%"PRIo64, u);
-			ts(b, rce, b0, "0%"PRIo64, u);
-			ts(b, rce, b0, "0x%"PRIx64, u);
-			ts(b, rce, b0, "0X%"PRIX64, u);
-			ts(b, rce, b0, "%"PRIu64, u);
-			ts(b, rce, b0, "0d%"PRIu64, u);
-			ts(b, rce, b0, "0D%"PRIu64, u);
+			ts(b, rce, b0, lb0, "0o%"PRIo64, u);
+			ts(b, rce, b0, lb0, "0O%"PRIo64, u);
+			ts(b, rce, b0, lb0, "0%"PRIo64, u);
+			ts(b, rce, b0, lb0, "0x%"PRIx64, u);
+			ts(b, rce, b0, lb0, "0X%"PRIX64, u);
+			ts(b, rce, b0, lb0, "%"PRIu64, u);
+			ts(b, rce, b0, lb0, "0d%"PRIu64, u);
+			ts(b, rce, b0, lb0, "0D%"PRIu64, u);
 		}
 	}
 }
 
-void tu(unsigned b, int rce, char *b0, const char *fmt, uint64_t u)
+void tu(unsigned b, int rce, char *b0, size_t lb0, const char *fmt, uint64_t u)
 {
 	int rc;
 	uint64_t ou;
 	json_object *obj;
 
-	sprintf(b0, fmt, u);
+	snprintf(b0, lb0, fmt, u);
 	obj = json_object_new_string(buffer);
 	rc = rp_jsonc_get_uint64(obj, &ou, rp_jsonc_int_mode_number);
 	printf("%u: %d %"PRIu64" %s\n", b, rc, ou, buffer);
@@ -100,13 +100,21 @@ void testu(char char0)
 	uint64_t u, ou;
 	int rc;
 	unsigned b;
-	char *b0 = buffer + !!char0;
-	size_t lb = sizeof buffer - !!char0;
+	char *b0;
+	size_t lb0;
 	int rce = 1;
 
-	buffer[0] = char0;
+	if (char0) {
+		buffer[0] = char0;
+		b0 = buffer + 1;
+		lb0 = sizeof buffer - 1;
+	}
+	else {
+		b0 = buffer;
+		lb0 = sizeof buffer;
+	}
 	for(b = 0 ; b <= 65 ; b++) {
-		bin_u_max(b, b0, lb);
+		bin_u_max(b, b0, lb0);
 		obj = json_object_new_string(buffer);
 		rc = rp_jsonc_get_uint64(obj, &ou, rp_jsonc_int_mode_number);
 		printf("%u: %d %"PRIu64" %s\n", b, rc, ou, buffer);
@@ -118,14 +126,14 @@ void testu(char char0)
 			ck_assert_int_eq(rc, rce);
 			ck_assert_uint_eq(u, ou);
 
-			tu(b, rce, b0, "0o%"PRIo64, u);
-			tu(b, rce, b0, "0O%"PRIo64, u);
-			tu(b, rce, b0, "0%"PRIo64, u);
-			tu(b, rce, b0, "0x%"PRIx64, u);
-			tu(b, rce, b0, "0X%"PRIX64, u);
-			tu(b, rce, b0, "%"PRIu64, u);
-			tu(b, rce, b0, "0d%"PRIu64, u);
-			tu(b, rce, b0, "0D%"PRIu64, u);
+			tu(b, rce, b0, lb0, "0o%"PRIo64, u);
+			tu(b, rce, b0, lb0, "0O%"PRIo64, u);
+			tu(b, rce, b0, lb0, "0%"PRIo64, u);
+			tu(b, rce, b0, lb0, "0x%"PRIx64, u);
+			tu(b, rce, b0, lb0, "0X%"PRIX64, u);
+			tu(b, rce, b0, lb0, "%"PRIu64, u);
+			tu(b, rce, b0, lb0, "0d%"PRIu64, u);
+			tu(b, rce, b0, lb0, "0D%"PRIu64, u);
 		}
 	}
 }
