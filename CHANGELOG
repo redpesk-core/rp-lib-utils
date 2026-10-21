@@ -1,3 +1,8 @@
+* version 0.4.2
+
+- Fix of issues reported by -fanalyze
+- Improve compatibility with C++
+
 * version 0.4.1
 
 - Fix of memory allocation error in rp-curl (#9450)
