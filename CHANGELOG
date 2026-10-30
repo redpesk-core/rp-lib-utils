@@ -1,3 +1,9 @@
+* version 0.?.?
+
+- Add rp-jsonc-iter for walking in JSON-C objects
+- Add rp_jsonc_path_t for path when walking in JSON-C objects
+- Add JSON pointer expression of rp_jsonc_path_t
+
 * version 0.4.2
 
 - Fix of issues reported by -fanalyze

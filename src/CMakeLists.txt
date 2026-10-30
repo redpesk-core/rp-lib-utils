@@ -187,6 +187,7 @@ if(JSON_C_FOUND)
 		json/rp-jsonc-expand
 		json/rp-jsonc-default-expand
 		json/rp-jsonc-path
+		json/rp-jsonc-iter
 		json/rp-jsonc
 	)
 endif()

@@ -30,6 +30,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 /**
  * Structure recording the path path of the expansion
@@ -177,3 +178,144 @@ char *rp_jsonc_path(struct json_object *root, struct json_object *jso)
 {
 	return search(root, jso, NULL);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* internal of computing JSON pointer length */
+static size_t pointer_length(const rp_jsonc_path_t *path, size_t length)
+{
+	if (path == NULL || path->parent == NULL)
+		return length;
+	else {
+		if (path->key != NULL) {
+			size_t len = strlen(path->key);
+			length += 1 + len;
+			while (len > 0) {
+				char c = path->key[--len];
+				if (c == '~' || c == '/')
+					length++;
+			}
+		}
+		else {
+			size_t idx = path->index;
+			while (idx >= 100) {
+				idx /= 100;
+				length += 2;
+			}
+			length += idx > 9 ? 3 : 2;
+		}
+		return pointer_length(path->parent, length);
+	}
+}
+
+/*
+ * Internal of computing JSON pointer.
+ *
+ * The build is done recurssively starting by the end of
+ * the resulting path.
+ */
+static char *pointer_get(const rp_jsonc_path_t *path, char *end)
+{
+	if (path == NULL || path->parent == NULL)
+		return end;
+	else {
+		if (path->key != NULL) {
+			size_t len = strlen(path->key);
+			while (len > 0) {
+				char c = path->key[--len];
+				if (c == '~') {
+					*--end = '0';
+					*--end = '~';
+				}
+				else if (c == '/') {
+					*--end = '1';
+					*--end = '~';
+				}
+				else
+					*--end = c;
+			}
+		}
+		else {
+			size_t idx = path->index;
+			do {
+				*--end = (char)('0' + (idx % 10));
+				idx /= 10;
+			}
+			while(idx > 0);
+		}
+		*--end = '/';
+		return pointer_get(path->parent, end);
+	}
+}
+
+/* validation of a path */
+int rp_jsonc_path_valid(const rp_jsonc_path_t *path, int ckobj)
+{
+	const rp_jsonc_path_t *slow = path;
+	int len = 0;
+
+	if (path == NULL)
+		return 0;
+
+	for(;;) {
+		/* at root ? */
+		if (path->parent == NULL)
+			/* check if valid root */
+			return path->key == NULL;
+
+		/* not at root, should it check the container? */
+		if (ckobj) {
+			/* should the container be an object? */
+			if (path->key != NULL) {
+				/* yes, check it */
+				if (!json_object_is_type(path->parent->object, json_type_object))
+					return 0;
+			}
+			else {
+				/* no, then check it is an array */
+				if (!json_object_is_type(path->parent->object, json_type_array))
+					return 0;
+			}
+		}
+
+		/* go to parent */
+		path = path->parent;
+
+		/* check using a slow iterator that there is no cycle */
+		if (path == slow)
+			return 0;
+		if (len++ & 1)
+			slow = slow->parent;
+	}
+}
+
+size_t rp_jsonc_path_pointer_length(const rp_jsonc_path_t *path)
+{
+	assert(rp_jsonc_path_valid(path, 0));
+	return pointer_length(path, 0);
+}
+
+char *rp_jsonc_path_pointer(const rp_jsonc_path_t *path)
+{
+	assert(rp_jsonc_path_valid(path, 0));
+	size_t length = pointer_length(path, 0);
+	char *pointer = malloc(1 + length);
+	if (pointer != NULL) {
+		char *end = &pointer[length];
+		*end = 0;
+		end = pointer_get(path, end);
+		assert(pointer == end);
+	}
+	return pointer;
+}
+
