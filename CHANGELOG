@@ -4,6 +4,7 @@
 - Add rp_jsonc_path_t for path when walking in JSON-C objects
 - Add JSON pointer expression of rp_jsonc_path_t
 - Rewrite of rp_jsonc_expand for using rp_jsonc_iter_alter
+- Remove function rp_jsonc_path
 
 * version 0.4.2
 

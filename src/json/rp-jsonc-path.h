@@ -76,17 +76,6 @@ typedef struct rp_jsonc_path
 	rp_jsonc_path_t;
 
 /**
- * Computes the path location of jso within root. The returned path is a string
- * that must be freed by the caller. NULL is returned if jso is not part of root.
- *
- * @param root the root object possibly containing jso
- * @param jso the object whose path within root is queried
- *
- * @return NULL if jso is not part of root or a string that must be freed using 'free'
- */
-extern char *rp_jsonc_path(struct json_object *root, struct json_object *jso) __attribute__ ((deprecated));
-
-/**
  * Checks that the given path is valid. A path is valid
  * if it is not circular and ends with a valid root.
  * This function can also ckeck on option (when 'ckobj'
