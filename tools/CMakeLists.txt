@@ -1,6 +1,4 @@
 
-pkg_check_modules(CHECK check IMPORTED_TARGET)
-
 if(NOT NO_STATIC_LIB)
 	set(MODE static)
 else()
@@ -15,5 +13,21 @@ if(TARGET rp-utils-yaml-${MODE})
 	message("Adding tool yaml2json")
 else()
 	message("NO tool yaml2json")
+endif()
+
+add_executable(data2cstr data2cstr.c)
+target_link_libraries(data2cstr rp-utils-yaml-${MODE})
+target_include_directories(data2cstr PRIVATE ../src)
+install(TARGETS data2cstr)
+message("Adding tool data2cstr")
+
+if(TARGET rp-utils-json-c-${MODE})
+	add_executable(info2skel info2skel.c)
+	target_link_libraries(info2skel rp-utils-json-c-${MODE})
+	target_include_directories(info2skel PRIVATE ../src)
+	install(TARGETS info2skel)
+	message("Adding tool info2skel")
+else()
+	message("NO tool info2skel")
 endif()
 

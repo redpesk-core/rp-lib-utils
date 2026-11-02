@@ -1,4 +1,4 @@
-* version 0.?.?
+* version 0.4.3
 
 - Add rp-jsonc-iter for walking in JSON-C objects
 - Add rp_jsonc_path_t for path when walking in JSON-C objects
@@ -6,6 +6,8 @@
 - Rewrite of rp_jsonc_expand for using rp_jsonc_iter_alter
 - Remove function rp_jsonc_path
 - Add function rp_jsonc_path_search for resolving JSON pointer (#9571)
+- Add tool 'data2cstr' for producing a C string from data (#9580)
+- Add tool 'info2skel' for producing binding skeleton from info description (#9579)
 
 * version 0.4.2
 
