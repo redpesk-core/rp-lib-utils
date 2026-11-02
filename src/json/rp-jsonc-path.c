@@ -160,3 +160,65 @@ char *rp_jsonc_path_pointer(const rp_jsonc_path_t *path)
 	return pointer;
 }
 
+int rp_jsonc_path_search(struct json_object *root, const char *pointer, struct json_object **result)
+{
+	int number, idx;
+	size_t value;
+	char key[200];
+
+	*result = NULL;
+	while (*pointer) {
+
+		/* valid pointer? */
+		if (*pointer++ != '/')
+			return 0; /* malformed pointer */
+
+		/* copy with unescaping the field */
+		number = 1;
+		idx = 0;
+		value = 0;
+		while (*pointer != '\0' && *pointer != '/') {
+			if (*pointer != '~') {
+				key[idx] = *pointer;
+				if (number) {
+					if ('0' <= *pointer && *pointer <= '9')
+						value = 10 * value + (size_t)(*pointer - '0');
+					else
+						number = 0;
+				}
+			}
+			else {
+				switch (*++pointer) {
+				case '0': key[idx] = '~'; break;
+				case '1': key[idx] = '/'; break;
+				default: return -1; /* malformed pointer */
+				}
+				number = 0;
+			}
+			pointer++;
+			if (++idx == (int)sizeof key)
+				return 0; /* key too long */
+		}
+
+		/* extract the key */
+		switch (json_object_get_type(root)) {
+		case json_type_object:
+			key[idx] = 0;
+			if (!json_object_object_get_ex(root, key, &root))
+				return 0;
+			break;
+		case json_type_array:
+			if (!number || idx == 0)
+				return 0; /* bad array index */
+			if (value >= json_object_array_length(root))
+				return 0; /* not found */
+			root = json_object_array_get_idx(root, value);
+			break;
+		default:
+			return 0; /* container missing in path */
+		}
+	}
+	/* end of the pointer */
+	*result = root;
+	return 1;
+}

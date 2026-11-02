@@ -117,6 +117,7 @@ struct desc dscleaf[] = {
 struct cloprt {
 	int cnt;
 	struct desc *ref;
+	struct json_object *root;
 };
 
 int prtpath(
@@ -128,6 +129,7 @@ int prtpath(
 	int rc;
 	char *pointer;
 	struct cloprt *clp = closure;
+	struct json_object *found;
 
 	ck_assert_int_ge(visit, 0);
 	ck_assert_int_lt((int)visit, (int)sizeof visit_names);
@@ -142,6 +144,11 @@ int prtpath(
 	printf("%d %d%s '%s'\n", clp->cnt, visit, visit_names[visit], pointer);
 	ck_assert_str_eq(pointer, clp->ref[clp->cnt].pointer);
 	ck_assert_int_eq(visit, clp->ref[clp->cnt].visit);
+
+	rc = rp_jsonc_path_search(clp->root, pointer, &found);
+	ck_assert_int_eq(rc, 1);
+	ck_assert_ptr_eq(object, found);
+
 	free(pointer);
 	clp->cnt++;
 	return 1;
@@ -152,13 +159,14 @@ void tu(const char *jstr, struct desc *ref, rp_jsonc_iter_want_t want)
 	int rc;
 	json_object *jo = NULL;
 	enum json_tokener_error jerr = json_tokener_success;
-	struct cloprt clp = { 0, ref };
+	struct cloprt clp = { 0, ref, NULL };
 
 	jo = json_tokener_parse_verbose(jstr, &jerr);
 	ck_assert_int_eq(jerr, json_tokener_success);
 	ck_assert_ptr_nonnull(jo);
 
 	printf("\nWANT %d\n", want);
+	clp.root = jo;
 	rc = rp_jsonc_iter_walk(jo, want, prtpath, &clp);
 	ck_assert_int_eq(rc, 0);
 	json_object_put(jo);

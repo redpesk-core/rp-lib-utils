@@ -123,6 +123,21 @@ extern size_t rp_jsonc_path_pointer_length(const rp_jsonc_path_t *path);
  */
 extern char *rp_jsonc_path_pointer(const rp_jsonc_path_t *path);
 
+/**
+ * Search in an object its component whose path is given by the pointer
+ *
+ * @param root    the root of the search
+ * @param pointer pointer of the element to search
+ * @param result  pointer for storing the element found
+ *
+ * @result 1 if found or else 0 (not found or error)
+ */
+extern
+int rp_jsonc_path_search(
+	struct json_object *root,
+	const char *pointer,
+	struct json_object **result);
+
 #ifdef	__cplusplus
 }
 #endif

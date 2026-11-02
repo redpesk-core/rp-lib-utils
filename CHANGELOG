@@ -5,6 +5,7 @@
 - Add JSON pointer expression of rp_jsonc_path_t
 - Rewrite of rp_jsonc_expand for using rp_jsonc_iter_alter
 - Remove function rp_jsonc_path
+- Add function rp_jsonc_path_search for resolving JSON pointer (#9571)
 
 * version 0.4.2
 
