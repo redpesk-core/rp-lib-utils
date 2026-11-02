@@ -65,8 +65,8 @@ struct expref
 	/** root object */
 	struct json_object *root;
 
-	/** path of the target */
-	const char *path;
+	/** target filename */
+	const char *filename;
 
 	/** target is the resulting object */
 	struct json_object *target;
@@ -78,12 +78,22 @@ struct expref
 	void *closure;
 };
 
+/**
+ * for iterating over arrays
+ */
+struct forall
+{
+	struct expref *expref;
+	rp_jsonc_path_t *path;
+};
+
 static int default_expand(struct expref *expref);
 
 /**
  * Emits an error for a given object of within path of ref
  *
- * @param object the object leading to an error
+ * @param expref the object leading to an error
+ * @param code   error code to set and return
  * @param path   path to the expanded reference or NULL
  * @param format the message as in printf
  * @param ...    argument of the printf like message
@@ -93,11 +103,11 @@ int
 set_error(
 	struct expref *expref,
 	int code,
-	struct json_object *object,
+	rp_jsonc_path_t *path,
 	const char *format,
 	...
 ) {
-	char *jpath;
+	char *jptr;
 	char *msg = NULL;
 	va_list ap;
 	int rc;
@@ -107,15 +117,15 @@ set_error(
 	rc = vasprintf(&msg, format, ap);
 	va_end(ap);
 
-	/* locating object */
-	jpath = rp_jsonc_path(expref->root, object);
+	/* JSON pointer of the error */
+	jptr = path == NULL ? NULL : rp_jsonc_path_pointer(path);
 
 	/* emit the error */
 	RP_ERROR("%s (file %s, json-path %s)",
 			rc > 0 ? msg : "json expansion error",
-			expref->path ? expref->path : "?",
-			jpath ? jpath : "?");
-	free(jpath);
+			expref->filename ? expref->filename : "?",
+			jptr ? jptr : "?");
+	free(jptr);
 	free(msg);
 
 	expref->flags = 0; /* stop further processings */
@@ -134,24 +144,24 @@ static
 int
 read_file(
 	struct expref *expref,
-	struct json_object *object,
-	const char *path,
+	rp_jsonc_path_t *path,
+	const char *filename,
 	struct json_object **result
 ) {
 	int rc;
 
 	/* read the file */
 	if (expref->readfunc != NULL)
-		rc = expref->readfunc(expref->closure, result, path);
+		rc = expref->readfunc(expref->closure, result, filename);
 	else
-		rc = -!(*result = json_object_from_file(path));
+		rc = -!(*result = json_object_from_file(filename));
 	if (rc >= 0)
 		return 0;
-	return set_error(expref, rc, object, "Reading of %s failed", path);
+	return set_error(expref, rc, path, "Reading of %s failed", filename);
 }
 
 /**
- * search the path of the file and check if it exists
+ * search the filename of the file and check if it exists
  */
 static
 const char *
@@ -163,12 +173,12 @@ search_path(
 	const char *lsl;
 	int len;
 
-	/* test relative path */
-	if (filename[0] != '/' && expref->path != NULL) {
-		lsl = strrchr(expref->path, '/');
+	/* test relative filename */
+	if (filename[0] != '/' && expref->filename != NULL) {
+		lsl = strrchr(expref->filename, '/');
 		if (lsl != NULL) {
-			len = (int)(1 + (lsl - expref->path));
-			len = snprintf(buffer, PATH_MAX, "%.*s%s", len, expref->path, filename);
+			len = (int)(1 + (lsl - expref->filename));
+			len = snprintf(buffer, PATH_MAX, "%.*s%s", len, expref->filename, filename);
 			if (len >= 0 && len < PATH_MAX && access(buffer, R_OK) == 0)
 				return buffer;
 		}
@@ -189,33 +199,33 @@ static
 int
 read_file_ref(
 	struct expref *expref,
-	struct json_object *object,
+	rp_jsonc_path_t *path,
 	const char *filename
 ) {
 	int rc;
 	struct json_object *obj, *saved_root;
 	char buffer[PATH_MAX];
-	const char *path, *saved_path;
+	const char *newfilename, *saved_path;
 
-	/* search the path */
-	path = search_path(expref, buffer, filename);
-	if (path == NULL)
-		return set_error(expref, -ENOENT, object, "Unable to locate file %s", filename);
+	/* search the filename */
+	newfilename = search_path(expref, buffer, filename);
+	if (newfilename == NULL)
+		return set_error(expref, -ENOENT, path, "Unable to locate file %s", filename);
 
 	/* read the file */
-	rc = read_file(expref, object, path, &obj);
+	rc = read_file(expref, path, newfilename, &obj);
 	if (rc < 0)
 		return rc;
 
 	/* expand the file read */
 	saved_root = expref->root;
-	saved_path = expref->path;
+	saved_path = expref->filename;
 	expref->root = obj;
-	expref->path = path;
+	expref->filename = newfilename;
 	rc = default_expand(expref);
 	obj = expref->root;
 	expref->root = saved_root;
-	expref->path = saved_path;
+	expref->filename = saved_path;
 	if (rc < 0) {
 		json_object_put(obj);
 		return rc;
@@ -243,21 +253,21 @@ static
 int
 read_dir_ref(
 	struct expref *expref,
-	struct json_object *object,
+	rp_jsonc_path_t *path,
 	const char *dirname,
 	DIR *dir
 ) {
 	int status = 0;
-	char path[PATH_MAX];
+	char filename[PATH_MAX];
 	size_t lenent, lendir = strlen(dirname);
 	struct dirent *ent;
 
-	if (lendir >= sizeof path)
+	if (lendir >= sizeof filename)
 		status = -1;
 	else {
-		memcpy(path, dirname, lendir);
-		if (path[lendir - 1] != '/')
-			path[lendir++] = '/';
+		memcpy(filename, dirname, lendir);
+		if (filename[lendir - 1] != '/')
+			filename[lendir++] = '/';
 		while ((ent = readdir(dir)) != NULL) {
 			/* skip directories */
 			if (ent->d_type == DT_DIR)
@@ -265,14 +275,14 @@ read_dir_ref(
 
 			/* make the filename */
 			lenent = strlen(ent->d_name);
-			if (lenent + lendir + 1 > sizeof path) {
+			if (lenent + lendir + 1 > sizeof filename) {
 				status = -1;
 				break;
 			}
-			memcpy(&path[lendir], ent->d_name, 1 + lenent);
+			memcpy(&filename[lendir], ent->d_name, 1 + lenent);
 
 			/* read the file */
-			status = read_file_ref(expref, object, path);
+			status = read_file_ref(expref, path, filename);
 			if (status < 0)
 				break;
 		}
@@ -285,18 +295,17 @@ static
 int
 read_any_ref(
 	struct expref *expref,
-	struct json_object *object,
+	rp_jsonc_path_t *path,
 	const char *filename
 ) {
 	if ((expref->flags & RP_JSONEXP_$REFS_DIR) != 0) {
 		DIR *dir = opendir(filename);
 		if (dir != NULL)
-			return read_dir_ref(expref, object, filename, dir);
+			return read_dir_ref(expref, path, filename, dir);
 	}
-	return read_file_ref(expref, object, filename);
+	return read_file_ref(expref, path, filename);
 }
 #endif
-
 
 /**
  * Called for each object referenced by "$ref", must be a string.
@@ -305,19 +314,26 @@ read_any_ref(
  * @param closure callback closure pointing a expref
  * @param the object referencing what to expand
  */
-static void expand_ref(void *closure, struct json_object *object)
+static void expand_ref(struct expref *expref, struct json_object *object, rp_jsonc_path_t *path)
 {
-	struct expref *expref = closure;
 	const char *string;
 
 	/* check type of object */
 	if (!json_object_is_type(object, json_type_string))
-		set_error(expref, -EINVAL, object, "$ref expects string");
+		set_error(expref, -EINVAL, path, "$ref expects string");
 	else {
 		/* read the file */
 		string = json_object_get_string(object);
-		read_any_ref(expref, object, string);
+		read_any_ref(expref, path, string);
 	}
+}
+
+/**
+ */
+static void array_expand_ref(void *closure, struct json_object *object)
+{
+	struct forall *forall = closure;
+	expand_ref(forall->expref, object, forall->path);
 }
 
 /**
@@ -332,7 +348,7 @@ static void expand_ref(void *closure, struct json_object *object)
  *
  * @return either the given object or its expansion
  */
-static struct json_object *expand_object(void *closure, struct json_object* object, rp_jsonc_expand_path_t epath)
+static struct json_object *expand_object(void *closure, struct json_object* object, rp_jsonc_path_t *path)
 {
 	struct expref *expref = closure;
 	struct json_object *ref;
@@ -341,15 +357,17 @@ static struct json_object *expand_object(void *closure, struct json_object* obje
 	if ((expref->flags & RP_JSONEXP_$REFS) != 0
 	 && json_object_object_get_ex(object, "$ref", &ref)) {
 		if (expref->nestcnt >= DEPTHMAX)
-			set_error(expref, -ELOOP, object, "Max include depth reached");
+			set_error(expref, -ELOOP, path, "Max include depth reached");
 		else {
 			struct json_object *saved_target = expref->target;
 			expref->nestcnt++;
 			expref->target = NULL;
-			if ((expref->flags & RP_JSONEXP_$REFS_MULTIPLE) != 0)
-				rp_jsonc_optarray_for_all(ref, expand_ref, expref);
-			else
-				expand_ref(expref, ref);
+			if ((expref->flags & RP_JSONEXP_$REFS_MULTIPLE) == 0)
+				expand_ref(expref, ref, path);
+			else {
+				struct forall forall = { expref, path };
+				rp_jsonc_optarray_for_all(ref, array_expand_ref, &forall);
+			}
 			if (expref->error_code == 0)
 				object = expref->target;
 			else
@@ -481,7 +499,7 @@ scan_string_value(
  *
  * @param closure the closure
  * @param object the string object to be exanded
- * @param path path of the string to expand
+ * @param path path of the string object to expand
  *
  * @return the object resulting of expanding the string or the given object
  * if no expansion has been done
@@ -491,7 +509,7 @@ struct json_object *
 expand_string(
 	void *closure,
 	struct json_object *object,
-	rp_jsonc_expand_path_t epath
+	rp_jsonc_path_t *path
 ) {
 	struct expref *expref = closure;
 	char *subst = NULL;
@@ -537,7 +555,7 @@ default_expand(struct expref *expref)
 int
 rp_jsonc_default_expanding(
 	struct json_object **object,
-	const char *path,
+	const char *filename,
 	int (*readfunc)(void *closure, struct json_object **obj, const char *filename),
 	void *closure,
 	int flags
@@ -549,16 +567,16 @@ rp_jsonc_default_expanding(
 	expref.flags = flags;
 	expref.nestcnt = 0;
 	expref.root = *object;
-	expref.path = path;
+	expref.filename = filename;
 	expref.target = NULL;
 	expref.readfunc = readfunc;
 	expref.closure = closure;
 
 	/* read the object if required */
 	if (expref.root == NULL) {
-		if (path == NULL)
-			return set_error(&expref, -EINVAL, NULL, "No object and no path!");
-		if (read_file(&expref, NULL, path, &expref.root) < 0)
+		if (filename == NULL)
+			return set_error(&expref, -EINVAL, NULL, "No object and no filename!");
+		if (read_file(&expref, NULL, filename, &expref.root) < 0)
 			return expref.error_code;
 	}
 

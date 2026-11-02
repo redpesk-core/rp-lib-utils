@@ -46,21 +46,25 @@ char input[] = "{ \"key\": [ { \"$ref\": \"$valref\" }, 5, true, 0 ], \"item\": 
 char *vars[] = { "valref=ZZ\\$(toto)ZZ", "valitem=HELLO", "toto=item", NULL };
 char output[] = "{ \"key\": [ \"ZZitemZZ\", 5, true, 0 ], \"item\": \"xHELLOx\" }";
 
-void printpath(rp_jsonc_expand_path_t path, struct json_object* object)
+void subprintpath(const rp_jsonc_path_t *path)
 {
-	int i, n = rp_jsonc_expand_path_length(path);
-
-	printf("ROOT");
-	for (i = 0 ; i < n ; i++) {
-		if (rp_jsonc_expand_path_is_array(path, i))
-			printf("[%d]", (int)rp_jsonc_expand_path_index(path, i));
+	if (path && path->parent) {
+		subprintpath(path->parent);
+		if (path->key)
+			printf(".%s", path->key);
 		else
-			printf(".%s", rp_jsonc_expand_path_key(path, i));
+			printf("[%d]", (int)path->index);
 	}
+}
+
+void printpath(const rp_jsonc_path_t *path, struct json_object* object)
+{
+	printf("ROOT");
+	subprintpath(path);
 	printf(" = %s\n", json_object_get_string(object));
 }
 
-struct json_object *expobj(void *closure, struct json_object* object, rp_jsonc_expand_path_t path)
+struct json_object *expobj(void *closure, struct json_object* object, rp_jsonc_path_t *path)
 {
 	struct json_object *ref;
 
@@ -71,7 +75,7 @@ struct json_object *expobj(void *closure, struct json_object* object, rp_jsonc_e
 	return object;
 }
 
-struct json_object *expstr(void *closure, struct json_object* object, rp_jsonc_expand_path_t path)
+struct json_object *expstr(void *closure, struct json_object* object, rp_jsonc_path_t *path)
 {
 	char *trf;
 
@@ -92,7 +96,8 @@ START_TEST (check_expand)
 	struct json_object *res;
 
 	res = rp_jsonc_expand(in, input, expobj, expstr);
-	printf("got %s\n", json_object_get_string(res));
+	printf("want %s\n", json_object_get_string(out));
+	printf("got  %s\n", json_object_get_string(res));
 	ck_assert_int_eq(0, rp_jsonc_cmp(res, out));
 
 	if (res != in)
