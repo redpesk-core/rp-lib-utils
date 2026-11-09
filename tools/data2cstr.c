@@ -54,6 +54,7 @@ void process(char *filename)
 	}
 
 	/* create the description */
+	fprintf(stdout, "\t/* generated from %s */\n", filename);
 	d2c(get, file, put, stdout, "\t", 71);
 
 	/* clean up */
