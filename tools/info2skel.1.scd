@@ -61,8 +61,7 @@ The below example shows a full featured info.
 		"version": INTEGER,
 		"c++": INTEGER,
 		"declare": BOOLEAN,
-		"name": STRING,
-		"info": STRING
+		"name": STRING
 	},
 	...
 }
@@ -112,9 +111,6 @@ Known entries, all optional, are:
 
 *name* (STRING)
 	Name of the API to be declared, default is in info at path `/name`.
-
-*info* (STRING)
-	Info about the binding, default is in info at path `/info`.
 
 # LINKS
 

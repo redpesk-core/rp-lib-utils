@@ -52,7 +52,6 @@ const char *postfix = NULL;
 const char *provideclass = NULL;
 const char *requireclass = NULL;
 const char *requireapi = NULL;
-const char *info = NULL;
 char *capi = NULL;
 int priv = -1;
 int noconc = -1;
@@ -118,11 +117,6 @@ char *str2c(const char *str, const char *prefix, int width)
 	if (rc >= 0)
 		rc = putend(&ps);
 	return ps.base;
-}
-
-char *str2c_inl(const char *str)
-{
-	return str2c(str, NULL, 0);
 }
 
 char *json2c_std(struct json_object *obj)
@@ -624,28 +618,20 @@ void print_declare_verb(const char *name, struct json_object *obj)
 
 void print_struct_verb(const char *name, struct json_object *obj)
 {
-	struct json_object *p, *i;
-	const char *info;
-
-	info = NULL;
-	if (json_object_object_get_ex(obj, "description", &i)
-	 || json_object_object_get_ex(obj, "info", &i))
-		info = json_object_get_string(i);
+	struct json_object *p;
 
 	p = permissions_of_verb(obj);
 	if (cpp >= 2) {
 		printf("    afb::verb<");
 		print_verb_cbname(name);
 		printf(">(\n        \"%s\"", name);
-		if (info || p) {
-			printf(",\n        %s", info ? str2c_inl(info) : "nullptr");
-			if (p) {
-				struct json_object *dp = decl_perm(p);
-				printf(",\n        ");
-				print_session(p);
-				if (dp)
-					printf(",\n        %s", json_object_get_string(dp));
-			}
+		printf(",\n        nullptr");
+		if (p) {
+			struct json_object *dp = decl_perm(p);
+			printf(",\n        ");
+			print_session(p);
+			if (dp)
+				printf(",\n        %s", json_object_get_string(dp));
 		}
 		printf("),\n");
 	}
@@ -660,11 +646,10 @@ void print_struct_verb(const char *name, struct json_object *obj)
 		printf(
 			",\n"
 			"        .auth = %s,\n"
-			"        .info = %s,\n"
 			, p && decl_perm(p) ? json_object_get_string(decl_perm(p)) : "NULL"
-			, info ? str2c_inl(info) : "NULL"
 		);
 		printf(
+			"        .info    = NULL,\n"
 			"        .vcbdata = NULL,\n"
 			"        .session = "
 		);
@@ -750,7 +735,6 @@ void afbinfo_get_options()
 	optvarint(&cpp, "/c++", 0, cpp_set);
 	optvarbool(&declare, "/declare", 1);
 	getvar(root, &api, "/name", "?");
-	getvar(root, &info, "/info", NULL);
 }
 
 void afbinfo_enum_verbs(void (*func)(const char *name, struct json_object *obj))
@@ -927,7 +911,7 @@ void process(char *filename)
 			"%sconst afb_binding_t %s%s = afb::binding<%s>(\n"
 			"    \"%s\",\n"
 			"    _afb_verbs_%s,\n"
-			"    %s,\n"
+			"    nullptr,\n"
 			"    _afb_description_%s%s);\n"
 			/* var */
 			, priv ? "static " : ""
@@ -937,7 +921,6 @@ void process(char *filename)
 			, TEST(mainctl) ? mainctl : "nullptr"
 			, api /* api */
 			, capi /* verbs */
-			, info ? str2c_inl(info) : "nullptr" /* info */
 			, capi /* description */
 			, noconc ? ",\n    true" : ""
 		);
@@ -947,7 +930,7 @@ void process(char *filename)
 			"%sconst struct afb_binding_v%d %s%s = {\n"
 			"    .api = \"%s\",\n"
 			"    .specification = _afb_description_%s,\n"
-			"    .info = %s,\n"
+			"    .info = NULL,\n"
 			"    .verbs = _afb_verbs_%s,\n"
 			, priv ? "static " : ""
 			, version
@@ -955,7 +938,6 @@ void process(char *filename)
 			, priv ? capi : ""
 			, api
 			, capi
-			, info && idl != idl_info2 ? str2c_inl(info) : "NULL"
 			, capi
 		);
 
