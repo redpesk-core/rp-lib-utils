@@ -44,9 +44,6 @@ struct json_object *options = NULL;
 struct json_object *d_perms = NULL;
 struct json_object *a_perms = NULL;
 const char *mainctl = NULL;
-const char *preinit = NULL;
-const char *init = NULL;
-const char *onevent = NULL;
 const char *api = NULL;
 const char *scope = NULL;
 const char *noexcpt = NULL;
@@ -739,9 +736,6 @@ void afbinfo_get_options()
 	int nexpt;
 
 	optvar(&mainctl, "/mainctl", NULL);
-	optvar(&preinit, "/preinit", NULL);
-	optvar(&init, "/init", NULL);
-	optvar(&onevent, "/onevent", NULL);
 	optvar(&scope, "/scope", "static");
 	optvar(&prefix, "/prefix", "afb_verb_");
 	optvar(&postfix, "/postfix", "_cb");
@@ -855,7 +849,7 @@ void process(char *filename)
 
 	/* expand references */
 	rp_jsonc_default_expand(&root, NULL);
- 
+
 	/* get the API name */
 	capi = cify(api);
 	printf(
@@ -914,7 +908,7 @@ void process(char *filename)
 		);
 	}
 
-	if (declare && (TEST(preinit) || TEST(init) || TEST(onevent) || TEST(mainctl))) {
+	if (declare && TEST(mainctl)) {
 		printf("\n");
 		if (TEST(mainctl)) {
 			if (TEST(scope))
