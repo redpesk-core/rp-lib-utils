@@ -22,17 +22,15 @@ typedef int (*d2c_put_cb)(void*, uint8_t);
 
 int d2c(d2c_get_cb get, void *getdata, d2c_put_cb put, void *putdata, const char *prefix, int width)
 {
-	size_t len;
 	int pos;
 	uint8_t in;
 
-#define P(x)    do { int s = put(putdata, (uint8_t)(x)); if(s < 0) return s; len++; pos++; } while(0)
+#define P(x)    do { int s = put(putdata, (uint8_t)(x)); if(s < 0) return s; pos++; } while(0)
 #define PS(x)   do { const char *p=(x); while(*p) { P(*p); p++; } } while(0)
 #define BOL()   do { if(prefix != NULL && pos == 0) { PS(prefix); P('"'); } } while(0)
 #define EOL()   do { if(prefix != NULL && pos > 0) { P('"'); P('\n'); pos = 0; } } while(0)
 
 	/* translate the string */
-	len = 0;
 	pos = 0;
 	BOL();
 	for(;;) {
